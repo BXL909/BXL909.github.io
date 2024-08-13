@@ -1,0 +1,62 @@
+!
+! Title: AdGuard DNS Popup Hosts filter
+! Description: Filter includes rules for sites that open in a new window, composed from AdGuard, EasyList, ABPindo filters and improved for compatibility with DNS-level pop-up blocking.
+! Version: 1.0.11.35
+! Homepage: https://github.com/AdguardTeam/AdguardSDNSFilter
+! Last modified: 2024-08-13T18:07:09.419Z
+!
+! Compiled by @adguard/hostlist-compiler v1.0.26
+!
+!
+! Source name: AdGuard DNS Popup Hosts filter
+! Source: https://adguardteam.github.io/AdGuardSDNSFilter/Filters/adguard_popup_filter.txt
+!
+!
+! Title: AdGuard DNS Popup Hosts filter
+! Description: Filter includes rules for sites that open in a new window, composed from AdGuard, EasyList, ABPindo filters and improved for compatibility with DNS-level pop-up blocking.
+! Homepage: https://github.com/AdguardTeam/AdguardSDNSFilter
+! License: https://github.com/AdguardTeam/AdguardSDNSFilter/blob/master/LICENSE
+! Last modified: 2024-08-13T18:01:24.722Z
+!
+! Compiled by @adguard/hostlist-compiler v1.0.24
+!
+||pagead2.googlesyndication.com^
+||adservice.google.com^
+||stats.g.doubleclick.net^
+||static.doubleclick.net^
+||m.doubleclick.net^
+||mediavisor.doubleclick.net^
+||static.media.net^
+||adservetx.media.net^
+||analytics.google.com^
+||click.googleanalytics.com^
+||google-analytics.com^
+||ssl.google-analytics.com^
+||pixel.facebook.com^
+||an.facebook.com^
+||ads.linkedin.com^
+||analytics.pointdrive.linkedin.com^
+||trk.pinterest.com^
+||ads.youtube.com^
+||ads.yahoo.com^
+||geo.yahoo.com^
+||udc.yahoo.com^
+||udcm.yahoo.com^
+||analytics.query.yahoo.com^
+||partnerads.ysm.yahoo.com^
+||log.fc.yahoo.com^
+||extmaps-api.yandex.net^
+||appmetrica.yandex.ru^
+||adfstat.yandex.ru^
+||metrika.yandex.ru^
+||offerwall.yandex.net^
+||adfox.yandex.ru^
+||webview.unityads.unity3d.com^
+||iadsdk.apple.com^
+||metrics.icloud.com^
+||metrics.mzstatic.com^
+||metrics.data.hicloud.com^
+||data.mistat.rus.xiaomi.com^
+||data.mistat.india.xiaomi.com^
+||api.ad.xiaomi.com^
+

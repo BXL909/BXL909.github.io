@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BXL909 | Home</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0d0d0d;
+            color: #ccc;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        img {
+            border-radius: 50%;
+            border: 4px solid #333;
+            width: 145px;
+            height: 145px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ff9933;
+            margin-top: 20px;
+        }
+
+        .links {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .links a {
+            color: #ff9933;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .contact-info {
+            margin-top: 40px;
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #aaa;
+        }
+
+        .contact-info a {
+            color: #ff9933;
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            color: #fff;
+        }
+
+        .project-images {
+            margin-top: 50px;
+        }
+
+        .project-images img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            border: 3px solid #333;
+            transition: transform 0.3s ease;
+        }
+
+        .project-images img:hover {
+            transform: scale(1.05);
+        }
+
+        @media (min-width: 768px) {
+            .project-images {
+                display: flex;
+                gap: 20px;
+            }
+
+            .project-images img {
+                max-width: 45%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png" alt="BXL909 Logo">
+        <h1>BXL909</h1>
+        <div class="links">
+            <a href="https://bxl909.github.io" target="_blank">Website</a>
+            <a href="https://cubit.btcdir.org" target="_blank">Cubit</a>
+            <a href="https://satsuma.btcdir.org" target="_blank">SATSuma</a>
+            <a href="https://btcdir.org" target="_blank">BTCdir</a>
+            <a href="https://github.com/BXL909" target="_blank">Source</a>
+            <a href="https://twitter.com/bxl909" target="_blank">Twitter</a>
+            <a href="mailto:21m@btcdir.org" target="_blank">Email</a>
+        </div>
+
+        <div class="contact-info">
+            <p>LNURL: bxl909@walletofsatoshi.com</p>
+            <p>BTC: bc1q039vgnn7chd4f3km8hpavyctu9g5thdrpuvmec (<a href="https://chart.googleapis.com/chart?cht=qr&chl=bc1q039vgnn7chd4f3km8hpavyctu9g5thdrpuvmec&chs=260x260&chld=L|0" target="_blank">QR</a>)</p>
+            <p>Nostr: npub1y2sgv8xwg9g63wlxq25735y9xvl4kjmwh5u92c0q2nkhurgjlstql87kmv</p>
+            <p>PGP Fingerprint: 5154 2C52 2310 A3C7 E709 98C0 5674 AD29 DB78 314F</p>
+            <p>80's, 90's: BASIC (Vic-20, C64, Amiga)<br>00's, 10's: COBOL (3270), VB, C, DirectX, HTML, ASP<br>Starting again with: C#, Python, PHP</p>
+        </div>
+
+        <div class="project-images">
+            <a href="https://satsuma.btcdir.org" target="_blank">
+                <img src="https://camo.githubusercontent.com/bb040a898e07ac632b230f837bf09bda4423db47f3c1a4f34163a4196363eed5/68747470733a2f2f73617473756d612e6274636469722e6f72672f77702d636f6e74656e742f75706c6f6164732f323032342f30322f54776974746572436172642d322e6a7067" alt="SATSuma">
+            </a>
+            <a href="https://btcdir.org" target="_blank">
+                <img src="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirCard.png?raw=true" alt="BTCdir">
+            </a>
+            <a href="https://cubit.btcdir.org" target="_blank">
+                <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true" alt="Cubit">
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

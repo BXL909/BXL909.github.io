@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BXL909 | Home</title>
     <style>
+        /*
         body {
             margin: 0;
             padding: 0;
@@ -14,6 +15,23 @@
             color: #ccc;
             font-family: 'Helvetica Neue', sans-serif;
         }
+        */
+
+body {
+                margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', sans-serif;
+    background: radial-gradient(circle, #0d0d0d, #1a1a1a);
+    background-size: 400% 400%;
+    animation: gradientMove 10s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+        
 
         .container {
             display: flex;
@@ -38,7 +56,6 @@
             height: 145px;
         }
 
-        /*
         h1 {
             font-size: 2.5rem;
             color: #000;
@@ -49,17 +66,7 @@
                 -1px 0px 0px #333, 
                 0px -1px 0px #333;
         }
-        */
-
-h1 {
-    font-size: 2.5rem;
-    color: transparent;
-    background: linear-gradient(90deg, #ff9933, #ff4500);
-    -webkit-background-clip: text;
-    background-clip: text;
-    text-shadow: none;
-}
-        
+      
         .links {
             margin-top: 10px;
             display: flex;

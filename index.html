@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BXL909 | Home</title>
     <style>
+        /* Particle Background */
         #particles-js {
             position: absolute;
             width: 100%;
@@ -19,6 +20,7 @@
             background-color: #0d0d0d;
         }
         
+        /* General Styling */
         body {
             margin: 0;
             padding: 0;
@@ -62,13 +64,14 @@
                 0px -1px 0px #444;
         }
 
-                h2 {
+        h2 {
             font-size: 0.9rem;
             color: #505050;
             margin-top: 4px;
-                    margin-bottom: 20px;
+            margin-bottom: 20px;
         }
       
+        /* Links */
         .links {
             margin-top: 10px;
             display: flex;
@@ -88,6 +91,7 @@
             transform: scale(1.05);
         }
 
+        /* Contact Info */
         .contact-info {
             margin-top: 30px;
             font-size: 0.9rem;
@@ -131,6 +135,55 @@
                 max-width: 100%;
             }
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            animation: fadeInModal 0.5s ease;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #111;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            text-align: center;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: scale(0.8); }
+            to { transform: scale(1); }
+        }
+
+        .modal-content img {
+            width: 300px;
+            height: auto;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: #fff;
+            font-size: 30px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -140,7 +193,7 @@
     <div class="container">
         <img src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png" alt="BXL909 Logo">
         <h1>BXL909</h1>
-<h2>BITCOIN PROJECTS</h2>
+        <h2>BITCOIN PROJECTS</h2>
         <div class="project-images">
             <a href="https://satsuma.btcdir.org" target="_blank">
                 <img src="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaButton.png?raw=true" alt="SATSuma">
@@ -152,17 +205,32 @@
                 <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitButton-2.png?raw=true" alt="Cubit">
             </a>
         </div>
-        
+
         <div class="contact-info">
-            <p>⚡ LNURL: bxl909@walletofsatoshi.com (<a href="https://satsuma.btcdir.org/wp-content/uploads/2024/08/WOSQR.png" target="_blank">QR</a>)</p>
-            <p>🟠 BTC: bc1q039vgnn7chd4f3km8hpavyctu9g5thdrpuvmec (<a href="https://btcdir.org/wp-content/uploads/2024/08/OnChain.png" target="_blank">QR</a>)</p>
+            <p>⚡ LNURL: bxl909@walletofsatoshi.com (<a href="#" onclick="showModal('lnurlModal')">QR</a>)</p>
+            <p>🟠 BTC: bc1q039vgnn7chd4f3km8hpavyctu9g5thdrpuvmec (<a href="#" onclick="showModal('btcModal')">QR</a>)</p>
             <p><a href="https://github.com/BXL909" target="_blank">GitHub</a> | <a href="https://twitter.com/bxl909" target="_blank">X</a> | <a href="https://primal.net/p/npub1y2sgv8xwg9g63wlxq25735y9xvl4kjmwh5u92c0q2nkhurgjlstql87kmv" target="_blank">Nostr</a> | <a href="mailto:21m@btcdir.org" target="_blank">Email</a></p>
         </div>
+    </div>
 
+    <!-- Modal for LNURL QR -->
+    <div id="lnurlModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('lnurlModal')">&times;</span>
+            <img src="https://satsuma.btcdir.org/wp-content/uploads/2024/08/WOSQR.png" alt="LNURL QR Code">
+        </div>
+    </div>
+
+    <!-- Modal for BTC QR -->
+    <div id="btcModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('btcModal')">&times;</span>
+            <img src="https://btcdir.org/wp-content/uploads/2024/08/OnChain.png" alt="BTC QR Code">
+        </div>
     </div>
 
     <script>
-particlesJS("particles-js", {
+        particlesJS("particles-js", {
             "particles": {
                 "number": {
                     "value": 60,
@@ -247,6 +315,15 @@ particlesJS("particles-js", {
             },
             "retina_detect": true
         });
+
+        // Modal Scripts
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = "flex";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
     </script>
 </body>
 

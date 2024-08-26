@@ -9,7 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BXL909 | Home</title>
     <style>
-
         /* Particle Background */
         #particles-js {
             position: absolute;
@@ -20,7 +19,7 @@
             z-index: -1;
             background-color: #0d0d0d;
         }
-        
+
         /* General Styling */
         body {
             margin: 0;
@@ -40,10 +39,15 @@
             opacity: 0;
             animation: fadeIn 1s ease-in-out forwards;
         }
-        
+
         @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         img {
@@ -58,10 +62,10 @@
             color: #000000;
             margin-top: 10px;
             margin-bottom: 0px;
-            text-shadow: 
-                1px 0px 0px #444, 
-                0px 1px 0px #444, 
-                -1px 0px 0px #444, 
+            text-shadow:
+                1px 0px 0px #444,
+                0px 1px 0px #444,
+                -1px 0px 0px #444,
                 0px -1px 0px #444;
         }
 
@@ -71,7 +75,7 @@
             margin-top: 4px;
             margin-bottom: 20px;
         }
-      
+
         /* Links */
         .links {
             margin-top: 10px;
@@ -99,7 +103,7 @@
             line-height: 1.5;
             color: #aaa;
         }
-        
+
         .contact-info a {
             color: #ff9933;
             text-decoration: none;
@@ -182,8 +186,13 @@
         }
 
         @keyframes fadeInModal {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .modal-content {
@@ -196,8 +205,13 @@
         }
 
         @keyframes slideIn {
-            from { transform: scale(0.8); }
-            to { transform: scale(1); }
+            from {
+                transform: scale(0.8);
+            }
+
+            to {
+                transform: scale(1);
+            }
         }
 
         .modal-content img {
@@ -247,7 +261,7 @@
                     <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitButton-2.png?raw=true" alt="Cubit">
                 </a>
                 <div class="project-info">
-                    <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true" alt="Cubit" style="width: 400px; ">                    
+                    <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true" alt="Cubit" style="width: 400px; ">
                     <p>Cubit is a free, open-source software designed with one purpose in mind: to make visualising your Bitcoin transactions straightforward and accessible – a practical tool for Bitcoiners.</p>
                 </div>
             </div>
@@ -255,128 +269,63 @@
 
         <div class="contact-info">
             <p>⚡ LNURL: bxl909@walletofsatoshi.com (<a href="#" onclick="showModal('lnurlModal')">QR</a>)</p>
-            <p>🟠 BTC: bc1q039vgnn7chd4f3km8hpavyctu9g5thdrpuvmec (<a href="#" onclick="showModal('btcModal')">QR</a>)</p>
-            <p><a href="https://github.com/BXL909" target="_blank">GitHub</a> | <a href="https://twitter.com/bxl909" target="_blank">X</a> | <a href="https://primal.net/p/npub1y2sgv8xwg9g63wlxq25735y9xvl4kjmwh5u92c0q2nkhurgjlstql87kmv" target="_blank">Nostr</a> | <a href="mailto:21m@btcdir.org" target="_blank">Email</a></p>
+            <p>🟠 BTC: bc1q039vnd2z2v28tus83l68v8dsjsa9dd7l0xxk33 (<a href="#" onclick="showModal('btcModal')">QR</a>)</p>
         </div>
     </div>
 
-    <!-- Modal for LNURL QR -->
-    <div id="lnurlModal" class="modal" onclick="closeModalOutside(event, 'lnurlModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close" onclick="closeModal('lnurlModal')">&times;</span>
-            <img src="https://satsuma.btcdir.org/wp-content/uploads/2024/08/WOSQR.png" alt="LNURL QR Code">
+    <!-- QR Code Modals -->
+    <div id="lnurlModal" class="modal" onclick="hideModal(event)">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal(event)">&times;</span>
+            <img src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/lnurlQR.png" alt="LNURL QR">
+            <p>LNURL: bxl909@walletofsatoshi.com</p>
         </div>
     </div>
 
-    <!-- Modal for BTC QR -->
-    <div id="btcModal" class="modal" onclick="closeModalOutside(event, 'btcModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close" onclick="closeModal('btcModal')">&times;</span>
-            <img src="https://btcdir.org/wp-content/uploads/2024/08/OnChain.png" alt="BTC QR Code">
+    <div id="btcModal" class="modal" onclick="hideModal(event)">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal(event)">&times;</span>
+            <img src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/bc1q039vnd2z2v28tus83l68v8dsjsa9dd7l0xxk33QR.png" alt="BTC Address QR">
+            <p>BTC: bc1q039vnd2z2v28tus83l68v8dsjsa9dd7l0xxk33</p>
         </div>
     </div>
 
     <script>
-        particlesJS("particles-js", {
-            "particles": {
-                "number": {
-                    "value": 60,
-                    "density": {
-                        "enable": true,
-                        "value_area": 800
-                    }
-                },
-                "color": {
-                    "value": "#d78b00"
-                },
-                "shape": {
-                    "type": "circle",
-                    "stroke": {
-                        "width": 0,
-                        "color": "#000000"
-                    }
-                },
-                "opacity": {
-                    "value": 0.2,
-                    "random": false
-                },
-                "size": {
-                    "value": 3,
-                    "random": true
-                },
-                "line_linked": {
-                    "enable": true,
-                    "distance": 160,
-                    "color": "#878787",
-                    "opacity": 0.2,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 5,
-                    "direction": "none",
-                    "random": false,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false
-                }
-            },
-            "interactivity": {
-                "detect_on": "window",
-                "events": {
-                    "onhover": {
-                        "enable": false,
-                        "mode": "grab"
-                    },
-                    "onclick": {
-                        "enable": true,
-                        "mode": "push"
-                    },
-                    "resize": true
-                },
-                "modes": {
-                    "grab": {
-                        "distance": 140,
-                        "line_linked": {
-                            "opacity": 1
-                        }
-                    },
-                    "bubble": {
-                        "distance": 400,
-                        "size": 40,
-                        "duration": 2,
-                        "opacity": 8,
-                        "speed": 3
-                    },
-                    "repulse": {
-                        "distance": 200,
-                        "duration": 0.4
-                    },
-                    "push": {
-                        "particles_nb": 4
-                    },
-                    "remove": {
-                        "particles_nb": 2
-                    }
-                }
-            },
-            "retina_detect": true
-        });
+        // Particle JS Background
+        particlesJS.load('particles-js', 'https://cdn.jsdelivr.net/particles.js/2.0.0/particles.json');
 
-        // Modal control
+        // Modal functionality
         function showModal(modalId) {
-            document.getElementById(modalId).style.display = "flex";
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'flex';
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = "none";
-        }
-
-        function closeModalOutside(event, modalId) {
-            if (event.target.classList.contains('modal')) {
-                document.getElementById(modalId).style.display = "none";
+        function hideModal(event) {
+            const modal = event.target.closest('.modal');
+            if (modal) {
+                modal.style.display = 'none';
             }
         }
+
+        // Dismiss Project Info on outside click
+        document.addEventListener('click', function (event) {
+            const projectInfos = document.querySelectorAll('.project-info');
+            projectInfos.forEach(function (info) {
+                if (!info.contains(event.target) && !event.target.closest('.project-card')) {
+                    info.style.display = 'none';
+                }
+            });
+        });
+
+        // Hover and click functionality
+        document.querySelectorAll('.project-card').forEach(function (card) {
+            card.addEventListener('mouseenter', function () {
+                card.querySelector('.project-info').style.display = 'block';
+            });
+            card.addEventListener('mouseleave', function () {
+                card.querySelector('.project-info').style.display = 'none';
+            });
+        });
     </script>
 </body>
 

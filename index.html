@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BXL909 | Home</title>
     <style>
+
         /* Particle Background */
         #particles-js {
             position: absolute;
@@ -110,6 +111,13 @@
 
         .project-images {
             margin-top: 20px;
+            position: relative;
+        }
+
+        .project-card {
+            position: relative;
+            display: inline-block;
+            margin: 0 10px;
         }
 
         .project-images img {
@@ -121,8 +129,29 @@
             background-color: #050505;
         }
 
-        .project-images img:hover {
+        .project-card img:hover {
             transform: scale(1.15);
+        }
+
+        .project-info {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            width: 200px;
+            text-align: center;
+            font-size: 0.9rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .project-card:hover .project-info {
+            display: block;
+            opacity: 1;
         }
 
         @media (min-width: 768px) {
@@ -195,15 +224,30 @@
         <h1>BXL909</h1>
         <h2>BITCOIN PROJECTS</h2>
         <div class="project-images">
-            <a href="https://satsuma.btcdir.org" target="_blank">
-                <img src="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaButton.png?raw=true" alt="SATSuma">
-            </a>
-            <a href="https://btcdir.org" target="_blank">
-                <img src="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirButton-2.png?raw=true" alt="BTCdir">
-            </a>
-            <a href="https://cubit.btcdir.org" target="_blank">
-                <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitButton-2.png?raw=true" alt="Cubit">
-            </a>
+            <div class="project-card">
+                <a href="https://satsuma.btcdir.org" target="_blank">
+                    <img src="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaButton.png?raw=true" alt="SATSuma">
+                </a>
+                <div class="project-info">
+                    SATSuma: A Bitcoin-powered micro-blogging platform that keeps your data private and decentralized.
+                </div>
+            </div>
+            <div class="project-card">
+                <a href="https://btcdir.org" target="_blank">
+                    <img src="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirButton-2.png?raw=true" alt="BTCdir">
+                </a>
+                <div class="project-info">
+                    BTCdir: A directory of Bitcoin resources aimed at helping users navigate the ecosystem.
+                </div>
+            </div>
+            <div class="project-card">
+                <a href="https://cubit.btcdir.org" target="_blank">
+                    <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitButton-2.png?raw=true" alt="Cubit">
+                </a>
+                <div class="project-info">
+                    Cubit: A tool for managing Bitcoin wallets with enhanced privacy features.
+                </div>
+            </div>
         </div>
 
         <div class="contact-info">

@@ -9,7 +9,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BXL909 | Home</title>
     <style>
-
         /* Particle Background */
         #particles-js {
             position: absolute;
@@ -20,7 +19,7 @@
             z-index: -1;
             background-color: #0d0d0d;
         }
-        
+
         /* General Styling */
         body {
             margin: 0;
@@ -40,7 +39,7 @@
             opacity: 0;
             animation: fadeIn 1s ease-in-out forwards;
         }
-        
+
         @keyframes fadeIn {
             0% { opacity: 0; }
             100% { opacity: 1; }
@@ -71,7 +70,7 @@
             margin-top: 4px;
             margin-bottom: 20px;
         }
-      
+
         /* Links */
         .links {
             margin-top: 10px;
@@ -99,7 +98,7 @@
             line-height: 1.5;
             color: #aaa;
         }
-        
+
         .contact-info a {
             color: #ff9933;
             text-decoration: none;
@@ -129,10 +128,6 @@
             background-color: #050505;
         }
 
-        .project-card img:hover {
-            transform: scale(1.15);
-        }
-
         .project-info {
             position: absolute;
             bottom: 45;
@@ -147,11 +142,6 @@
             text-align: center;
             font-size: 0.9rem;
             transition: opacity 0.3s ease;
-        }
-
-        .project-card:hover .project-info {
-            display: block;
-            opacity: 1;
         }
 
         @media (min-width: 768px) {
@@ -224,30 +214,30 @@
         <h1>BXL909</h1>
         <h2>BITCOIN PROJECTS</h2>
         <div class="project-images">
-            <div class="project-card">
+            <div class="project-card" onclick="toggleProjectInfo(event, this)">
                 <a href="https://satsuma.btcdir.org" target="_blank">
                     <img src="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaButton.png?raw=true" alt="SATSuma">
                 </a>
                 <div class="project-info">
-                    <img src="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaCard.jpeg?raw=true" alt="SATSuma" style="width: 400px; ">
+                    <img src="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaCard.jpeg?raw=true" alt="SATSuma" style="width: 400px;">
                     <p>SATSuma (for Windows) is a free and open source Bitcoin explorer, Xpub viewer, Bitcoin & Lightning dashboard, with the option to create encrypted bookmarks and notes for addresses, blocks, xpubs and transactions, view network, on-chain and market charts and metrics, use as a ‘watch-only’ wallet, and much more.</p>
                 </div>
             </div>
-            <div class="project-card">
+            <div class="project-card" onclick="toggleProjectInfo(event, this)">
                 <a href="https://btcdir.org" target="_blank">
                     <img src="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirButton-2.png?raw=true" alt="BTCdir">
                 </a>
                 <div class="project-info">
-                    <img src="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirCard.png?raw=true" alt="BTCdir" style="width: 400px; ">
+                    <img src="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirCard.png?raw=true" alt="BTCdir" style="width: 400px;">
                     <p>BTCdir: A web-based directory of categorized Bitcoin resources.</p>
                 </div>
             </div>
-            <div class="project-card">
+            <div class="project-card" onclick="toggleProjectInfo(event, this)">
                 <a href="https://cubit.btcdir.org" target="_blank">
                     <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitButton-2.png?raw=true" alt="Cubit">
                 </a>
                 <div class="project-info">
-                    <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true" alt="Cubit" style="width: 400px; ">                    
+                    <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true" alt="Cubit" style="width: 400px;">
                     <p>Cubit is a free, open-source software designed with one purpose in mind: to make visualising your Bitcoin transactions straightforward and accessible – a practical tool for Bitcoiners.</p>
                 </div>
             </div>
@@ -256,127 +246,73 @@
         <div class="contact-info">
             <p>⚡ LNURL: bxl909@walletofsatoshi.com (<a href="#" onclick="showModal('lnurlModal')">QR</a>)</p>
             <p>🟠 BTC: bc1q039vgnn7chd4f3km8hpavyctu9g5thdrpuvmec (<a href="#" onclick="showModal('btcModal')">QR</a>)</p>
-            <p><a href="https://github.com/BXL909" target="_blank">GitHub</a> | <a href="https://twitter.com/bxl909" target="_blank">X</a> | <a href="https://primal.net/p/npub1y2sgv8xwg9g63wlxq25735y9xvl4kjmwh5u92c0q2nkhurgjlstql87kmv" target="_blank">Nostr</a> | <a href="mailto:21m@btcdir.org" target="_blank">Email</a></p>
+            <p><a href="https://github.com/BXL909" target="_blank">GitHub</a> | <a href="mailto:bxl909@proton.me">Email</a></p>
         </div>
     </div>
 
-    <!-- Modal for LNURL QR -->
-    <div id="lnurlModal" class="modal" onclick="closeModalOutside(event, 'lnurlModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close" onclick="closeModal('lnurlModal')">&times;</span>
-            <img src="https://satsuma.btcdir.org/wp-content/uploads/2024/08/WOSQR.png" alt="LNURL QR Code">
+    <!-- Modal for LNURL -->
+    <div id="lnurlModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('lnurlModal')">&times;</span>
+            <img src="https://github.com/BXL909/BXL909.github.io/blob/main/LNURLCard.png?raw=true" alt="LNURL QR Code">
         </div>
     </div>
 
-    <!-- Modal for BTC QR -->
-    <div id="btcModal" class="modal" onclick="closeModalOutside(event, 'btcModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <span class="close" onclick="closeModal('btcModal')">&times;</span>
-            <img src="https://btcdir.org/wp-content/uploads/2024/08/OnChain.png" alt="BTC QR Code">
+    <!-- Modal for BTC -->
+    <div id="btcModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('btcModal')">&times;</span>
+            <img src="https://github.com/BXL909/BXL909.github.io/blob/main/BTCQRCard.png?raw=true" alt="BTC QR Code">
         </div>
     </div>
 
     <script>
-        particlesJS("particles-js", {
-            "particles": {
-                "number": {
-                    "value": 60,
-                    "density": {
-                        "enable": true,
-                        "value_area": 800
-                    }
-                },
-                "color": {
-                    "value": "#d78b00"
-                },
-                "shape": {
-                    "type": "circle",
-                    "stroke": {
-                        "width": 0,
-                        "color": "#000000"
-                    }
-                },
-                "opacity": {
-                    "value": 0.2,
-                    "random": false
-                },
-                "size": {
-                    "value": 3,
-                    "random": true
-                },
-                "line_linked": {
-                    "enable": true,
-                    "distance": 160,
-                    "color": "#878787",
-                    "opacity": 0.2,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 5,
-                    "direction": "none",
-                    "random": false,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false
-                }
-            },
-            "interactivity": {
-                "detect_on": "window",
-                "events": {
-                    "onhover": {
-                        "enable": false,
-                        "mode": "grab"
-                    },
-                    "onclick": {
-                        "enable": true,
-                        "mode": "push"
-                    },
-                    "resize": true
-                },
-                "modes": {
-                    "grab": {
-                        "distance": 140,
-                        "line_linked": {
-                            "opacity": 1
-                        }
-                    },
-                    "bubble": {
-                        "distance": 400,
-                        "size": 40,
-                        "duration": 2,
-                        "opacity": 8,
-                        "speed": 3
-                    },
-                    "repulse": {
-                        "distance": 200,
-                        "duration": 0.4
-                    },
-                    "push": {
-                        "particles_nb": 4
-                    },
-                    "remove": {
-                        "particles_nb": 2
-                    }
-                }
-            },
-            "retina_detect": true
-        });
+        // Project Info Toggle
+        function toggleProjectInfo(event, card) {
+            event.stopPropagation(); // Prevent event bubbling
 
-        // Modal control
-        function showModal(modalId) {
-            document.getElementById(modalId).style.display = "flex";
-        }
+            const projectInfo = card.querySelector('.project-info');
+            const isVisible = window.getComputedStyle(projectInfo).display === 'block';
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = "none";
-        }
+            // Hide all project-info elements
+            document.querySelectorAll('.project-info').forEach(info => info.style.display = 'none');
 
-        function closeModalOutside(event, modalId) {
-            if (event.target.classList.contains('modal')) {
-                document.getElementById(modalId).style.display = "none";
+            // Show the selected project-info
+            if (!isVisible) {
+                projectInfo.style.display = 'block';
             }
         }
+
+        // Hide project-info when clicking outside
+        window.addEventListener('click', function () {
+            document.querySelectorAll('.project-info').forEach(info => info.style.display = 'none');
+        });
+
+        // Prevent closing the project-info when clicking inside the card
+        document.querySelectorAll('.project-card').forEach(card => {
+            card.addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+        });
+
+        // Modal functionality
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Hide modal when clicking outside content
+        window.onclick = function (event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        };
     </script>
 </body>
 

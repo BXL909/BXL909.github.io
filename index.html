@@ -67,8 +67,15 @@
             font-size: 0.9rem;
             color: #444;
             margin-top: 4px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
+
+        h3 {
+            font-size: 0.8rem;
+            color: #444;
+            margin-top: 4px;
+            margin-bottom: 20px;
+        }        
 
         .links {
             margin-top: 10px;
@@ -136,19 +143,20 @@
         <img id="mainImage" src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png" alt="BXL909 Logo" data-default-src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png">
         <h1 id="mainTitle" data-default-text="BXL909">BXL909</h1>
         <h2 id="mainSubtitle" data-default-text="BITCOIN PROJECTS">BITCOIN PROJECTS</h2>
+        <h3 id="mainSubtitle2" data-default-text=""></h2>
 
         <div class="project-images">
-            <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaCard.jpeg?raw=true" data-title="SATSuma" data-subtitle="(WINDOWS)">
+            <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaCard.jpeg?raw=true" data-title="SATSuma" data-subtitle="(WINDOWS)" data-subtitle2="satsuma test">
                 <a href="https://satsuma.btcdir.org" target="_blank">
                     <img src="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaButton.png?raw=true" alt="SATSuma">
                 </a>
             </div>
-            <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirCard.png?raw=true" data-title="BTCdir" data-subtitle="(WEBSITE)">
+            <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirCard.png?raw=true" data-title="BTCdir" data-subtitle="(WEBSITE)" data-subtitle2="btcdir test">
                 <a href="https://btcdir.org" target="_blank">
                     <img src="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirButton-2.png?raw=true" alt="BTCdir">
                 </a>
             </div>
-            <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true" data-title="Cubit" data-subtitle="(WINDOWS)">
+            <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true" data-title="Cubit" data-subtitle="(WINDOWS)" data-subtitle2="cubit test">
                 <a href="https://cubit.btcdir.org" target="_blank">
                     <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitButton-2.png?raw=true" alt="Cubit">
                 </a>
@@ -233,10 +241,12 @@
                 const newImage = card.getAttribute('data-image');
                 const newTitle = card.getAttribute('data-title');
                 const newSubtitle = card.getAttribute('data-subtitle');
+                const newSubtitle2 = card.getAttribute('data-subtitle2');
 
                 document.getElementById('mainImage').src = newImage;
                 document.getElementById('mainTitle').textContent = newTitle;
                 document.getElementById('mainSubtitle').textContent = newSubtitle;
+                document.getElementById('mainSubtitle2').textContent = newSubtitle2;
 
                 document.getElementById('mainImage').classList.add('hovering');
             });
@@ -245,10 +255,12 @@
                 const defaultImage = document.getElementById('mainImage').getAttribute('data-default-src');
                 const defaultTitle = document.getElementById('mainTitle').getAttribute('data-default-text');
                 const defaultSubtitle = document.getElementById('mainSubtitle').getAttribute('data-default-text');
+                const defaultSubtitle2 = document.getElementById('mainSubtitle2').getAttribute('data-default-text');
 
                 document.getElementById('mainImage').src = defaultImage;
                 document.getElementById('mainTitle').textContent = defaultTitle;
                 document.getElementById('mainSubtitle').textContent = defaultSubtitle;
+                document.getElementById('mainSubtitle2').textContent = defaultSubtitle2;
 
                 document.getElementById('mainImage').classList.remove('hovering');
             });

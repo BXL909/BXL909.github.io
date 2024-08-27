@@ -137,23 +137,23 @@
             transform: scale(1.15);
         }
 
-.project-info {
-    position: absolute;
-    top: -250px; /* Adjust this value to control how far above the button it appears */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 1);
-    color: #666;
-    padding: 10px;
-    border-radius: 5%;
-    display: none;
-    width: 400px;
-    text-align: center;
-    font-size: 0.9rem;
-    z-index: 10; /* Ensure it appears above other content */
-    transition: opacity 0.3s ease;
-}
-        
+       .project-info {
+            position: fixed;
+            bottom: -125;
+            left: 50%; 
+            transform: translateX(-50%); 
+            background-color: rgba(0, 0, 0, 1);
+            color: #666;
+            padding: 10px;
+            margin-bottom: 100px;
+            padding-top: 30px;
+            border-radius: 5%;
+            display: none;
+            width: 400px;
+            text-align: center;
+            font-size: 0.9rem;
+            transition: opacity 0.3s ease;
+        }   
  
         .project-card:hover .project-info {
             display: block;

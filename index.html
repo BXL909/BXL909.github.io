@@ -75,7 +75,7 @@
             color: #aaa;
             margin-top: 4px;
             margin-bottom: 0px;
-        }        
+        }
 
         .links {
             margin-top: 10px;
@@ -133,6 +133,54 @@
         .project-card img:hover {
             transform: scale(1.15);
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            position: relative;
+            margin: auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 400px;
+            background-color: #fff;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: #aaa;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
     </style>
 </head>
 
@@ -143,7 +191,7 @@
         <img id="mainImage" src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png" alt="BXL909 Logo" data-default-src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png">
         <h1 id="mainTitle" data-default-text="BXL909">BXL909</h1>
         <h2 id="mainSubtitle" data-default-text="BITCOIN PROJECTS">BITCOIN PROJECTS</h2>
-        <h3 id="mainSubtitle2" data-default-text="&nbsp;">&nbsp;</h2>
+        <h3 id="mainSubtitle2" data-default-text="&nbsp;">&nbsp;</h3>
 
         <div class="project-images">
             <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaCard.jpeg?raw=true" data-title="SATSuma" data-subtitle="(WINDOWS)" data-subtitle2="a fully customisable bitcoin explorer with a load of extra tools, charts, features, converters, etc.">
@@ -268,12 +316,12 @@
 
         // Modal show and hide functions
         function showModal(modalId) {
-            document.getElementById(modalId).style.display = "block";
+            document.getElementById(modalId).style.display = "flex";
         }
 
         function hideModal(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = "none";
+            if (event.target.classList.contains('modal') || event.target.classList.contains('close')) {
+                event.target.closest('.modal').style.display = "none";
             }
         }
     </script>

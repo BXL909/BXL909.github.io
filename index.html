@@ -3,7 +3,6 @@
 
 <head>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,11 +61,7 @@
             color: #000000;
             margin-top: 10px;
             margin-bottom: 0px;
-            text-shadow:
-                1px 0px 0px #444,
-                0px 1px 0px #444,
-                -1px 0px 0px #444,
-                0px -1px 0px #444;
+            text-shadow: 1px 0px 0px #444, 0px 1px 0px #444, -1px 0px 0px #444, 0px -1px 0px #444;
         }
 
         h2 {
@@ -76,7 +71,6 @@
             margin-bottom: 20px;
         }
 
-        /* Links */
         .links {
             margin-top: 10px;
             display: flex;
@@ -96,7 +90,6 @@
             transform: scale(1.05);
         }
 
-        /* Contact Info */
         .contact-info {
             margin-top: 30px;
             font-size: 0.9rem;
@@ -119,7 +112,6 @@
         }
 
         .project-card {
-            position: relative;
             display: inline-block;
             margin: 0 10px;
         }
@@ -130,104 +122,10 @@
             border-radius: 5px;
             border: 1px solid #333;
             transition: transform 0.3s ease;
-            background-color: #050505;
         }
 
         .project-card img:hover {
             transform: scale(1.15);
-        }
-
-       .project-info {
-            position: fixed;
-            bottom: -125;
-            left: 50%; 
-            transform: translateX(-50%); 
-            background-color: rgba(0, 0, 0, 1);
-            color: #666;
-            padding: 10px;
-            margin-bottom: 100px;
-            padding-top: 30px;
-            border-radius: 5%;
-            display: none;
-            width: 400px;
-            text-align: center;
-            font-size: 0.9rem;
-            transition: opacity 0.3s ease;
-        }   
- 
-        .project-card:hover .project-info {
-            display: block;
-            opacity: 1;
-        }
-
-        @media (min-width: 768px) {
-            .project-images {
-                display: flex;
-                gap: 20px;
-            }
-
-            .project-images img {
-                max-width: 100%;
-            }
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            animation: fadeInModal 0.5s ease;
-        }
-
-        @keyframes fadeInModal {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .modal-content {
-            background-color: #111;
-            padding: 20px;
-            border-radius: 10px;
-            position: relative;
-            text-align: center;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: scale(0.8);
-            }
-
-            to {
-                transform: scale(1);
-            }
-        }
-
-        .modal-content img {
-            width: 300px;
-            height: auto;
-        }
-
-        .close {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            color: #fff;
-            font-size: 30px;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -236,45 +134,25 @@
     <div id="particles-js"></div>
 
     <div class="container">
-        <img src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png" alt="BXL909 Logo">
-        <h1>BXL909</h1>
-        <h2>BITCOIN PROJECTS</h2>
+        <img id="mainImage" src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png" alt="BXL909 Logo" data-default-src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png">
+        <h1 id="mainTitle" data-default-text="BXL909">BXL909</h1>
+        <h2 id="mainSubtitle" data-default-text="BITCOIN PROJECTS">BITCOIN PROJECTS</h2>
+
         <div class="project-images">
-            <div class="project-card">
+            <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaCard.jpeg?raw=true" data-title="SATSuma (windows)" data-subtitle="A Free and Open Source Bitcoin Explorer.">
                 <a href="https://satsuma.btcdir.org" target="_blank">
                     <img src="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaButton.png?raw=true" alt="SATSuma">
                 </a>
-                <div class="project-info">
-                    <a href="https://satsuma.btcdir.org" target="_blank">
-                        <img src="https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaCard.jpeg?raw=true" alt="SATSuma" style="width: 400px; ">
-                    </a>
-                    <h2>SATSuma (windows)</h2>
-                    <p>SATSuma is a free and open source Bitcoin explorer, Xpub viewer, Bitcoin & Lightning dashboard, with the option to create encrypted bookmarks and notes for addresses, blocks, xpubs and transactions, view network, on-chain and market charts and metrics, use as a ‘watch-only’ wallet, and much more.</p>
-                </div>
             </div>
-            <div class="project-card">
+            <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirCard.png?raw=true" data-title="BTCdir (web)" data-subtitle="An Ever-Expanding Directory of Bitcoin Resources.">
                 <a href="https://btcdir.org" target="_blank">
                     <img src="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirButton-2.png?raw=true" alt="BTCdir">
                 </a>
-                <div class="project-info">
-                    <a href="https://btcdir.org" target="_blank">
-                        <img src="https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirCard.png?raw=true" alt="BTCdir" style="width: 400px; ">
-                    </a>
-                    <h2>BTCdir (web)</h2>
-                    <p>BTCdir: An ever-expanding directory of categorized Bitcoin resources. Always looking out for new projects to include!</p>
-                </div>
             </div>
-            <div class="project-card">
+            <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true" data-title="Cubit (windows)" data-subtitle="A Simple Way to Visualize Your Bitcoin Transactions.">
                 <a href="https://cubit.btcdir.org" target="_blank">
                     <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitButton-2.png?raw=true" alt="Cubit">
                 </a>
-                <div class="project-info">
-                    <a href="https://cubit.btcdir.org" target="_blank">
-                        <img src="https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true" alt="Cubit" style="width: 400px; ">
-                    </a>
-                    <h2>Cubit (windows)</h2>
-                    <p>Cubit is a free, open-source application designed to help accurately record and visualise your Bitcoin transactions in a straightforward and accessible way.</p>
-                </div>
             </div>
         </div>
 
@@ -347,80 +225,46 @@
                     "bounce": false
                 }
             },
-            "interactivity": {
-                "detect_on": "window",
-                "events": {
-                    "onhover": {
-                        "enable": false,
-                        "mode": "grab"
-                    },
-                    "onclick": {
-                        "enable": true,
-                        "mode": "push"
-                    },
-                    "resize": true
-                },
-                "modes": {
-                    "grab": {
-                        "distance": 140,
-                        "line_linked": {
-                            "opacity": 1
-                        }
-                    },
-                    "bubble": {
-                        "distance": 400,
-                        "size": 40,
-                        "duration": 2,
-                        "opacity": 8,
-                        "speed": 3
-                    },
-                    "repulse": {
-                        "distance": 200,
-                        "duration": 0.4
-                    },
-                    "push": {
-                        "particles_nb": 4
-                    },
-                    "remove": {
-                        "particles_nb": 2
-                    }
-                }
-            },
             "retina_detect": true
         });
 
-        // Modal functionality
+        // Functionality to change content on hover
+        document.querySelectorAll('.project-card').forEach(function (card) {
+            card.addEventListener('mouseenter', function () {
+                const newImage = card.getAttribute('data-image');
+                const newTitle = card.getAttribute('data-title');
+                const newSubtitle = card.getAttribute('data-subtitle');
+
+                document.getElementById('mainImage').src = newImage;
+                document.getElementById('mainTitle').textContent = newTitle;
+                document.getElementById('mainSubtitle').textContent = newSubtitle;
+
+                document.getElementById('mainImage').classList.add('hovering');
+            });
+
+            card.addEventListener('mouseleave', function () {
+                const defaultImage = document.getElementById('mainImage').getAttribute('data-default-src');
+                const defaultTitle = document.getElementById('mainTitle').getAttribute('data-default-text');
+                const defaultSubtitle = document.getElementById('mainSubtitle').getAttribute('data-default-text');
+
+                document.getElementById('mainImage').src = defaultImage;
+                document.getElementById('mainTitle').textContent = defaultTitle;
+                document.getElementById('mainSubtitle').textContent = defaultSubtitle;
+
+                document.getElementById('mainImage').classList.remove('hovering');
+            });
+        });
+
+        // Modal show and hide functions
         function showModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.style.display = 'flex';
+            document.getElementById(modalId).style.display = "block";
         }
 
         function hideModal(event) {
-            const modal = event.target.closest('.modal');
-            if (modal) {
-                modal.style.display = 'none';
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
             }
         }
-
-        // Dismiss Project Info on outside click
-        document.addEventListener('click', function (event) {
-            const projectInfos = document.querySelectorAll('.project-info');
-            projectInfos.forEach(function (info) {
-                if (!info.contains(event.target) && !event.target.closest('.project-card')) {
-                    info.style.display = 'none';
-                }
-            });
-        });
-
-        // Hover and click functionality
-        document.querySelectorAll('.project-card').forEach(function (card) {
-            card.addEventListener('mouseenter', function () {
-                card.querySelector('.project-info').style.display = 'block';
-            });
-            card.addEventListener('mouseleave', function () {
-                card.querySelector('.project-info').style.display = 'none';
-            });
-        });
     </script>
 </body>
 

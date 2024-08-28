@@ -344,29 +344,29 @@
             }
         }
 
-
-
-
-        
-    
-    // Preload hover images as soon as the DOM is ready
-    document.addEventListener('DOMContentLoaded', function () {
-        preloadHoverImages();
-    });
-
-    function preloadHoverImages() {
-        const images = [
-            "https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaCard.jpeg?raw=true",
-            "https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirCard.png?raw=true",
-            "https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true"
-        ];
-
-        images.forEach((src) => {
-            const img = new Image();
-            img.src = src;
+        // Preload hover images as soon as the DOM is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            preloadHoverImages();
         });
-    }
+    
+        function preloadHoverImages() {
+            const images = [
+                "https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaCard.jpeg?raw=true",
+                "https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirCard.png?raw=true",
+                "https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true"
+            ];
+    
+            images.forEach((src) => {
+                const img = new Image();
+                img.src = src;
+            });
+        }
 
+
+        // Disable right-click on the entire page
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });        
         
     </script>
 </body>

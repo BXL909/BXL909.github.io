@@ -186,10 +186,24 @@
         .close:focus {
             color: #000;
         }
+
+        .preload {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    background-image: url('https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaCard.jpeg?raw=true'),
+                      url('https://github.com/BXL909/BXL909.github.io/blob/main/BTCdirCard.png?raw=true'),
+                      url('https://github.com/BXL909/BXL909.github.io/blob/main/CubitCard.png?raw=true');
+}
     </style>
 </head>
 
 <body>
+    <div class="preload"></div>
+
     <div id="particles-js"></div>
 
     <div class="container">
@@ -334,7 +348,12 @@
 
 
         
-    // Preload hover images
+    
+    // Preload hover images as soon as the DOM is ready
+    document.addEventListener('DOMContentLoaded', function () {
+        preloadHoverImages();
+    });
+
     function preloadHoverImages() {
         const images = [
             "https://github.com/BXL909/BXL909.github.io/blob/main/SatsumaCard.jpeg?raw=true",
@@ -347,13 +366,6 @@
             img.src = src;
         });
     }
-
-    // Call the preload function on page load
-    window.onload = function () {
-        preloadHoverImages();
-    };
-
-
 
         
     </script>

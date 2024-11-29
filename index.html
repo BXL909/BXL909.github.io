@@ -9,6 +9,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BXL909 projects</title>
     <style>
+        #news {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease;
+            margin-top: 10px;
+            padding-left: 0px; 
+            color: #555;
+            font-size: 0.8rem;
+            justify-content: left;
+            border-radius: 5px;
+        }
+
+        #news.show {
+            max-height: 5000px; 
+            padding: 10px;
+            padding-left: 0px;
+        }
+
+        .toggle-link {
+            color: #ff9933;;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .toggle-link:hover {
+            color: darkblue;
+        }
+
         /* Particle Background */
         #particles-js {
             position: absolute;
@@ -213,7 +241,50 @@
 
     <div id="particles-js"></div>
 
-    <div align="right"> <img style="width:120px; height:auto; border:none;" src="https://github.com/BXL909/BXL909.github.io/blob/main/BXL909Button.png?raw=true" alt=""></div>
+    
+    <div align="center">
+        <h2>
+        PROJECT NEWS/UPDATES 
+        <span class="toggle-link" onclick="toggleNews()">(EXPAND)</span></h2>
+        <div id="news">
+                <br>20241129 - Chromaseed v1.01.  
+                <br>20241121 - new .onion address.                              
+                <br>20241121 - onion version of Satadelica.                              
+                <br>20241116 - Satadelica v1.                
+                <br>20241028 - Chromaseed v1.                
+                <br>20240922 - Bitvain v1.
+                <br>20240916 - .onion project site launched.                                
+                <br>20240818 - SATSuma v2.5.                
+                <br>20240805 - BTCdir redesign.                
+                <br>20240224 - SATSuma v2.01.                
+                <br>20240222 - SATSuma v2.                
+                <br>20240123 - Cubit v1.2.                
+                <br>20231007 - SATSuma v1.09.                
+                <br>20231102 - Cubit v1.1.                
+                <br>20231016 - Cubit v1.                
+                <br>20231011 - SATSuma v1.07.                
+                <br>20231008 - SATSuma v1.06.                
+                <br>20231005 - Cubit v0.92.                
+                <br>20231005 - SATSuma v1.04.                
+                <br>20231004 - Cubit v0.9.                                
+                <br>20230824 - SATSuma v1.02.                
+                <br>20230819 - BTCdir.org new design.                
+                <br>20230812 - SATSuma v1.01.                
+                <br>20230806 - SATSuma v1.                
+                <br>20230723 - SATSuma v0.98.                
+                <br>20230715 - SATSuma v0.95.                
+                <br>20230709 - SATSuma v0.94.                
+                <br>20230707 - SATSuma v0.93.                
+                <br>20230704 - SATSuma v0.8 (replaces Statamoto).                
+                <br>20230204 - Statamoto v1.2.                
+                <br>20230126 - Statamoto v1.1.
+                <br>20230115 - Statamoto released.
+                <br>202105 - BTCdir.org launched.
+            
+        </div>
+    </div>
+
+
     <div class="container">
         <img id="mainImage" src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png" alt="BXL909 Logo" data-default-src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png">
         <h1 id="mainTitle" data-default-text="BXL909">BXL909</h1>
@@ -419,8 +490,22 @@
                 img.src = src;
             });
         }
+
+        function toggleNews() {
+        const newsDiv = document.getElementById('news');
+        const toggleLink = document.querySelector('.toggle-link');
+
+        if (newsDiv.classList.contains('show')) {
+            newsDiv.classList.remove('show');
+            toggleLink.textContent = '(EXPAND)';
+        } else {
+            newsDiv.classList.add('show');
+            toggleLink.textContent = '(COLLAPSE)';
+        }
+    }
         
     </script>
+
 </body>
 
 </html>

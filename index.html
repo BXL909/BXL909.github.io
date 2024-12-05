@@ -435,7 +435,7 @@
 
                 document.getElementById('mainImage').src = newImage;
                 document.getElementById('mainTitle').textContent = newTitle;
-                document.getElementById('mainSubtitle').textContent = newSubtitle;
+                //document.getElementById('mainSubtitle').textContent = newSubtitle;
                 document.getElementById('mainSubtitle2').textContent = newSubtitle2;
 
                 document.getElementById('mainImage').classList.add('hovering');
@@ -444,12 +444,12 @@
             card.addEventListener('mouseleave', function () {
                 const defaultImage = document.getElementById('mainImage').getAttribute('data-default-src');
                 const defaultTitle = document.getElementById('mainTitle').getAttribute('data-default-text');
-                const defaultSubtitle = document.getElementById('mainSubtitle').getAttribute('data-default-text');
+                //const defaultSubtitle = document.getElementById('mainSubtitle').getAttribute('data-default-text');
                 const defaultSubtitle2 = document.getElementById('mainSubtitle2').getAttribute('data-default-text');
 
                 document.getElementById('mainImage').src = defaultImage;
                 document.getElementById('mainTitle').textContent = defaultTitle;
-                document.getElementById('mainSubtitle').textContent = defaultSubtitle;
+                //document.getElementById('mainSubtitle').textContent = defaultSubtitle;
                 document.getElementById('mainSubtitle2').textContent = defaultSubtitle2;
 
                 document.getElementById('mainImage').classList.remove('hovering');

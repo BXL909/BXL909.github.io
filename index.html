@@ -27,6 +27,24 @@
             padding-left: 0px;
         }
 
+        #tips {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease;
+            margin-top: 10px;
+            padding-left: 0px; 
+            color: #555;
+            font-size: 0.8rem;
+            justify-content: left;
+            border-radius: 5px;
+        }
+
+        #tips.show {
+            max-height: 5000px; 
+            padding: 10px;
+            padding-left: 0px;
+        }
+        
         .toggle-link {
             color: #ff9933;;
             cursor: pointer;

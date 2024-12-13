@@ -359,7 +359,7 @@
         <h2>
         TIPS / DONATIONS 
         </h2>
-            <span class="toggle-link" onclick="toggleNews()">EXPAND</span>
+            <span class="toggle-link2" onclick="toggleTips()">EXPAND</span>
         <div id="tips">
             <p>⚡ LNURL: bxl909@walletofsatoshi.com (<a href="#" onclick="showModal('lnurlModal')">QR</a>)<br>
             🟠 BTC: 1BXL9o99CZVeD8jvd4pwQfDRfky1LvMqP1 (<a href="#" onclick="showModal('btcModal')">QR</a>)<br>
@@ -508,12 +508,26 @@
 
         if (newsDiv.classList.contains('show')) {
             newsDiv.classList.remove('show');
-            toggleLink.textContent = '(EXPAND)';
+            toggleLink.textContent = 'EXPAND';
         } else {
             newsDiv.classList.add('show');
-            toggleLink.textContent = '(COLLAPSE)';
+            toggleLink.textContent = 'COLLAPSE';
         }
     }
+
+        function toggleTips() {
+        const tipsDiv = document.getElementById('tips');
+        const toggleLink2 = document.querySelector('.toggle-news');
+
+        if (tipsDiv.classList.contains('show')) {
+            tipsDiv.classList.remove('show');
+            toggleLink2.textContent = 'EXPAND';
+        } else {
+            tipsDiv.classList.add('show');
+            toggleLink2.textContent = 'COLLAPSE';
+        }
+    }
+
         
     </script>
 

@@ -37,6 +37,16 @@
             color: darkblue;
         }
 
+                .toggle-tips {
+            color: #ff9933;;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .toggle-tips:hover {
+            color: darkblue;
+        }
+
                 .toggle-news {
             color: #ff9933;;
             cursor: pointer;
@@ -527,7 +537,7 @@
 
         function toggleTips() {
         const tipsDiv = document.getElementById('tips');
-        const toggleLink2 = document.querySelector('.toggle-news');
+        const toggleLink2 = document.querySelector('.toggle-tips');
 
         if (tipsDiv.classList.contains('show')) {
             tipsDiv.classList.remove('show');

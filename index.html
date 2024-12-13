@@ -37,6 +37,16 @@
             color: darkblue;
         }
 
+                .toggle-news {
+            color: #ff9933;;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .toggle-news:hover {
+            color: darkblue;
+        }
+
         /* Particle Background */
         #particles-js {
             position: absolute;
@@ -359,7 +369,7 @@
         <h2>
         TIPS / DONATIONS 
         </h2>
-            <span class="toggle-link" onclick="toggleTips()">EXPAND</span>
+            <span class="toggle-link2" onclick="toggleTips()">EXPAND</span>
         <div id="tips">
             <p>⚡ LNURL: bxl909@walletofsatoshi.com (<a href="#" onclick="showModal('lnurlModal')">QR</a>)<br>
             🟠 BTC: 1BXL9o99CZVeD8jvd4pwQfDRfky1LvMqP1 (<a href="#" onclick="showModal('btcModal')">QR</a>)<br>
@@ -517,7 +527,7 @@
 
         function toggleTips() {
         const tipsDiv = document.getElementById('tips');
-        const toggleLink2 = document.querySelector('.toggle-link');
+        const toggleLink2 = document.querySelector('.toggle-news');
 
         if (tipsDiv.classList.contains('show')) {
             tipsDiv.classList.remove('show');

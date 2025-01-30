@@ -692,6 +692,19 @@
             toggleLink2.textContent = 'COLLAPSE';
         }
     }
+
+    function toggleTor() {
+        const torDiv = document.getElementById('torlinks');
+        const toggleLink = event.target;
+
+        if (torDiv.classList.contains('show')) {
+            torDiv.classList.remove('show');
+            toggleLink.textContent = 'EXPAND';
+        } else {
+            torDiv.classList.add('show');
+            toggleLink.textContent = 'COLLAPSE';
+        }
+    }        
     </script>
 
 </body>

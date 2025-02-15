@@ -13,7 +13,7 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s ease, padding 0.5s ease;
-            margin-top: 10px;
+            margin-top: 0px;
             padding-left: 0px; 
             color: #555;
             font-size: 0.8rem;
@@ -334,7 +334,7 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s ease, padding 0.5s ease;
-            margin-top: 10px;
+            margin-top: 0px;
             padding-left: 0px; 
             color: #555;
             font-size: 0.8rem;
@@ -347,6 +347,24 @@
             padding: 10px;
             padding-left: 0px;
         }
+
+        #mirrorlinks {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease;
+            margin-top: 0px;
+            padding-left: 0px; 
+            color: #555;
+            font-size: 0.8rem;
+            justify-content: left;
+            border-radius: 5px;
+        }
+
+        #mirrorlinks.show {
+            max-height: 5000px; 
+            padding: 10px;
+            padding-left: 0px;
+        }        
     </style>
 </head>
 
@@ -434,7 +452,55 @@
             </div>
         </div>
 
+        <h3 id="mainSubtitle2" data-default-text="&nbsp;">&nbsp;</h3>
+        <div align="center">
+            <h2 style="display: inline-block; margin-right: 10px;">
+                <svg fill="#2349a1" height="16px" width="16px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+                viewBox="0 0 330 330" xml:space="preserve">
+           <g>
+               <path d="M35,270h45v45c0,8.284,6.716,15,15,15h200c8.284,0,15-6.716,15-15V75c0-8.284-6.716-15-15-15h-45V15
+                   c0-8.284-6.716-15-15-15H35c-8.284,0-15,6.716-15,15v240C20,263.284,26.716,270,35,270z M280,300H110V90h170V300z M50,30h170v30H95
+                   c-8.284,0-15,6.716-15,15v165H50V30z"/>
+               <path d="M155,120c-8.284,0-15,6.716-15,15s6.716,15,15,15h80c8.284,0,15-6.716,15-15s-6.716-15-15-15H155z"/>
+               <path d="M235,180h-80c-8.284,0-15,6.716-15,15s6.716,15,15,15h80c8.284,0,15-6.716,15-15S243.284,180,235,180z"/>
+               <path d="M235,240h-80c-8.284,0-15,6.716-15,15c0,8.284,6.716,15,15,15h80c8.284,0,15-6.716,15-15C250,246.716,243.284,240,235,240z
+                   "/>
+           </g>
+           </svg>                 MIRRORS - </h2>
+            <span class="toggle-link" onclick="toggleMirrors()"> EXPAND</span>
+        <div id="mirrorlinks">
+            <div class="project-images">
+                <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/SatadelicaTwitterCard.png?raw=true" data-title="Satadelica" data-subtitle="(MIRROR)" data-subtitle2="a .gitHub mirror of satadelica.btcdir.org">
+                    <a href="https://bxl909.github.io/satadelica" target="_blank">
+                        <img width="120px" src="https://github.com/BXL909/BXL909.github.io/blob/main/satadelicaButton.png?raw=true" alt="Satadelica">
+                    </a>
+                </div>
+                <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/TwitterCard202412.png?raw=true" data-title="Hashteroids" data-subtitle="(MIRROR)" data-subtitle2="a gitHub mirror of hashteroids.btcdir.org">
+                    <a href="https://bxl909.github.io/hashteroids" target="_blank">
+                        <img width="120px" src="https://github.com/BXL909/BXL909.github.io/blob/main/HashteroidsButton.png?raw=true" alt="Hashteroids">
+                    </a>
+                </div>
+                <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/ASICLanderCard.png?raw=true" data-title="ASIC Lander" data-subtitle="(MIRROR)" data-subtitle2="a gitHub mirror of asiclander.btcdir.org">
+                    <a href="https://bxl909.github.io/asiclander" target="_blank">
+                        <img width="120px" src="https://github.com/BXL909/BXL909.github.io/blob/main/ASICLanderButton.png?raw=true" alt="ASIC Lander">
+                    </a>
+                </div>
+                <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/2048Card.png?raw=true" data-title="2048 Sats" data-subtitle="(MIRROR)" data-subtitle2="a gitHub mirror of 2048sats.btcdir.org">
+                    <a href="https://bxl909.github.io/2048sats" target="_blank">
+                        <img width="120px" src="https://github.com/BXL909/BXL909.github.io/blob/main/2048SatsButton.png?raw=true" alt="2048 Sats">
+                    </a>
+                </div>
+                <div class="project-card" data-image="https://github.com/BXL909/BXL909.github.io/blob/main/OrangeSignalCard.png?raw=true" data-title="The Orange Signal" data-subtitle="(MIRROR)" data-subtitle2="a gitHub mirror of theorangesignal.btcdir.org"></div>
+                    <a href="https://bxl909.github.io/theorangesignal" target="_blank">
+                        <img width="120px" src="https://github.com/BXL909/BXL909.github.io/blob/main/OrangeSignalButton.png?raw=true" alt="The Orange Signal">
+                    </a>
+                </div>                
+            </div>
+        </div>
 
+
+
+        
         <h3 id="mainSubtitle2" data-default-text="&nbsp;">&nbsp;</h3>
         <div align="center">
             <h2 style="display: inline-block; margin-right: 10px;">
@@ -720,7 +786,21 @@
             torDiv.classList.add('show');
             toggleLink.textContent = 'COLLAPSE';
         }
-    }        
+    }   
+
+    function toggleMirrors() {
+        const mirrorDiv = document.getElementById('mirrorlinks');
+        const toggleLink = event.target;
+
+        if (mirrorDiv.classList.contains('show')) {
+            mirrorDiv.classList.remove('show');
+            toggleLink.textContent = 'EXPAND';
+        } else {
+            mirrorDiv.classList.add('show');
+            toggleLink.textContent = 'COLLAPSE';
+        }
+    }
+        
     </script>
 
 </body>

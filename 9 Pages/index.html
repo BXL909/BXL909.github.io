@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>'9 PAGES' - the Bitcoin Whitepaper presented by BXL909</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #fff;
+        }
+        #container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #background-image {
+            position: fixed;
+            width: 120vh;
+            height: 120vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.2;
+            z-index: 1;
+            border: 0px solid #f7931a;
+        }
+        #image {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: center;
+            animation: imageWarp 10s infinite ease-in-out;
+            z-index: 5;
+        }
+        @keyframes rotateClockwise {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes rotateAntiClockwise {
+            from { transform: translate(-50%, -50%) rotate(360deg); }
+            to { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+        @keyframes imageWarp {
+            0% { transform: scale(1) rotate(0deg); }
+            20% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1) rotate(0deg); }
+            80% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #f7931a;
+            padding: 5px;
+            border-radius: 10px;
+            z-index: 100;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            font-size: 10px;
+        }
+        #controls button {
+            background: #fff;
+            color: #000000;
+            border: none;
+            padding: 5px 9px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 10px;
+        }
+        #controls button:hover {
+            background: #eee;
+        }
+        #controls button.active {
+            background: #f7931a;
+            color: white;
+        }
+        #speed-control {
+            width: 84px;
+            margin: 0;
+            accent-color: #f7931a;
+        }
+        .control-label {
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #pause-play svg {
+            width: 12px;
+            height: 12px;
+            fill: #000000;
+        }
+        #pause-play {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            padding: 0px !important;
+            background: #fff !important;
+        }
+        #pause-play:hover {
+            background: #eee !important;
+        }
+        .negative-mode {
+            filter: invert(1);
+        }
+        .negative-mode #bxl909-logo,
+        .negative-mode .modal-content img[src="BXL909.png"] {
+            filter: invert(1);
+        }
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, 
+                rgba(247,147,26,0.0) 0%,
+                rgba(247,147,26,0.0) 50%,
+                rgba(247,147,26,0) 100%);
+            z-index: 999;
+        }
+        #progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to bottom, 
+                rgba(247,147,26,0.4) 0%,
+                rgba(247,147,26,0.2) 50%,
+                rgba(247,147,26,0) 100%);
+            transition: width 0.2s;
+        }
+        .speed-control-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0px;
+        }
+        #zoom-text-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .zoom-text {
+            position: absolute;
+            transform: scale(0);
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            color: rgba(140,140,140,0.5);
+            opacity: 0;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        @keyframes zoomInAndFade {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+                font-size: 0px;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+                font-size: min(600px, 70vw);
+            }
+        }
+
+        @keyframes zoomOutAndFade {
+            0% {
+                transform: scale(2);
+                opacity: 0;
+                font-size: min(600px, 70vw);
+            }
+            100% {
+                transform: scale(0);
+                opacity: 1;
+                font-size: 0px;
+            }
+        }
+
+        .zoom-active {
+            opacity: 1;
+        }
+        #bxl909-logo {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            opacity: 1;
+            transition: opacity 0.3s;
+            border: 1px solid #f7931a;
+            border-radius: 5px;
+        }
+        #bxl909-logo:hover {
+            opacity: 0.8;
+        }
+        #corner-logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 300px;
+            cursor: pointer;
+            opacity: 1;
+            transition: opacity 0.3s;
+            border: 0px solid #f7931a;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        #corner-logo:hover {
+            opacity: 1;
+        }
+        #help-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #f7931a;
+            padding: 0px;
+            border-radius: 10px;
+            z-index: 1000;
+        }
+
+        #help-panel button {
+            background: #f7931a !important;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 12px;
+            font-weight: bold;
+            position: relative;
+            z-index: 1001;
+            width: 22px;
+            height: 22px;
+            padding: 0px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #help-panel button:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #f7931a;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 2000;
+            max-width: 600px;
+            width: 80%;
+        }
+
+        .modal-content {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .close-modal {
+            color: #f7931a;
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .close-modal:hover {
+            color: #000;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.5);
+            z-index: 1999;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <img id="background-image" src="BitcoinBig3.png" alt="Bitcoin Background">
+        <img id="image" src="Whitepaper.png" alt="Whitepaper Image">
+        <a href="https://bxl909.github.io" target="_blank">
+            <img id="corner-logo" src="logo.png" alt="BXL909 Logo">
+        </a>
+        <div id="progress-bar"><div id="progress"></div></div>
+        <div id="zoom-text-container"></div>
+        <div id="controls">
+            <button id="auto-scroll" class="active">AUTO</button>
+            <button id="negative-mode">DARK</button>
+            <button id="pdf-link">PDF</button>
+            <button id="pause-play">
+                <svg class="pause-icon" viewBox="0 0 24 24">
+                    <path d="M6 4h4v16H6zm8 0h4v16h-4z"/>
+                </svg>
+                <svg class="play-icon" viewBox="0 0 24 24" style="display: none;">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+            </button>
+            <div class="speed-control-container">
+                <label class="control-label">SCROLL SPEED</label>
+                <input type="range" id="speed-control" min="0.1" max="8" step="0.1" value="2">
+            </div>
+            <a href="https://bxl909.github.io" target="_blank">
+                <img id="bxl909-logo" src="BXL909.png" alt="BXL909 Logo">
+            </a>
+        </div>
+        <div id="help-panel">
+            <button id="help-button">?</button>
+        </div>
+
+        <div id="help-modal" class="modal">
+            <span class="close-modal">&times;</span>
+            <div class="modal-content">
+                <a target="_blank" href="https://bxl909.github.io"><img src="BXL909.png" alt="BXL909" style="display: block; margin: 0 auto; max-width: 100%; height: auto; margin-bottom: 20px;"></a>
+                <p class="modal-text" align="center">This is another free and open source Bitcoin project by BXL909. For more of my projects, or if you want to send a small tip in support of my work, visit</p>
+                <p align="center"><a target="_blank" href="https://bxl909.github.io" style="color: var(--link-color); text-decoration: none;">https://bxl909.github.io</a></p>
+                <p style="text-align: center;">🧡</p>
+            </div>
+        </div>
+        <div id="modal-overlay" class="modal-overlay"></div>
+    </div>
+
+    <script>
+        const image = document.getElementById('image');
+        const container = document.getElementById('container');
+        const speedControl = document.getElementById('speed-control');
+        const autoScrollBtn = document.getElementById('auto-scroll');
+        const negativeBtn = document.getElementById('negative-mode');
+        const pausePlayBtn = document.getElementById('pause-play');
+        const pdfBtn = document.getElementById('pdf-link');
+        
+        let direction = 1;
+        let scrollSpeed = 0.5;
+        let currentSpeed = scrollSpeed;
+        let transitioningDirection = false;
+        let isAutoScrolling = true;
+        let isPaused = false;
+        let lastY = 0;
+        let targetScrollPosition = 0;
+        let isManualAnimating = false;
+        let lastAnimationTime = 0;
+        let lastScrollPosition = 0;
+        let scrollDirection = 1; 
+        const sectionStates = new Map(); 
+
+        function handleManualScroll(e) {
+            if (!isAutoScrolling) {
+                const deltaY = (e.touches ? e.touches[0].clientY : e.clientY) - lastY;
+                lastY = e.touches ? e.touches[0].clientY : e.clientY;
+                
+                let currentTop = parseFloat(getComputedStyle(image).top);
+                const maxScroll = image.height - window.innerHeight;
+                
+                currentTop = Math.min(0, Math.max(-maxScroll, currentTop + deltaY));
+                image.style.top = currentTop + 'px';
+            }
+        }
+
+        function scrollImage() {
+            if (!isAutoScrolling || isPaused) return;
+            
+            const maxScroll = image.height - window.innerHeight;
+            let currentTop = parseFloat(getComputedStyle(image).top);
+
+            if (direction === 1 && currentTop <= -maxScroll) {
+                if (!transitioningDirection) {
+                    transitioningDirection = true;
+                    currentSpeed = 0;
+                    setTimeout(() => {
+                        direction = -1;
+                        currentSpeed = scrollSpeed;
+                        transitioningDirection = false;
+                    }, 1000);
+                }
+            } else if (direction === -1 && currentTop >= 0) {
+                if (!transitioningDirection) {
+                    transitioningDirection = true;
+                    currentSpeed = 0; 
+                    setTimeout(() => {
+                        direction = 1;
+                        currentSpeed = scrollSpeed;
+                        transitioningDirection = false;
+                    }, 1000);
+                }
+            }
+
+            if (transitioningDirection) {
+                currentSpeed = Math.max(0, currentSpeed * 0.95);
+            } else {
+                currentSpeed = scrollSpeed;
+            }
+
+            image.style.top = (currentTop - direction * currentSpeed) + 'px';
+            requestAnimationFrame(scrollImage);
+        }
+
+        speedControl.addEventListener('input', (e) => {
+            scrollSpeed = parseFloat(e.target.value);
+            if (!transitioningDirection) currentSpeed = scrollSpeed;
+        });
+
+        autoScrollBtn.addEventListener('click', () => {
+            isAutoScrolling = !isAutoScrolling;
+            autoScrollBtn.classList.toggle('active');
+            if (isAutoScrolling) {
+                scrollImage();
+            }
+        });
+
+        negativeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('negative-mode');
+            negativeBtn.classList.toggle('active');
+        });
+
+        pausePlayBtn.addEventListener('click', () => {
+            isPaused = !isPaused;
+            document.querySelector('.pause-icon').style.display = isPaused ? 'none' : 'block';
+            document.querySelector('.play-icon').style.display = isPaused ? 'block' : 'none';
+            if (!isPaused) scrollImage();
+        });
+
+        pdfBtn.addEventListener('click', () => {
+            window.open('https://bitcoin.org/en/bitcoin-paper', '_blank');
+        });
+
+        container.addEventListener('mousedown', (e) => {
+            if (!isAutoScrolling) {
+                lastY = e.clientY;
+                container.addEventListener('mousemove', handleManualScroll);
+            }
+        });
+
+        container.addEventListener('mouseup', () => {
+            container.removeEventListener('mousemove', handleManualScroll);
+        });
+
+        container.addEventListener('mouseleave', () => {
+            container.removeEventListener('mousemove', handleManualScroll);
+        });
+
+        container.addEventListener('touchstart', (e) => {
+            if (!isAutoScrolling) {
+                lastY = e.touches[0].clientY;
+            }
+        });
+
+        container.addEventListener('touchmove', (e) => {
+            if (!isAutoScrolling) {
+                e.preventDefault();
+                handleManualScroll(e);
+            }
+        });
+
+        container.addEventListener('wheel', (e) => {
+            if (!isAutoScrolling) {
+                e.preventDefault();
+                const maxScroll = image.height - window.innerHeight;
+                let currentTop = parseFloat(getComputedStyle(image).top);
+                
+                targetScrollPosition = Math.min(0, Math.max(-maxScroll, currentTop - e.deltaY));
+                
+                if (!isManualAnimating) {
+                    isManualAnimating = true;
+                    smoothManualScroll();
+                }
+            }
+        }, { passive: false });
+
+        document.addEventListener('keydown', (e) => {
+            if (!isAutoScrolling) {
+                const scrollAmount = 50; 
+                const maxScroll = image.height - window.innerHeight;
+                let currentTop = parseFloat(getComputedStyle(image).top);
+                
+                switch (e.key) {
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        targetScrollPosition = Math.min(0, Math.max(-maxScroll, currentTop + scrollAmount));
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        targetScrollPosition = Math.min(0, Math.max(-maxScroll, currentTop - scrollAmount));
+                        break;
+                    default:
+                        return;
+                }
+                
+                if (!isManualAnimating) {
+                    isManualAnimating = true;
+                    smoothManualScroll();
+                }
+            }
+        });
+
+        function smoothManualScroll() {
+            if (!isManualAnimating) return;
+            
+            let currentTop = parseFloat(getComputedStyle(image).top);
+            const diff = targetScrollPosition - currentTop;
+            
+            if (Math.abs(diff) < 0.1) {
+                isManualAnimating = false;
+                return;
+            }
+            
+            currentTop += diff * 0.1;
+            image.style.top = currentTop + 'px';
+            
+            requestAnimationFrame(smoothManualScroll);
+        }
+
+        function updateProgress() {
+            const maxScroll = image.height - window.innerHeight;
+            const currentTop = parseFloat(getComputedStyle(image).top);
+            
+            const newScrollDirection = currentTop < lastScrollPosition ? 1 : -1;
+            if (newScrollDirection !== scrollDirection) {
+                sectionStates.clear(); 
+            }
+            scrollDirection = newScrollDirection;
+            lastScrollPosition = currentTop;
+
+            const viewportHeight = window.innerHeight;
+            const visiblePosition = -currentTop + (viewportHeight * 0.3);
+            const relativeProgress = (visiblePosition / image.height) * 100;
+
+            const container = document.getElementById('zoom-text-container');
+
+            const bgImage = document.getElementById('background-image');
+            bgImage.style.animation = scrollDirection === 1 
+                ? 'rotateClockwise 90s linear infinite'
+                : 'rotateClockwise 90s linear infinite';
+
+            const showSectionTitle = (title, triggerPoint, range = 1) => {
+                const sectionKey = `section_${triggerPoint}`;
+                const lastDirection = sectionStates.get(sectionKey);
+
+                if (Math.abs(relativeProgress - triggerPoint) <= range && 
+                    (!lastDirection || lastDirection !== scrollDirection) &&
+                    !container.querySelector(`.zoom-active[data-section="${sectionKey}"]`)) {
+                    
+                    const zoomText = document.createElement('div');
+                    zoomText.textContent = title;
+                    zoomText.className = 'zoom-text zoom-active';
+                    zoomText.dataset.section = sectionKey;
+                    container.appendChild(zoomText);
+                    
+                    zoomText.style.animation = scrollDirection === 1
+                        ? 'zoomInAndFade 6s cubic-bezier(0.5, 0.5, 0.5, 1) forwards'
+                        : 'zoomOutAndFade 6s cubic-bezier(0.5, 0.5, 0.5, 1) forwards';
+                    
+                    sectionStates.set(sectionKey, scrollDirection);
+                    
+                    zoomText.addEventListener('animationend', () => {
+                        zoomText.remove();
+                    });
+                }
+            };
+
+            const sectionsDown = [
+                { title: 'ABSTRACT', point: 4},
+                { title: '1. INTRODUCTION', point: 7 },
+                { title: '2. TRANSACTIONS', point: 12 },
+                { title: '3. TIMESTAMP SERVER', point: 21 },
+                { title: '4. PROOF OF WORK', point: 23 },
+                { title: '5. NETWORK', point: 31 },
+                { title: '6. INCENTIVE', point: 36 },
+                { title: '7. RECLAIMING DISK SPACE', point: 40 },
+                { title: '8. SIMPLIFIED PAYMENT VERIFICATION', point: 47 },
+                { title: '9. COMBINING AND SPLITTING VALUE', point: 55 },
+                { title: '10. PRIVACY', point: 59 },
+                { title: '11. CALCULATIONS', point: 63 },
+                { title: '12. CONCLUSION', point: 88 },
+                { title: '13. REFERENCES', point: 91 }
+            ];
+
+            const sectionsUp = [
+                { title: 'ABSTRACT', point: 7},
+                { title: '1. INTRODUCTION', point: 10 },
+                { title: '2. TRANSACTIONS', point: 15 },
+                { title: '3. TIMESTAMP SERVER', point: 24 },
+                { title: '4. PROOF OF WORK', point: 26 },
+                { title: '5. NETWORK', point: 34 },
+                { title: '6. INCENTIVE', point: 39 },
+                { title: '7. RECLAIMING DISK SPACE', point: 43 },
+                { title: '8. SIMPLIFIED PAYMENT VERIFICATION', point: 50 },
+                { title: '9. COMBINING AND SPLITTING VALUE', point: 58 },
+                { title: '10. PRIVACY', point: 62 },
+                { title: '11. CALCULATIONS', point: 66 },
+                { title: '12. CONCLUSION', point: 91 },
+                { title: '13. REFERENCES', point: 94 }
+            ];
+
+            const sections = scrollDirection === 1 ? sectionsDown : sectionsUp;
+            sections.forEach(section => {
+                showSectionTitle(section.title, section.point);
+            });
+
+            const progress = Math.abs(currentTop / maxScroll * 100);
+            document.getElementById('progress').style.width = `${progress}%`;
+
+            requestAnimationFrame(updateProgress);
+        }
+
+        window.onload = () => {
+            scrollImage();
+            updateProgress();
+        };
+
+        const helpButton = document.getElementById('help-button');
+        const modal = document.getElementById('help-modal');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const closeModal = document.querySelector('.close-modal');
+
+        helpButton.addEventListener('click', () => {
+            modal.style.display = 'block';
+            modalOverlay.style.display = 'block';
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+        modalOverlay.addEventListener('click', () => {
+            modal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                modal.style.display = 'none';
+                modalOverlay.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -142,6 +142,25 @@
             }
         }
 
+        .expandable-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.7s ease-in-out, padding 0.7s ease-in-out;
+            margin-top: 0px;
+            padding: 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-align: left;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .expandable-section.show {
+            max-height: 5000px; /* Large enough to accommodate content */
+            padding: 10px 0;
+        }
+        
         img {
             border-radius: 5px;
             border: 1px solid #444;
@@ -517,7 +536,7 @@
                 </svg>
                 PROJECT NEWS / UPDATES - 
             </h2>
-            <span class="toggle-news" onclick="toggleNews()"> EXPAND</span>
+            <span class="expandable-section" onclick="toggleNews()"> EXPAND</span>
         <div id="news">
                 <br>20250304 - .onion sites retired (server failure)
                 <br>20250227 - 9 Pages released.                  
@@ -572,7 +591,7 @@
             </svg>
             TIPS / DONATIONS - 
         </h2>
-        <span class="toggle-link2" onclick="toggleTips()"> EXPAND</span>
+        <span class="expandable-section" onclick="toggleTips()"> EXPAND</span>
         <div id="tips">
                 ⚡ Lightning: <a href="https://zbd.gg/BTCdir" target="_blank" style="color: #ff9933; text-decoration: none;">https://zbd.gg/BTCdir</a><br>
                 ⚡ LNURL: bxl909@walletofsatoshi.com (<a href="#" onclick="showModal('lnurlModal')" style="color: #ff9933; text-decoration: none;">QR</a>)<br>

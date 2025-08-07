@@ -1,0 +1,1566 @@
+<!-- BTCPhoebe - the Bitcoin Fee Bee - by BXL909 -->
+<!--              bxl909.github.io               -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoebe - the bitcoin fee bee - bxl909.github.io</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+<style>
+    body {
+        background-color: #121212;
+        background-image: url("bg.png");
+        background-size: contain;
+        background-position: top;
+        background-repeat: no-repeat;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 20px;
+        padding-top: 40px;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-bottom: 40px;
+    }
+    a {
+        color: #c49551;
+        text-decoration: none;
+    }
+    #sourceSelectorContainer, #chartContainer, #blocksSection, #miningFeesSection, #blockFeesSubsidySection {
+        width: 90vw;
+        max-width: 1000px;
+        min-width: 300px;
+        margin: 1.8rem auto;
+        position: relative;
+    }
+    #blockFeesSubsidySection {
+        margin-bottom: 0px;
+    }
+    #sourceSelector, #miningFeesToggle, #feeHistogramToggle {
+        max-width: 720px;
+        margin-left: 0;
+        margin-right: auto;
+        border-radius: 8px;
+        padding-top: 1rem;
+        padding-right: 1rem;
+        padding-bottom: 0.5rem;
+        padding-left: 0rem;
+        text-align: left;
+        position: relative;
+        overflow: visible;
+    }
+    #chartContainer, #miningFeesSection {
+        border-radius: 0 8px 8px 8px;
+        background-color: #1e1e1e;
+    }
+    #blocksSection, #blockFeesSubsidySection {
+        border-radius: 8px 0 8px 8px;
+        background-color: #1e1e1e;
+    }
+    .title-image {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 30vw;
+        max-width: 300px;
+        min-width: 100px;
+        height: auto;
+        z-index: 10;
+        margin-right: 20px;
+    }
+    #sourceSelectorContainer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-top: 10px;
+        min-height: 100px;
+    }
+    #sourceSelector {
+        max-width: 60%;
+    }
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+        background-color: #1e1e1e;
+        border-radius: 8px;
+    }
+    h1 {
+        font-size: clamp(1.2rem, 3vw, 1.5em);
+        margin-bottom: 1rem;
+    }
+    h2 {
+        font-size: clamp(0.8rem, 2vw, 1em);
+        margin: 0;
+        color: #c49551;
+        font-weight: normal;
+        padding: 0.4rem 0.8rem;
+    }
+    .tab-title {
+        position: absolute;
+        top: -26px;
+        background-color: #1e1e1e;
+        color: #c0c0c0;
+        z-index: 5;
+        display: inline-block;
+        padding: 0;
+        border-radius: 8px 8px 0 0;
+    }
+    #sourceSelector .tab-title, #chartContainer .tab-title, #miningFeesSection .tab-title {
+        left: 0;
+    }
+    #blocksSection .tab-title, #blockFeesSubsidySection .tab-title {
+        right: 0;
+    }
+    .source-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-top: 0rem;
+        padding-right: 0.5rem;
+        padding-bottom: 0rem;
+        padding-left: 0rem;
+    }
+    .toggle-content {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        padding: 0.5rem;
+        align-items: center;
+    }
+    .source-option {
+        font-size: 0.8rem;
+        font-family: Arial, sans-serif;
+        font-weight: normal;
+        color: #c0c0c0;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        white-space: nowrap;
+        -webkit-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+    }
+    .source-option input[type="radio"] {
+        accent-color: #fbba24;
+    }
+    .input-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    #customMempoolUrl {
+        background-color: #2a2a2a;
+        color: #c0c0c0;
+        border: 1px solid #3a3a3a;
+        border-radius: 4px;
+        padding: 0.1rem;
+        margin-left: 24px;
+        font-size: 0.8em;
+        width: 100%;
+        max-width: 180px;
+        box-sizing: border-box;
+    }
+    #customMempoolUrl:disabled {
+        background-color: #1a1a1a;
+        color: #888888;
+    }
+    #saveSource {
+        background-color: #fbba24;
+        color: #121212;
+        border: none;
+        border-radius: 4px;
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8em;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        white-space: nowrap;
+    }
+    #saveSource:hover {
+        background-color: #e0a21f;
+    }
+    #saveSource:disabled {
+        background-color: #3a3a3a;
+        color: #888888;
+        cursor: not-allowed;
+    }
+    #lastUpdated {
+        font-size: 0.8rem;
+        font-family: Arial, sans-serif;
+        font-weight: normal;
+        color: #bbbbbb;
+        margin: 0;
+        text-align: left;
+        padding-left: 0rem;
+        line-height: 1.2;
+        -webkit-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+    }
+    .clock-icon {
+        font-size: 0.8rem;
+        font-family: Arial, sans-serif;
+        line-height: 1.2;
+        color: #d9b248;
+        margin-left: 4px;
+        margin-right: 4px;
+        vertical-align: middle;
+    }
+    .last-updated-text {
+        font-size: 0.8rem;
+        font-family: Arial, sans-serif;
+        font-weight: normal;
+        line-height: 1.2;
+        color: #bbbbbb;
+    }
+    #blocksContainer {
+        padding: 1.0rem;
+        padding-bottom: 0rem;
+        margin-top: 1rem;
+    }
+    #miningFeesContainer, #blockFeesSubsidyContainer {
+        padding: 1.5rem;
+        padding-bottom: 0;
+        height: 100%;
+        box-sizing: border-box;
+        margin-top: 1rem;
+    }
+    #miningFeesChart, #blockFeesSubsidyChart {
+        width: 100% !important;
+        height: 100% !important;
+    }
+    .block-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 0.8rem;
+        background-color: #2a2a2a;
+        border-radius: 6px;
+        transition: all 0.5s ease;
+        transform: translateY(0);
+    }
+    .block-row.slide-down {
+        animation: slideDown 0.8s ease-out;
+    }
+    .block-row.new-block {
+        animation: slideInFromTop 0.8s ease-out, blockHighlight 2s ease-out;
+    }
+    @keyframes slideDown {
+        0% { transform: translateY(-70px); }
+        100% { transform: translateY(0); }
+    }
+    @keyframes slideInFromTop {
+        0% { 
+            transform: translateY(-70px);
+            opacity: 0;
+        }
+        100% { 
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    @keyframes blockHighlight {
+        0% { background-color: #4a5568; transform: scale(1.02); }
+        100% { background-color: #2a2a2a; transform: scale(1); }
+    }
+    .block-info {
+        min-width: 60px;
+        font-size: 0.7em;
+        color: #bbbbbb;
+        text-align: left;
+    }
+    .block-height {
+        font-weight: bold;
+        color: #c0c0c0;
+        font-size: 1.2em;
+    }
+    .median-fee-display {
+        flex: 1;
+        min-width: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 30px;
+        border-radius: 6px;
+        margin: 0 1rem;
+        position: relative;
+        transition: all 0.5s ease;
+        background: linear-gradient(to right, rgba(255, 165, 0, 0.5), var(--fee-color, rgba(34, 197, 94, 0.3)));
+    }
+    .median-fee-value {
+        font-size: 0.8em;
+        font-weight: bold;
+        color: #c0c0c0;
+    }
+.fee-range-text {
+    flex: 1;
+    max-width: 150px;
+    font-size: 0.85em;
+    color: #c0c0c0;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+.fee-range-main {
+    font-size: 0.85em;
+    margin-bottom: 2px;
+    max-width: 150px;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+.fee-range-details {
+    font-size: 0.7em;
+    color: #bbbbbb;
+    max-width: 150px;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+    .miner-info {
+        flex: 0 0 120px;
+        max-width: 40px;
+        font-size: 0.8em;
+        color: #c0c0c0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+    .miner-icon {
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
+    }
+    .miner-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80px;
+    }
+    .sticker {
+        position: absolute;
+        width: 100px;
+        height: auto;
+        z-index: 10;
+        transform: rotate(-10deg);
+    }
+    .sticker-1 {
+        top: -50px;
+        left: -40px;
+        transform: scale(50%) translateX(-20%) rotate(-10deg);
+    }
+    .sticker-2 {
+        top: -60px;
+        right: -40px;
+        transform: scale(50%) translateX(20%) rotate(-10deg);
+    }
+    .sticker-3 {
+        top: -60px;
+        left: -40px;
+        transform: scale(45%) translateX(-20%) rotate(-10deg);
+    }
+    #blocksSection, #miningFeesSection, #blockFeesSubsidySection {
+        position: relative;
+        overflow: visible;
+    }
+    #miningFeesToggle, #feeHistogramToggle {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        z-index: 10;
+        gap: 0.5rem; 
+        background-color: #2a2a2a;
+        border-radius: 6px;
+        padding: 0.1rem 0.4rem;
+        display: inline-flex;
+    }
+    .footer {
+        margin-top: 0.5rem;
+        width: 90vw;
+        max-width: 1000px;
+        min-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        color: #c0c0c0;
+    }
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-start;
+    }
+    .social-links a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .social-links svg {
+        width: 20px;
+        height: 20px;
+        transition: transform 0.2s ease;
+    }
+    .social-links a:hover svg {
+        transform: scale(1.1);
+    }
+    .footer-text-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .footer-logo {
+        height: 24px;
+        width: auto;
+    }
+    .footer-text {
+        font-size: 0.8em;
+        margin: 0;
+        color: #c0c0c0;
+        text-align: left;
+    }
+    .footer-text a {
+        color: #fbba24;
+        text-decoration: none;
+    }
+    .footer-text a:hover {
+        text-decoration: underline;
+    }
+    @media (max-width: 1000px) {
+        .title-image {
+            width: 30vw;
+            max-width: 200px;
+            min-width: 80px;
+            margin-right: 10px;
+        }
+        #sourceSelectorContainer {
+            padding-top: 5px;
+        }
+        #sourceSelector {
+            max-width: 70%;
+        }
+        .footer-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        .footer-text-container {
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+        .footer-text {
+            font-size: 0.8em;
+            text-align: left;
+        }
+        .social-links svg {
+            width: 20px;
+            height: 20px;
+        }
+        .toggle-content {
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+        #miningFeesToggle, #feeHistogramToggle {
+            width: auto;
+            max-width: 200px;
+        }
+        #lastUpdated {
+            font-size: 0.8rem;
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            line-height: 1.2;
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+        }
+        .source-option {
+            font-size: 0.8rem;
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+        }
+        .clock-icon {
+            font-size: 0.8rem;
+            font-family: Arial, sans-serif;
+            line-height: 1.2;
+            vertical-align: middle;
+        }
+        .last-updated-text {
+            font-size: 0.8rem;
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            line-height: 1.2;
+        }
+    }
+    @media (max-width: 600px) {
+        .title-image {
+            width: 35vw;
+            max-width: 250px;
+            min-width: 80px;
+            margin-right: 5px;
+        }
+        #sourceSelector {
+            max-width: 65%;
+        }
+    }
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+    }
+    .tips-popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #1e1e1e;
+        padding: 2rem;
+        border-radius: 8px;
+        z-index: 1001;
+        color: #c0c0c0;
+        min-width: 300px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    .tips-popup p {
+        margin: 0.5rem 0;
+        font-size: 0.9em;
+    }
+    .tips-popup a {
+        color: #fbba24;
+        text-decoration: none;
+    }
+    .tips-popup a:hover {
+        text-decoration: underline;
+    }
+    .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #fbba24;
+        color: #121212;
+        border: none;
+        border-radius: 4px;
+        padding: 0.3rem 0.6rem;
+        cursor: pointer;
+        font-size: 0.8em;
+    }
+    .close-button:hover {
+        background: #e0a21f;
+    }
+</style>
+</head>
+<body>
+<div id="sourceSelectorContainer">
+    <div id="sourceSelector">
+        <div class="source-content">
+            <label class="source-option">
+                <input type="radio" name="mempoolSource" value="default" checked> mempool.space (default)
+            </label>
+            <label class="source-option">
+                <input type="radio" name="mempoolSource" value="custom"> other mempool.space instance
+            </label>
+            <div class="input-container">
+                <input type="text" id="customMempoolUrl" placeholder="e.g https://xxi.mempool.space" disabled>
+                <button id="saveSource">save</button>
+            </div>
+            <p id="lastUpdated"><span class="clock-icon">⏲</span> <span class="last-updated-text">last updated: never</span></p>
+        </div>
+    </div>
+    <img src="title.png" alt="Title" class="title-image">
+</div>
+
+    <div id="chartContainer">
+        <div class="tab-title"><h2>MEMPOOL FEE HISTOGRAM</h2></div>
+        <div id="feeHistogramToggle" class="toggle-content">
+            <label class="source-option">
+                <input type="radio" name="yAxisScale" value="linear" checked> linear
+            </label>
+            <label class="source-option">
+                <input type="radio" name="yAxisScale" value="logarithmic"> log
+            </label>
+        </div>
+        <canvas id="feeChart"></canvas>
+    </div>
+    
+    <div id="blocksSection">
+        <div class="tab-title"><h2>RECENT BLOCK FEES</h2></div>
+        <div id="blocksContainer"></div>
+        <img src="3.png" alt="Sticker 3" class="sticker sticker-3">
+    </div>
+    
+    <div id="miningFeesSection">
+        <div class="tab-title"><h2>TOTAL BLOCK FEES</h2></div>
+        <div id="miningFeesToggle" class="toggle-content">
+            <label class="source-option">
+                <input type="radio" name="usdDisplay" value="totalFeesUSD" checked> total fees (USD)
+            </label>
+            <label class="source-option">
+                <input type="radio" name="usdDisplay" value="bitcoinPriceUSD"> bitcoin price (USD)
+            </label>
+        </div>
+        <div id="miningFeesContainer">
+            <canvas id="miningFeesChart"></canvas>
+        </div>
+        <img src="2.png" alt="Sticker 2" class="sticker sticker-2">
+    </div>
+    
+    <div id="blockFeesSubsidySection">
+        <div class="tab-title"><h2>SUBSIDY VS FEES</h2></div>
+        <div id="blockFeesSubsidyContainer">
+            <canvas id="blockFeesSubsidyChart"></canvas>
+        </div>
+        <img src="1.png" alt="Sticker 1" class="sticker sticker-1">
+    </div>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-text-container">
+
+<p class="footer-text">made with 🧡 by BXL909. <a href="#" id="tipsLink">Click for tips</a> 🙏<br>
+go to <a href="https://bxl909.github.io">bxl909.github.io</a> for more bitcoin apps, games, etc</p>            
+
+        </div>
+        <div class="social-links">
+<img src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png" alt="BXL909 Logo" class="footer-logo">
+            <a href="https://github.com/BXL909" target="_blank" aria-label="GitHub">
+                <svg fill="#ff9933" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <title>GitHub</title>
+                    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path>
+                </svg>
+            </a>
+            <a href="https://x.com/bxl909" target="_blank" aria-label="X">
+                <svg fill="#ff9933" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"></path>
+                </svg>
+            </a>
+            <a href="https://primal.net/p/npub1y2sgv8xwg9g63wlxq25735y9xvl4kjmwh5u92c0q2nkhurgjlstql87kmv" target="_blank" aria-label="Nostr">
+                <svg fill="#ff9933" viewBox="0 0 875 875" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M684.72 485.57c.22 12.59-11.93 51.47-38.67 81.3-26.74 29.83-56.02 20.85-58.42 20.16s-3.09-4.46-7.89-3.77-9.6 6.17-18.86 7.2-17.49 1.71-26.06-1.37c-4.46.69-5.14.71-7.2 2.24s-17.83 10.79-21.6 11.47c0 7.2-1.37 44.57 0 55.89s3.77 25.71 7.54 36 2.74 10.63 7.54 9.94 13.37.34 15.77 4.11c2.4 3.77 1.37 6.51 5.49 8.23s60.69 17.14 99.43 19.2c26.74.69 42.86 2.74 52.12 19.54 1.37 7.89 7.54 13.03 11.31 14.06s8.23 2.06 12 5.83 1.03 8.23 5.49 11.66c4.46 3.43 14.74 8.57 25.37 13.71 10.63 5.14 15.09 13.37 15.77 16.11s1.71 10.97 1.71 10.97-8.91 0-10.97-2.06-2.74-5.83-2.74-5.83-6.17 1.03-7.54 3.43.69 2.74-7.89.69-11.66-3.77-18.17-8.57c-6.51-4.8-16.46-17.14-25.03-16.8 4.11 8.23 5.83 8.23 10.63 10.97s8.23 5.83 8.23 5.83l-7.2 4.46s-4.46 2.06-14.74-.69-11.66-4.46-12.69-10.63 0-9.26-2.74-14.4-4.11-15.77-22.29-21.26c-18.17-5.49-66.52-21.26-100.12-24.69s-22.63-2.74-28.11-1.37-15.77 4.46-26.4-1.37c-10.63-5.83-16.8-13.71-17.49-20.23s-1.71-10.97 0-19.2 3.43-19.89 1.71-26.74-14.06-55.89-19.89-64.12c-13.03 1.03-50.74-.69-50.74-.69s-2.4-.69-17.49 5.83-36.48 13.76-46.77 19.93-14.4 9.7-16.12 13.13c.12 3-1.23 7.72-2.79 9.06s-12.48 2.42-12.48 2.42-5.85 5.86-8.25 9.97c-6.86 9.6-55.2 125.14-66.52 149.83-13.54 32.57-9.77 27.43-37.71 27.43s-8.06.3-8.06.3-12.34 5.88-16.8 5.88-18.86-2.4-26.4 0-16.46 9.26-23.31 10.29-4.95-1.34-8.38-3.74c-4-.21-14.27-.12-14.27-.12s1.74-6.51 7.91-10.88c8.23-5.83 25.37-16.11 34.63-21.26s17.49-7.89 23.31-9.26 18.51-6.17 30.51-9.94 19.54-8.23 29.83-31.54 50.4-111.43 51.43-116.23c.63-2.96 3.73-6.48 4.8-15.09.66-5.35-2.49-13.04 1.71-22.63 10.97-25.03 21.6-20.23 26.4-20.23s17.14.34 26.4-1.37 15.43-2.74 24.69-7.89 11.31-8.91 11.31-8.91l-19.89-3.43s-18.51.69-25.03-4.46-15.43-15.77-15.43-15.77l-7.54-7.2 1.03 8.57s-5.14-8.91-6.51-10.29-8.57-6.51-11.31-11.31-7.54-25.03-7.54-25.03l-6.17 13.03-1.71-18.86-5.14 7.2-2.74-16.11-4.8 8.23-3.43-14.4-5.83 4.46-2.4-10.29-5.83-3.43s-14.06-9.26-16.46-9.6-4.46 3.43-4.46 3.43l1.37 12-12.2-6.27-7-11.9s2.36 4.01-9.62 7.53c-20.55 0-21.89-2.28-24.93-3.94-1.31-6.56-5.57-10.11-5.57-10.11h-20.57l-.34-6.86-7.89 3.09.69-10.29h-14.06l1.03-11.31h-8.91s3.09-9.26 25.71-22.97 25.03-16.46 46.29-17.14c21.26-.69 32.91 2.74 46.29 8.23s38.74 13.71 43.89 17.49c11.31-9.94 28.46-19.89 34.29-19.89 1.03-2.4 6.19-12.33 17.96-17.60 35.31-15.81 108.13-34 131.53-35.54 31.2-2.06 7.89-1.37 39.09 2.06 31.2 3.43 54.17 7.54 69.6 12.69 12.58 4.19 25.03 9.6 34.29 2.06 4.33-1.81 11.81-1.34 17.83-5.14 30.69-25.09 34.72-32.35 43.63-41.95s20.14-24.91 22.54-45.14 4.46-58.29-10.63-88.12-28.80-45.26-34.63-69.26c-5.83-24-8.23-61.03-6.17-73.03 2.06-12 5.14-22.29 6.86-30.51s9.94-14.74 19.89-16.46c9.94-1.71 17.83 1.37 22.29 4.80 4.46 3.43 11.65 6.28 13.37 10.29.34 1.71-1.37 6.51 8.23 8.23 9.6 1.71 16.05 4.16 16.05 4.16s15.64 4.29 3.11 7.73c-12.69 2.06-20.52-.71-24.29 1.69s-7.21 10.08-9.61 11.10-7.20 .34-12 4.11-9.60 6.86-12.69 14.40-5.49 15.77-3.43 26.74 8.57 31.54 14.40 43.20c5.83 11.66 20.23 40.80 24.34 47.66s15.77 29.49 16.80 53.83 1.03 44.23 0 54.86-10.84 51.65-35.53 85.94c-8.16 14.14-23.21 31.90-24.67 35.03-1.45 3.13-3.02 4.88-1.61 7.65 4.62 9.05 12.87 22.13 14.71 29.22 2.29 6.64 6.99 16.13 7.22 28.72Z" style="stroke: #fff; stroke-miterlimit: 10; stroke-width: 6px;"></path>
+                </svg>
+            </a>
+            <a href="mailto:bxl909@pm.me" aria-label="Email">
+                <svg fill="#ff9933" viewBox="0 0 8 6" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m0 0h8v6h-8zm.75 .75v4.5h6.5v-4.5zM0 0l4 3 4-3v1l-4 3-4-3z"/>
+                </svg>
+            </a>
+        </div>
+
+    </div>
+</footer>
+    <script>
+        const DEFAULT_MEMPOOL_URL = 'https://mempool.space';
+        let mempoolBaseUrl = DEFAULT_MEMPOOL_URL;
+        let previousBlockHeights = new Set();
+        let miningFeesChart = null;
+        let blockFeesSubsidyChart = null;
+
+        const FALLBACK_ICON = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjM0EzQTNBIi8+Cjx0ZXh0IHg9IjUiIHk9IjE1IiBmaWxsPSIjQzBDMEMwIiBmb250LXNpemU9IjEwIj8/PlU8L3RleHQ+Cjwvc3ZnPg==';
+
+        function loadSavedSource() {
+            const savedSource = localStorage.getItem('mempoolSource') || 'default';
+            const savedUrl = localStorage.getItem('customMempoolUrl') || '';
+            
+            const defaultRadio = document.querySelector('input[value="default"]');
+            const customRadio = document.querySelector('input[value="custom"]');
+            const customUrlInput = document.getElementById('customMempoolUrl');
+            const saveButton = document.getElementById('saveSource');
+
+            if (savedSource === 'custom' && savedUrl) {
+                customRadio.checked = true;
+                customUrlInput.disabled = false;
+                customUrlInput.value = savedUrl;
+                mempoolBaseUrl = savedUrl;
+                saveButton.disabled = false;
+            } else {
+                defaultRadio.checked = true;
+                customUrlInput.disabled = true;
+                customUrlInput.value = '';
+                mempoolBaseUrl = DEFAULT_MEMPOOL_URL;
+                saveButton.disabled = true;
+            }
+        }
+
+        function handleSourceChange() {
+            const defaultRadio = document.querySelector('input[value="default"]');
+            const customRadio = document.querySelector('input[value="custom"]');
+            const customUrlInput = document.getElementById('customMempoolUrl');
+            const saveButton = document.getElementById('saveSource');
+
+            defaultRadio.addEventListener('change', () => {
+                customUrlInput.disabled = true;
+                customUrlInput.value = '';
+                saveButton.disabled = true;
+                mempoolBaseUrl = DEFAULT_MEMPOOL_URL;
+                localStorage.setItem('mempoolSource', 'default');
+                localStorage.removeItem('customMempoolUrl');
+                updateRefreshingSections();
+            });
+
+            customRadio.addEventListener('change', () => {
+                customUrlInput.disabled = false;
+                saveButton.disabled = false;
+                customUrlInput.focus();
+            });
+
+            saveButton.addEventListener('click', () => {
+                const customUrl = customUrlInput.value.trim();
+                if (customUrl) {
+                    mempoolBaseUrl = customUrl.replace(/\/$/, '');
+                    localStorage.setItem('mempoolSource', 'custom');
+                    localStorage.setItem('customMempoolUrl', mempoolBaseUrl);
+                    updateRefreshingSections();
+                } else {
+                    alert('Please enter a valid URL');
+                    customUrlInput.focus();
+                }
+            });
+        }
+
+        function handleUsdDisplayToggle() {
+            const totalFeesRadio = document.querySelector('input[value="totalFeesUSD"]');
+            const bitcoinPriceRadio = document.querySelector('input[value="bitcoinPriceUSD"]');
+            
+            const savedUsdDisplay = localStorage.getItem('usdDisplay') || 'totalFeesUSD';
+            if (savedUsdDisplay === 'bitcoinPriceUSD') {
+                bitcoinPriceRadio.checked = true;
+            } else {
+                totalFeesRadio.checked = true;
+            }
+
+            totalFeesRadio.addEventListener('change', () => {
+                localStorage.setItem('usdDisplay', 'totalFeesUSD');
+                updateMiningFeesChart();
+            });
+            bitcoinPriceRadio.addEventListener('change', () => {
+                localStorage.setItem('usdDisplay', 'bitcoinPriceUSD');
+                updateMiningFeesChart();
+            });
+        }
+
+        function handleFeeHistogramScaleToggle() {
+            const linearRadio = document.querySelector('input[value="linear"]');
+            const logarithmicRadio = document.querySelector('input[value="logarithmic"]');
+            
+            const savedScale = localStorage.getItem('yAxisScale') || 'linear';
+            if (savedScale === 'logarithmic') {
+                logarithmicRadio.checked = true;
+            } else {
+                linearRadio.checked = true;
+            }
+
+            function updateChartScale() {
+                const isLogarithmic = logarithmicRadio.checked;
+                if (window.myChart) {
+                    window.myChart.options.scales.y.type = isLogarithmic ? 'logarithmic' : 'linear';
+                    window.myChart.options.scales.y.min = isLogarithmic ? 1 : 0;
+                    window.myChart.options.scales.y.ticks.callback = isLogarithmic
+                        ? function(value) {
+                              if (value >= 1000) return (value / 1000).toFixed(1) + 'k';
+                              return value;
+                          }
+                        : function(value) {
+                              return value >= 1000 ? (value / 1000) + 'k' : value;
+                          };
+                    window.myChart.update('active');
+                }
+            }
+
+            linearRadio.addEventListener('change', () => {
+                localStorage.setItem('yAxisScale', 'linear');
+                updateChartScale();
+            });
+            logarithmicRadio.addEventListener('change', () => {
+                localStorage.setItem('yAxisScale', 'logarithmic');
+                updateChartScale();
+            });
+        }
+
+        function getTimeUnitFromZoom(min, max) {
+            const range = max - min;
+            const rangeDays = range / (1000 * 60 * 60 * 24);
+            if (rangeDays <= 2) return 'hour';
+            else if (rangeDays <= 14) return 'day';
+            else if (rangeDays <= 90) return 'week';
+            else if (rangeDays <= 730) return 'month';
+            else return 'year';
+        }
+
+        function getStepSize(unit, range) {
+            const rangeDays = range / (1000 * 60 * 60 * 24);
+            switch (unit) {
+                case 'hour': return rangeDays <= 1 ? 6 : 12;
+                case 'day': return rangeDays <= 7 ? 1 : 2;
+                case 'week': return 1;
+                case 'month': return rangeDays > 365 ? 3 : 1;
+                case 'year': return 1;
+                default: return 1;
+            }
+        }
+
+        function synchronizeSectionHeights() {
+            const blocksSection = document.getElementById('blocksSection');
+            const chartContainer = document.getElementById('chartContainer');
+            const miningFeesSection = document.getElementById('miningFeesSection');
+            const blockFeesSubsidySection = document.getElementById('blockFeesSubsidySection');
+            const miningFeesContainer = document.getElementById('miningFeesContainer');
+            const blockFeesSubsidyContainer = document.getElementById('blockFeesSubsidyContainer');
+            
+            const blocksHeight = blocksSection.offsetHeight;
+            chartContainer.style.height = `${blocksHeight}px`;
+            miningFeesSection.style.height = `${blocksHeight}px`;
+            blockFeesSubsidySection.style.height = `${blocksHeight}px`;
+            const sectionPadding = parseFloat(getComputedStyle(miningFeesSection).paddingTop);
+            const tabHeightAdjustment = 36;
+            miningFeesContainer.style.height = `${blocksHeight - 2 * sectionPadding - tabHeightAdjustment}px`;
+            blockFeesSubsidyContainer.style.height = `${blocksHeight - 2 * sectionPadding - tabHeightAdjustment}px`;
+            
+            const feeChartCanvas = document.getElementById('feeChart');
+            const miningFeesChartCanvas = document.getElementById('miningFeesChart');
+            const blockFeesSubsidyChartCanvas = document.getElementById('blockFeesSubsidyChart');
+            feeChartCanvas.style.height = '100%';
+            miningFeesChartCanvas.style.height = '100%';
+            blockFeesSubsidyChartCanvas.style.height = '100%';
+            
+            if (window.myChart) window.myChart.resize();
+            if (miningFeesChart) miningFeesChart.resize();
+            if (blockFeesSubsidyChart) blockFeesSubsidyChart.resize();
+        }
+
+        async function updateRefreshingSections() {
+            try {
+                const [mempoolResponse, feesResponse, blocksResponse] = await Promise.all([
+                    fetch(`${mempoolBaseUrl}/api/mempool`).catch(e => { throw new Error(`Mempool API fetch error: ${e.message}`); }),
+                    fetch(`${mempoolBaseUrl}/api/v1/fees/recommended`).catch(e => { throw new Error(`Fees API fetch error: ${e.message}`); }),
+                    fetch(`${mempoolBaseUrl}/api/v1/blocks`).catch(e => { throw new Error(`Blocks API fetch error: ${e.message}`); })
+                ]);
+
+                if (!mempoolResponse.ok) throw new Error(`Mempool API error! status: ${mempoolResponse.status}`);
+                if (!feesResponse.ok) throw new Error(`Fees API error! status: ${feesResponse.status}`);
+                if (!blocksResponse.ok) throw new Error(`Blocks API error! status: ${blocksResponse.status}`);
+                
+                const mempoolData = await mempoolResponse.json();
+                const feesData = await feesResponse.json();
+                const blocksData = await blocksResponse.json();
+
+                const ctx = document.getElementById('feeChart').getContext('2d');
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+                if (!mempoolData.fee_histogram) {
+                    throw new Error('Mempool data missing fee_histogram property');
+                }
+
+                const feeHistogram = mempoolData.fee_histogram;
+                if (feeHistogram.length === 0) {
+                    ctx.fillStyle = '#c0c0c0';
+                    ctx.font = '16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('No fee histogram data available from this mempool instance', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                    updateBlocksSection(blocksData);
+                    document.getElementById('lastUpdated').innerHTML = `<span class="clock-icon">⏲</span> last updated: ${new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/London' })}`;
+                    synchronizeSectionHeights();
+                    return;
+                }
+
+                const labels = feeHistogram.map(entry => entry[0]);
+                const sizes = feeHistogram.map(entry => entry[1]);
+                const minRecommendedFee = feesData.hourFee || 3;
+                const maxRecommendedFee = feesData.fastestFee || 5;
+                const maxSize = Math.max(...sizes);
+                const effectiveMinFee = minRecommendedFee;
+                const effectiveMaxFee = Math.max(maxRecommendedFee, minRecommendedFee + 1);
+                const recommendedAreaData = labels.map(feeRate => 
+                    feeRate >= effectiveMinFee && feeRate <= effectiveMaxFee ? maxSize : null
+                );
+                
+                if (window.myChart) {
+                    window.myChart.data.labels = labels;
+                    window.myChart.data.datasets[0].data = sizes;
+                    window.myChart.data.datasets[1].data = recommendedAreaData;
+                    window.myChart.data.datasets[1].label = `recommended fee range (${minRecommendedFee}-${maxRecommendedFee} sat/vB)`;
+                    window.myChart.update('active');
+                } else {
+                    window.myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'total size (bytes)',
+                                    data: sizes,
+                                    backgroundColor: 'rgba(255, 165, 0, 0.7)',
+                                    borderColor: 'rgba(255, 165, 0, 1)',
+                                    borderWidth: 1,
+                                    type: 'bar'
+                                },
+                                {
+                                    label: `recommended fee range (${minRecommendedFee}-${maxRecommendedFee} sat/vB)`,
+                                    data: recommendedAreaData,
+                                    backgroundColor: 'rgba(255, 165, 0, 0.15)',
+                                    borderColor: 'rgba(255, 165, 0, 0.4)',
+                                    borderWidth: 0,
+                                    type: 'line',
+                                    fill: 'origin',
+                                    tension: 0,
+                                    stepped: true,
+                                    pointRadius: 0,
+                                    pointHoverRadius: 0,
+                                    order: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            responsive: true,
+                            layout: { padding: 0 },
+                            scales: {
+                                x: {
+                                    reverse: true,
+                                    title: { display: true, text: 'Fee Rate (sat/vB)', color: '#c0c0c0', font: { size: 14 } },
+                                    ticks: { color: '#c0c0c0', maxTicksLimit: 20 },
+                                    grid: { color: 'rgba(255, 255, 255, 0.08)', lineWidth: 0.5 }
+                                },
+                                y: {
+                                    type: localStorage.getItem('yAxisScale') || 'linear',
+                                    title: { display: true, text: 'total size (bytes)', color: '#c0c0c0', font: { size: 14 } },
+                                    min: localStorage.getItem('yAxisScale') === 'logarithmic' ? 1 : 0,
+                                    ticks: {
+                                        color: '#c0c0c0',
+                                        callback: function(value) {
+                                            return value >= 1000 ? (value / 1000) + 'k' : value;
+                                        }
+                                    },
+                                    grid: { color: 'rgba(255, 255, 255, 0.08)', lineWidth: 0.5 }
+                                }
+                            },
+                            plugins: {
+                                legend: { display: true, labels: { color: '#c0c0c0', font: { size: 12 } } },
+                                tooltip: {
+                                    titleColor: '#c0c0c0',
+                                    bodyColor: '#c0c0c0',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    borderColor: '#c0c0c0',
+                                    borderWidth: 1,
+                                    callbacks: {
+                                        label: function(context) {
+                                            if (context.datasetIndex === 0) {
+                                                const value = context.raw;
+                                                const formatted = value >= 1000 ? (value / 1000).toFixed(1) + 'k' : value;
+                                                return `${context.dataset.label}: ${formatted} bytes`;
+                                            } else {
+                                                return `${context.dataset.label}`;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                updateBlocksSection(blocksData);
+                document.getElementById('lastUpdated').innerHTML = `<span class="clock-icon">⏲</span> last updated: ${new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/London' })}`;
+                synchronizeSectionHeights();
+            } catch (error) {
+                console.error('Error updating refreshing sections:', error);
+                document.getElementById('lastUpdated').textContent = `Error: ${error.message}`;
+                const ctx = document.getElementById('feeChart').getContext('2d');
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                ctx.fillStyle = '#c0c0c0';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Error: ${error.message}`, ctx.canvas.width / 2, ctx.canvas.height / 2);
+            }
+        }
+
+        async function updateMiningFeesChart() {
+            try {
+                const endpoint = `${mempoolBaseUrl}/api/v1/mining/blocks/fees/all`;
+                let miningFeesData = null;
+                try {
+                    const response = await fetch(endpoint);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data && !data.error) miningFeesData = data;
+                    }
+                } catch (e) {
+                    console.error('Failed to fetch mining fees data:', e);
+                }
+                
+                if (!miningFeesData) {
+                    const blocksResponse = await fetch(`${mempoolBaseUrl}/api/v1/blocks`);
+                    if (!blocksResponse.ok) throw new Error('Failed to fetch blocks data for mining fees');
+                    const blocksData = await blocksResponse.json();
+                    miningFeesData = blocksData.slice(0, 20).reverse().map(block => ({
+                        timestamp: block.timestamp,
+                        avgFees: block.extras?.totalFees || 0,
+                        totalFees: block.extras?.totalFees || 0,
+                        USD: 0,
+                        height: block.height
+                    }));
+                }
+                
+                const ctx = document.getElementById('miningFeesChart').getContext('2d');
+                const canvas = document.getElementById('miningFeesChart');
+                const parent = canvas.parentElement;
+                canvas.style.height = '100%';
+                canvas.style.width = '100%';
+                canvas.height = parent.offsetHeight;
+                canvas.width = parent.offsetWidth;
+                
+                if (miningFeesChart) {
+                    miningFeesChart.destroy();
+                    miningFeesChart = null;
+                }
+                
+                let labels, feesData, usdData, usdLabel, usdTickCallback;
+                const usdDisplay = localStorage.getItem('usdDisplay') || 'totalFeesUSD';
+                
+                if (Array.isArray(miningFeesData) && miningFeesData.length > 0) {
+                    const sortedData = miningFeesData.sort((a, b) => a.timestamp - b.timestamp);
+                    labels = sortedData.map(item => new Date(item.timestamp * 1000));
+                    feesData = sortedData.map(item => item.avgFees);
+                    if (usdDisplay === 'bitcoinPriceUSD') {
+                        usdData = sortedData.map(item => (item.USD || 0).toFixed(2));
+                        usdLabel = 'bitcoin price (USD)';
+                        usdTickCallback = function(value) {
+                            if (value >= 1000) return '$' + (value / 1000).toFixed(1) + 'k';
+                            return '$' + value.toFixed(2);
+                        };
+                    } else {
+                        usdData = sortedData.map(item => {
+                            const totalFeesBTC = (item.avgFees || 0) / 100000000;
+                            return item.USD ? (totalFeesBTC * item.USD).toFixed(2) : 0;
+                        });
+                        usdLabel = 'total block fees (USD)';
+                        usdTickCallback = function(value) {
+                            if (value >= 1000) return '$' + (value / 1000).toFixed(1) + 'k';
+                            return '$' + value.toFixed(2);
+                        };
+                    }
+                } else {
+                    throw new Error('No valid mining fees data available');
+                }
+
+                const maxSats = Math.max(...feesData, 1000000) * 1.1;
+                const maxUSD = Math.max(...usdData, 100) * 1.1;
+
+                miningFeesChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'total block fees (sats)',
+                data: feesData,
+                borderColor: 'rgba(255, 165, 0, 1)',
+                backgroundColor: 'rgba(255, 165, 0, 0.0)',
+                borderWidth: 0.5,
+                fill: false,
+                tension: 0.1,
+                pointRadius: 0,
+                pointHoverRadius: 0,
+                pointStyle: 'line',
+                yAxisID: 'ySats'
+            },
+            {
+                label: usdLabel,
+                data: usdData,
+                borderColor: 'rgba(34, 197, 94, 1)',
+                backgroundColor: 'rgba(34, 197, 94, 0.0)',
+                borderWidth: 0.5,
+                fill: false,
+                tension: 0.1,
+                pointRadius: 0,
+                pointHoverRadius: 0,
+                pointStyle: 'line',
+                yAxisID: 'yUSD'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: 0 },
+        scales: {
+            x: {
+                type: 'time',
+                time: { unit: 'month', displayFormats: { month: 'MMM yyyy' } },
+                title: { display: true, text: '', color: '#c0c0c0' },
+                grid: { color: 'rgba(255, 255, 255, 0.08)', lineWidth: 0.5 },
+                ticks: { color: '#c0c0c0' }
+            },
+            ySats: {
+                title: { 
+                    display: true, 
+                    text: 'total fees (sats)', 
+                    color: 'rgba(255, 165, 0, 1)',
+                    font: { size: 14 } 
+                },
+                beginAtZero: true,
+                ticks: {
+                    color: '#c0c0c0',
+                    callback: function(value) {
+                        if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                        else if (value >= 1000) return (value / 1000).toFixed(1) + 'k';
+                        return value;
+                    }
+                },
+                grid: { color: 'rgba(255, 255, 255, 0.08)', lineWidth: 0.5 },
+                position: 'left',
+                suggestedMax: maxSats
+            },
+            yUSD: {
+                title: { 
+                    display: true, 
+                    text: usdLabel, 
+                    color: 'rgba(34, 197, 94, 1)',
+                    font: { size: 14 } 
+                },
+                beginAtZero: true,
+                ticks: {
+                    color: '#c0c0c0',
+                    callback: usdTickCallback
+                },
+                grid: { display: false },
+                position: 'right',
+                suggestedMax: maxUSD
+            }
+        },
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#c0c0c0',
+                    usePointStyle: true,
+                    generateLabels: function(chart) {
+                        const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                        return originalLabels.map(label => ({
+                            ...label,
+                            pointStyle: chart.data.datasets[label.datasetIndex].pointStyle || 'line'
+                        }));
+                    }
+                }
+            },
+            tooltip: {
+                titleColor: '#c0c0c0',
+                bodyColor: '#c0c0c0',
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                borderColor: '#c0c0c0',
+                borderWidth: 1,
+                callbacks: {
+                    label: function(context) {
+                        const dataset = context.dataset;
+                        const value = context.raw;
+                        if (dataset.yAxisID === 'yUSD') {
+                            return `${dataset.label}: $${value}`;
+                        } else {
+                            const formatted = value >= 1000000 ? (value / 1000000).toFixed(1) + 'M' :
+                                            value >= 1000 ? (value / 1000).toFixed(1) + 'k' : value;
+                            return `${dataset.label}: ${formatted} sats`;
+                        }
+                    }
+                }
+            },
+            zoom: {
+                limits: {
+                    x: { min: 'original', max: 'original' },
+                    ySats: { min: 0, max: maxSats },
+                    yUSD: { min: 0, max: maxUSD }
+                },
+                pan: {
+                    enabled: true,
+                    mode: 'x',
+                    onPanComplete: function(chart) { updateTimeAxisOnZoom(chart); }
+                },
+                zoom: {
+                    wheel: { enabled: true },
+                    pinch: { enabled: true },
+                    mode: 'x',
+                    onZoomComplete: function(chart) { updateTimeAxisOnZoom(chart); }
+                }
+            }
+        }
+    }
+});
+                
+                synchronizeSectionHeights();
+            } catch (error) {
+                console.error('Error updating mining fees chart:', error);
+                const ctx = document.getElementById('miningFeesChart').getContext('2d');
+                ctx.fillStyle = '#c0c0c0';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Error: ${error.message}`, ctx.canvas.width / 2, ctx.canvas.height / 2);
+            }
+        }
+
+        function updateBlockFeesSubsidyChart(blockFeesSubsidyData) {
+            try {
+                const sortedData = blockFeesSubsidyData.map(item => {
+                    const height = item.avgHeight;
+                    let subsidy = 50;
+                    const halvings = Math.floor(height / 210000);
+                    for (let i = 0; i < halvings; i++) subsidy /= 2;
+                    const fees = item.avgFees / 100000000;
+                    const totalReward = subsidy + fees;
+                    return {
+                        timestamp: item.timestamp * 1000,
+                        fees: fees,
+                        subsidy: subsidy,
+                        totalReward: totalReward,
+                        feeToRewardRatio: totalReward > 0 ? (fees / totalReward) * 100 : 0
+                    };
+                }).sort((a, b) => a.timestamp - b.timestamp);
+
+                const labels = sortedData.map(item => new Date(item.timestamp));
+                const subsidyData = sortedData.map(item => item.subsidy);
+                const feesData = sortedData.map(item => item.fees);
+                const totalRewardData = sortedData.map(item => item.totalReward);
+                const feeToRewardRatioData = sortedData.map(item => item.feeToRewardRatio);
+
+                const minTimestamp = Math.min(...labels.map(date => date.getTime()));
+                const maxTimestamp = Math.max(...labels.map(date => date.getTime()));
+                const maxY = Math.max(
+                    ...subsidyData,
+                    ...feesData,
+                    ...totalRewardData,
+                    0.1
+                ) * 1.1;
+                const maxPercentage = Math.max(...feeToRewardRatioData, 100) * 1.1;
+
+                const ctx = document.getElementById('blockFeesSubsidyChart').getContext('2d');
+                
+                if (blockFeesSubsidyChart) blockFeesSubsidyChart.destroy();
+
+                blockFeesSubsidyChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'subsidy (BTC)',
+                                data: subsidyData,
+                                borderColor: 'rgba(255, 165, 0, 0)',
+                                backgroundColor: 'rgba(255, 165, 0, 0.15)',
+                                borderWidth: 0,
+                                fill: true,
+                                tension: 0.1,
+                                pointRadius: 0,
+                                pointHoverRadius: 4,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'fees (BTC)',
+                                data: feesData,
+                                borderColor: 'rgba(251, 191, 36, 1)',
+                                backgroundColor: 'rgba(251, 191, 36, 0.0)',
+                                borderWidth: 0.5,
+                                fill: false,
+                                tension: 0.1,
+                                pointRadius: 0,
+                                pointHoverRadius: 4,
+                                yAxisID: 'y',
+                                pointStyle: 'line'
+                            },
+                            {
+                                label: 'total reward (BTC)',
+                                data: totalRewardData,
+                                borderColor: 'rgba(59, 130, 246, 1)',
+                                backgroundColor: 'rgba(59, 130, 246, 0.0)',
+                                borderWidth: 1,
+                                fill: false,
+                                tension: 0.1,
+                                pointRadius: 0,
+                                pointHoverRadius: 4,
+                                yAxisID: 'y',
+                                pointStyle: 'line'
+                            },
+                            {
+                                label: 'fee to reward ratio',
+                                data: feeToRewardRatioData,
+                                borderColor: 'rgba(34, 197, 94, 1)',
+                                backgroundColor: 'rgba(34, 197, 94, 0.0)',
+                                borderWidth: 0.5,
+                                fill: false,
+                                tension: 0.1,
+                                pointRadius: 0,
+                                pointHoverRadius: 4,
+                                yAxisID: 'yPercentage',
+                                pointStyle: 'line'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: { unit: 'month', displayFormats: { month: 'MMM yyyy' } },
+                                title: { display: true, text: '', color: '#c0c0c0' },
+                                grid: { color: 'rgba(255, 255, 255, 0.08)', lineWidth: 0.5 },
+                                ticks: { color: '#c0c0c0' }
+                            },
+                            y: {
+                                title: { display: true, text: 'bitcoin (BTC)', color: '#c0c0c0' },
+                                grid: { color: 'rgba(255, 255, 255, 0.08)', lineWidth: 0.5 },
+                                ticks: { color: '#c0c0c0' },
+                                position: 'left',
+                                beginAtZero: true,
+                                suggestedMax: maxY
+                            },
+                            yPercentage: {
+                                title: { display: true, text: 'fee to reward ratio (%)', color: '#c0c0c0' },
+                                grid: { display: false },
+                                ticks: {
+                                    color: '#c0c0c0',
+                                    callback: function(value) { return value.toFixed(1) + '%'; }
+                                },
+                                position: 'right',
+                                beginAtZero: true,
+                                suggestedMax: maxPercentage
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#c0c0c0',
+                                    usePointStyle: true,
+                                    generateLabels: function(chart) {
+                                        const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                        return originalLabels.map(label => ({
+                                            ...label,
+                                            pointStyle: chart.data.datasets[label.datasetIndex].pointStyle || 'rect'
+                                        }));
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                titleColor: '#c0c0c0',
+                                bodyColor: '#c0c0c0',
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                borderColor: '#c0c0c0',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        const dataset = context.dataset;
+                                        const value = context.raw;
+                                        if (dataset.yAxisID === 'yPercentage') {
+                                            return `${dataset.label}: ${value.toFixed(2)}%`;
+                                        } else {
+                                            return `${dataset.label}: ${value.toFixed(4)} BTC`;
+                                        }
+                                    }
+                                }
+                            },
+                            zoom: {
+                                limits: {
+                                    x: { min: minTimestamp, max: maxTimestamp },
+                                    y: { min: 0, max: maxY },
+                                    yPercentage: { min: 0, max: maxPercentage }
+                                },
+                                pan: {
+                                    enabled: true,
+                                    mode: 'x',
+                                    onPanComplete: function(chart) { updateTimeAxisOnZoom(chart); }
+                                },
+                                zoom: {
+                                    wheel: { enabled: true },
+                                    pinch: { enabled: true },
+                                    mode: 'x',
+                                    onZoomComplete: function(chart) { updateTimeAxisOnZoom(chart); }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                blockFeesSubsidyChart.update();
+                blockFeesSubsidyChart.resize();
+            } catch (err) {
+                console.error('Block Fees Subsidy Chart Error:', err);
+                const ctx = document.getElementById('blockFeesSubsidyChart').getContext('2d');
+                ctx.fillStyle = '#c0c0c0';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Error: ${err.message}`, ctx.canvas.width / 2, ctx.canvas.height / 2);
+            }
+        }
+
+        function updateTimeAxisOnZoom(chart) {
+            if (!chart || !chart.scales || !chart.scales.x) return;
+            const xScale = chart.scales.x;
+            if (!xScale.min || !xScale.max) return;
+            const min = xScale.min;
+            const max = xScale.max;
+            const range = max - min;
+            const timeUnit = getTimeUnitFromZoom(min, max);
+            const stepSize = getStepSize(timeUnit, range);
+            if (chart.options.scales.x.time) {
+                chart.options.scales.x.time.unit = timeUnit;
+                chart.options.scales.x.time.stepSize = stepSize;
+            }
+            const rangeDays = range / (1000 * 60 * 60 * 24);
+            if (chart.options.scales.x.ticks) {
+                if (rangeDays <= 1) chart.options.scales.x.ticks.maxTicksLimit = 12;
+                else if (rangeDays <= 7) chart.options.scales.x.ticks.maxTicksLimit = 10;
+                else chart.options.scales.x.ticks.maxTicksLimit = 8;
+            }
+            chart.update('none');
+        }
+
+
+
+        function updateBlocksSection(blocksData) {
+            const blocksContainer = document.getElementById('blocksContainer');
+            const currentBlockHeights = new Set(blocksData.slice(0, 5).map(block => block.height));
+            const hasNewBlock = blocksData.length > 0 && !previousBlockHeights.has(blocksData[0].height);
+            
+            blocksContainer.innerHTML = '';
+            
+            blocksData.slice(0, 5).forEach((block, index) => {
+                const blockRow = document.createElement('div');
+                blockRow.className = 'block-row';
+                if (hasNewBlock && index === 0) blockRow.classList.add('new-block');
+                else if (hasNewBlock && previousBlockHeights.has(block.height)) blockRow.classList.add('slide-down');
+                
+                const blockTime = new Date(block.timestamp * 1000);
+                const now = new Date();
+                const timeDiffMinutes = Math.floor((now - blockTime) / (1000 * 60));
+                let timeAgo = timeDiffMinutes < 1 ? 'Just now' : timeDiffMinutes < 60 ? `${timeDiffMinutes}m ago` : `${Math.floor(timeDiffMinutes / 60)}h ago`;
+                
+                const medianFee = block.extras?.medianFee ?? 0;
+                const feeRange = block.extras?.feeRange || [];
+                let feeColor;
+                if (medianFee < 1) feeColor = 'rgba(34, 197, 94, 0.8)';
+                else if (medianFee < 5) feeColor = 'rgba(34, 197, 94, 0.8)';
+                else if (medianFee < 20) feeColor = 'rgba(251, 191, 36, 0.8)';
+                else if (medianFee < 50) feeColor = 'rgba(249, 115, 22, 0.8)';
+                else feeColor = 'rgba(239, 68, 68, 0.8)';
+                
+                const totalFeesSats = block.extras?.totalFees || 0;
+                let totalFeesFormatted = totalFeesSats >= 100000000 ? (totalFeesSats / 100000000).toFixed(4) + ' BTC' :
+                    totalFeesSats >= 1000000 ? (totalFeesSats / 1000000).toFixed(2) + 'm sats' :
+                    totalFeesSats >= 1000 ? (totalFeesSats / 1000).toFixed(2) + 'k sats' : totalFeesSats.toFixed(0) + ' sats';
+                
+                const minerName = block.extras?.pool?.name || 'Unknown';
+                const minerSlug = (block.extras?.pool?.slug || 'unknown').replace(/[^a-zA-Z0-9-_]/g, '');
+                const minerIconUrl = `${mempoolBaseUrl}/resources/mining-pools/${minerSlug}.svg`;
+                
+                blockRow.innerHTML = `
+                    <div class="block-info">
+                        <div class="block-height">#${block.height.toLocaleString()}</div>
+                        <div>${timeAgo}</div>
+                    </div>
+                    <div class="median-fee-display" style="--fee-color: ${feeColor.replace('0.8)', '0.3)')};">
+                        <div class="median-fee-value">${medianFee.toFixed(1)} sat/vB</div>
+                    </div>
+                    <div class="fee-range-text">
+                        <div class="fee-range-main">${feeRange.length > 0 ? `${feeRange[0]?.toFixed(1) || '0.0'} - ${feeRange[feeRange.length - 1]?.toFixed(1) || '0.0'} sat/vB` : `${medianFee.toFixed(1)} sat/vB range`}</div>
+                        <div class="fee-range-details">(${block.tx_count} txs, ${(block.size / 1024 / 1024).toFixed(2)} MB, ${totalFeesFormatted})</div>
+                    </div>
+                    <div class="miner-info">
+                        <img src="${minerIconUrl}" alt="${minerName} icon" class="miner-icon" title="${minerName}" onerror="this.src='${FALLBACK_ICON}'; console.error('Failed to load icon for ${minerName}: ${minerIconUrl}');">
+                    </div>
+                `;
+                
+                blocksContainer.appendChild(blockRow);
+            });
+            
+            previousBlockHeights = currentBlockHeights;
+            synchronizeSectionHeights();
+        }
+
+        window.addEventListener('resize', synchronizeSectionHeights);
+
+        async function initialLoad() {
+            loadSavedSource();
+            handleSourceChange();
+            handleUsdDisplayToggle();
+            handleFeeHistogramScaleToggle();
+            try {
+                const [blockFeesSubsidyResponse, miningFeesResponse] = await Promise.all([
+                    fetch(`${mempoolBaseUrl}/api/v1/mining/blocks/fees/all`).catch(e => { throw new Error(`Block Fees Subsidy API fetch error: ${e.message}`); }),
+                    fetch(`${mempoolBaseUrl}/api/v1/mining/blocks/fees/all`).catch(e => { throw new Error(`Mining Fees API fetch error: ${e.message}`); })
+                ]);
+
+                if (!blockFeesSubsidyResponse.ok) throw new Error(`Block Fees Subsidy API error! status: ${blockFeesSubsidyResponse.status}`);
+                if (!miningFeesResponse.ok) throw new Error(`Mining Fees API error! status: ${miningFeesResponse.status}`);
+                
+                const blockFeesSubsidyData = await blockFeesSubsidyResponse.json();
+                updateBlockFeesSubsidyChart(blockFeesSubsidyData);
+                
+                await updateMiningFeesChart();
+                
+                await updateRefreshingSections();
+                setInterval(updateRefreshingSections, 120000);
+            } catch (error) {
+                console.error('Initial load error:', error);
+                document.getElementById('lastUpdated').textContent = `Error: ${error.message}`;
+            }
+        }
+
+
+
+        initialLoad();
+
+function setupTipsPopup() {
+    const tipsLink = document.getElementById('tipsLink');
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    document.body.appendChild(overlay);
+
+    const tipsPopup = document.createElement('div');
+    tipsPopup.className = 'tips-popup';
+    tipsPopup.innerHTML = `
+        <button class="close-button">X</button>
+        <p>⚡ Lightning: <a href="https://zbd.gg/BTCdir" target="_blank">https://zbd.gg/BTCdir</a></p>
+        <p>⚡ LNURL: <a href="lightning:bxl909@walletofsatoshi.com">bxl909@walletofsatoshi.com</a></p>
+        <p>🟠 BTC: 1BXL9o99CZVeD8jvd4pwQfDRfky1LvMqP1</p>
+    `;
+    document.body.appendChild(tipsPopup);
+
+    const closeButton = tipsPopup.querySelector('.close-button');
+
+    tipsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        overlay.style.display = 'block';
+        tipsPopup.style.display = 'block';
+    });
+
+    closeButton.addEventListener('click', () => {
+        overlay.style.display = 'none';
+        tipsPopup.style.display = 'none';
+    });
+
+    overlay.addEventListener('click', () => {
+        overlay.style.display = 'none';
+        tipsPopup.style.display = 'none';
+    });
+}
+
+initialLoad().then(() => {
+    setupTipsPopup();
+});
+    </script>
+</body>
+</html>

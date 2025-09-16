@@ -1,260 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta http-equiv="Permissions-Policy" content="">
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BXL909 projects</title>
+    <title>BXL909 Projects</title>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <style>
-        #news {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease, padding 0.5s ease;
-            margin-top: 0px;
-            padding-left: 0px; 
-            color: #555;
-            font-size: 0.8rem;
-            justify-content: left;
-            border-radius: 5px;
-        }
-
-        #news.show {
-            max-height: 5000px; 
-            padding: 10px;
-            padding-left: 0px;
-        }
-
-
-        #tips {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease, padding 0.5s ease;
-            margin-top: 10px;
-            padding-left: 0px; 
-            color: #555;
-            font-size: 0.8rem;
-            justify-content: left;
-            border-radius: 5px;
-        }
-
-        #tips.show {
-            max-height: 5000px; 
-            padding: 10px;
-            padding-left: 0px;
-        }
-        
-        .a {
-            color: #ff9933;;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .a:hover {
-            color: #fff;
-        }
-
-        .toggle-link {
-            color: #ff9933;;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .toggle-link:hover {
-            color: #fff;
-        }
-
-                .toggle-link2 {
-            color: #ff9933;;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .toggle-link2 {
-            color: #ff9933;;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-
-        .toggle-link2:hover {
-            color: #fff;
-        }
-
-                .toggle-tips {
-            color: #ff9933;;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .toggle-tips:hover {
-            color: #fff;
-        }
-
-                .toggle-news {
-            color: #ff9933;;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .toggle-news:hover {
-            color: #fff;
-        }
-
-        #particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            background-color: #0d0d0d;
+        @import url('https://fonts.googleapis.com/css2?family=Electrolize&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            margin: 0;
-            padding: 0;
             background-color: #0d0d0d;
-            color: #ccc;
-            font-family: 'Helvetica Neue', sans-serif;
+            color: #666;
+            font-family: 'Electrolize', sans-serif;
+            overflow-x: hidden;
         }
 
-        .container {
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(13, 13, 13, 0.9);
+            border-bottom: 0px solid #444;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            max-width: 700px;
-            text-align: center;
-            opacity: 0;
-            animation: fadeIn 1s ease-in-out forwards;
-            margin-inline: auto;
+            z-index: 10;
         }
 
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-            }
-
-            100% {
-                opacity: 1;
-            }
+        .header-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.1;
+            z-index: -1;
+            transition: opacity 0.3s ease, background-image 0.3s ease;
+            -webkit-mask-image: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 1) 0%,
+                rgba(0, 0, 0, 1) 90%,
+                rgba(0, 0, 0, 0) 100%
+            );
+            mask-image: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 1) 0%,
+                rgba(0, 0, 0, 1) 90%,
+                rgba(0, 0, 0, 0) 100%
+            );
         }
 
-        img {
+        .header img {
+            height: 200px;
+            width: auto;
             border-radius: 5px;
             border: 1px solid #444;
-            height: 120px;
+            transition: opacity 0.3s ease;
+            position: relative;
+            z-index: 1;
         }
 
-        h1 {
-            font-size: 2.1rem;
-            color: #000000;
-            margin-top: 1px;
+        .header-title {
+            font-size: 1.0rem;
+            color: #666;
+            margin-top: 30px;
             margin-bottom: 0px;
-            text-shadow: 1px 0px 0px #555, 0px 1px 0px #555, -1px 0px 0px #555, 0px -1px 0px #555;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 2px;
         }
 
-        h2 {
-            font-size: 0.9rem;
-            color: #555;
-            margin-top: 4px;
-            margin-bottom: 1px;
-            margin-right: 0px !important;
-        }
-
-        h3 {
-            font-size: 0.8rem;
-            color: #555;
-            margin-top: px;
-            margin-bottom: 0px;
-        }
-
-        .links {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .links a {
+        .header-title a {
             color: #ff9933;
-            font-size: 1.2rem;
             text-decoration: none;
             transition: color 0.3s ease, transform 0.3s ease;
         }
 
-        .links a:hover {
-            color: #fff;
-            transform: scale(1.05);
-        }
-
-        .contact-info {
-            margin-top: 30px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            color: #555;
-        }
-
-        .contact-info a {
-            color: #ff9933;
-            text-decoration: none;
-        }
-
-        .contact-info a:hover {
-            color: #fff;
-        }
-
-        .project-images {
-            margin-top: 5px;
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1000px;
             position: relative;
+            z-index: 1;
         }
 
-        .project-card {
-            display: inline-block;
-            margin: 5px 10px;
+        .header-links {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 2;
         }
 
-        .project-images img {
-            max-width: 145px;
-            height: auto;
+        .header-links a {
+            color: #ff9933;
+            font-size: 1.0rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .header-links a:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .header-links a svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+        }
+
+        .social-links {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 2;
+        }
+
+        .social-links a {
+            color: #ff9933;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #fff;
+            transform: scale(1.2);
+        }
+
+        .social-links svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .content {
+            margin-top: 300px;
+            padding: 20px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+        }
+
+        .footer-links a {
+            color: #ff9933;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .footer-links a svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+        }
+
+        .title-row {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            margin-bottom: 3px;
+        }
+
+        .project-description h3 {
+            font-size: 1.1rem;
+            color: #ff9933;
+            margin-bottom: 0;
+            margin-right: 10px;
+        }
+
+        .project-section {
+            margin-bottom: 40px;
+        }
+
+        .project-section h2 {
+            font-size: 1.3rem;
+            color: #666;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            display: inline-block; 
+        }
+        .project-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #ff9933;
+            opacity: 0.3; 
+        }
+
+        .project-row {
+            display: flex;
+            align-items: flex-start;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            transition: background-color 0.3s ease;
+        }
+
+        .project-row:hover {
+            background-color: rgba(255, 153, 51, 0.1);
+        }
+
+        .project-row img {
+            width: 198px;
+            height: 60px;
             border-radius: 5px;
             border: 1px solid #555;
-            background-color: #000;
-            transition: transform 0.3s ease;
+            margin-right: 20px;
+            margin-top: 2px;
         }
 
-        .project-card img:hover {
-            transform: scale(1.15);
+        .project-description {
+            align-items: flex-start;
+            flex: 1;
+        }
+
+        .project-description h3 {
+            font-size: 1.1rem;
+            color: #ff9933;
+            margin-bottom: 0px;
+        }
+
+        .project-description p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .project-description a {
+            color: #ff9933;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .project-description a:hover {
+            color: #fff;
         }
 
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
             align-items: center;
             justify-content: center;
         }
 
         .modal-content {
-            position: relative;
-            margin: auto;
-            padding: 20px;
-            width: 80%;
-            max-width: 400px;
             background-color: #000;
-            border: 1px solid #333;
+            padding: 20px;
             border-radius: 8px;
+            border: 1px solid #333;
+            text-align: left;
+            max-width: 400px;
+            width: 80%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-content h2 {
+            color: #ff9933;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
             text-align: center;
+        }
+
+        .modal-content p {
+            color: #ccc;
+            font-size: 0.8rem;
+            margin: 5px 0;
+        }
+
+        .modal-content a {
+            color: #ff9933;
+            text-decoration: none;
+        }
+
+        .modal-content a:hover {
+            color: #fff;
         }
 
         .modal-content img {
@@ -267,364 +334,396 @@
         .close {
             position: absolute;
             top: 10px;
-            right: 20px;
+            right: 10px;
             color: #ff9933;
-            font-size: 24px;
-            font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            margin-right: 5px;
+            transition: color 0.3s ease, transform 0.3s ease;
         }
 
-        .close:hover,
-        .close:focus {
-            color: #000;
+        .close:hover {
+            color: #fff;
+            transform: scale(1.2);
         }
 
-        .preload {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-        width: 0;
-        height: 0;
-        overflow: hidden;
-        background-image: url('https://btcdir.org/github_buttons/SATSumaCard.png'),
-                          url('https://btcdir.org/github_buttons/SatsumaButton.png'),
-            
-                          url('https://btcdir.org/github_buttons/BTCdirCard.png'),
-                          url('https://btcdir.org/github_buttons/BTCdirButton.png'),
-            
-                          url('https://btcdir.org/github_buttons/BitvainButtonBlack.png'),
-                          url('https://btcdir.org/github_buttons/bitvainrCard.png'),
-            
-                          url('https://btcdir.org/github_buttons/chromassedButton.png'),
-                          url('https://btcdir.org/github_buttons/chromaseedCard.png'),
-            
-                          url('https://btcdir.org/github_buttons/BXL909Button.png'),
-                          url('https://btcdir.org/github_buttons/BXL909TwitterCard2.png'),
-            
-                          url('https://btcdir.org/github_buttons/SatadelicaCard.png'),
-                          url('https://btcdir.org/github_buttons/satadelicaButton.png'),
-            
-                          url('https://btcdir.org/github_buttons/ASICLanderButton.png'),
-                          url('https://btcdir.org/github_buttons/ASICLanderCard.png'),
-            
-                          url('https://btcdir.org/github_buttons/2048SatsButton.png'),
-                          url('https://btcdir.org/github_buttons/2048Card.png'),            
-            
-                          url('https://btcdir.org/github_buttons/OrangeSignalButton.png'),
-                          url('https://btcdir.org/github_buttons/OrangeSignalCard.png'),    
-            
-                          url('https://btcdir.org/github_buttons/9PagesButton.png'),
-                          url('https://btcdir.org/github_buttons/9PagesCard.png'),
-
-                          url('https://btcdir.org/github_buttons/HashteroidsButton.png'),
-                          url('https://btcdir.org/github_buttons/hashteroidsCard.png'),
-
-                          url('https://btcdir.org/github_buttons/BTCPhoebeButton.png'),
-                          url('https://btcdir.org/github_buttons/BTCPhoebeCard.png'),            
-            
-                          url('https://btcdir.org/github_buttons/HASHCONButton.png'),
-                          url('https://btcdir.org/github_buttons/HASHCONCard.png'),            
-
-                          url('https://btcdir.org/github_buttons/CubitButton.png'),
-                          url('https://btcdir.org/github_buttons/CubitCard.png');
-        }
-
-        .social-links {
-            margin-top: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .social-links svg {
+        .close svg {
             width: 20px;
             height: 20px;
         }
 
-        .social-links .col-sm-12 {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
+        @media (max-width: 768px) {
+            .header img {
+                height: 150px;
+                width: auto;
+                margin-top: 40px; 
+            }
 
-        #mirrorlinks {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease, padding 0.5s ease;
-            margin-top: 0px;
-            padding-left: 0px; 
-            color: #555;
-            font-size: 0.8rem;
-            justify-content: left;
-            border-radius: 5px;
-        }
+            .header-title {
+                font-size: 1.0rem;
+            }
 
-        #mirrorlinks.show {
-            max-height: 5000px; 
-            padding: 10px;
-            padding-left: 0px;
-        }        
+            .content {
+                margin-top: 380px;
+            }
+
+            .project-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .project-row img {
+                width: 100%;
+                max-width: 198px;
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+
+            .header-links {
+                top: 10px;
+                left: 20px;
+                display: flex;
+                gap: 15px;
+            }
+
+            .social-links {
+                top: 10px; 
+                right: 20px;
+                flex-direction: row; 
+                gap: 10px; 
+            }
+
+            .modal-content {
+                width: 90%;
+            }
+        }
     </style>
 </head>
-
 <body>
-    <div class="preload"></div>
-
     <div id="particles-js"></div>
 
-    <div class="container">
-        <h1 id="mainTitle" data-default-text="FREE . OPEN SOURCE. BITCOIN">FREE . OPEN SOURCE . BITCOIN</h1>
-        <h2 id="mainSubtitle" data-default-text="BY">BY</h2>
-        <img id="mainImage" 
-     src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png" 
-     alt="BXL909 Logo" 
-     data-default-src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png"
-     style="margin-top:8px;">
-        <h1 id="mainTitle" data-default-text="BXL909">BXL909</h1>
-
-        <h3 id="mainSubtitle2" data-default-text="&nbsp;">&nbsp;&nbsp;</h3>
-        <h3> &nbsp;</h3>
-        <h2 id="mainSubtitle" data-default-text="BITCOIN WEBSITES - CLEAR WEB">BITCOIN WEBSITES</h2>
-     
-
-        <div class="project-images">
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/BXL909TwitterCard2.png" data-title="BXL909" data-subtitle="(BITCOIN - CLEAR WEB)" data-subtitle2="You are here. The home of all my projects.">
-                <a href="https://bxl909.github.io" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/BXL909Button.png" alt="BXL909">
-                </a>
-            </div>
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/BTCdirCard.png" data-title="BTCdir" data-subtitle="(BITCOIN - CLEAR WEB)" data-subtitle2="an ever-expanding directory of categorized bitcoin resources.">
-                <a href="https://btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/BTCdirButton.png" alt="BTCdir">
-                </a>
-            </div>
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/SatadelicaCard.png" data-title="Satadelica" data-subtitle="(BITCOIN - CLEAR WEB)" data-subtitle2="a trippy price visualiser. Also at https://bxl909.github.io/satadelica/">
-                <a href="https://satadelica.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/satadelicaButton.png" alt="Satadelica">
-                </a>
-            </div>
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/OrangeSignalCard.png" data-title="The Orange Signal" data-subtitle="(BITCOIN - CLEAR WEB)" data-subtitle2="a bitcoin news and podcast aggregator. Also at https://bxl909.github.io/theorangesignal/">
-                <a href="https://theorangesignal.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/OrangeSignalButton.png" alt="The Orange Signal">
-                </a>
-            </div> 
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/9PagesCard.png" data-title="9 Pages" data-subtitle="(BITCOIN - CLEAR WEB)" data-subtitle2="a fancy Bitcoin Whitepaper viewer. Also at https://bxl909.github.io/9pages/">
-                <a href="https://9pages.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/9PagesButton.png" alt="9 Pages">
-                </a>
-            </div>
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/BTCPhoebeCard.png" data-title="BTC Phoebe" data-subtitle="(BITCOIN - CLEAR WEB)" data-subtitle2="the Bitcoin fee bee. Also at https://bxl909.github.io/phoebe/">
-                <a href="https://phoebe.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/BTCPhoebeButton.png" alt="BTC Phoebe">
-                </a>
-            </div>
-        </div>
-
-        <h3 id="mainSubtitle2" data-default-text="&nbsp;">&nbsp;</h3>
-        <h2 id="mainSubtitle" data-default-text="BITCOIN APPS - WINDOWS">BITCOIN APPS - WINDOWS</h2>
-
-      <div class="project-images">
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/SATSumaCard.png" data-title="SATSuma" data-subtitle="(BITCOIN - WINDOWS)" data-subtitle2="a fully customisable bitcoin explorer with a load of extra tools, charts, features, converters, etc.">
-                <a href="https://satsuma.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/SatsumaButton.png" alt="SATSuma">
-                </a>
-            </div>
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/CubitCard.png" data-title="Cubit" data-subtitle="(BITCOIN - WINDOWS)" data-subtitle2="keep an accurate record of your bitcoin finances with stats, charts and a miserable droid called Cubit.">
-                <a href="https://cubit.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/CubitButton.png" alt="Cubit">
-                </a>
-            </div>
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/bitvainrCard.png" data-title="Bitvain" data-subtitle="(BITCOIN - WINDOWS)" data-subtitle2="an offline bitcoin vanity address generator.">
-                <a href="https://bitvain.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/BitvainButtonBlack.png" alt="Bitvain">
-                </a>
-            </div>
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/chromaseedCard.png" data-title="Chromaseed" data-subtitle="(BITCOIN - WINDOWS)" data-subtitle2="Convert your 12 or 24-word BIP39 seed phrase into a unique, visually coded series of colours.">
-                <a href="https://chromaseed.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/chromassedButton.png" alt="Chromaseed">
-                </a>
-            </div>
-        </div>
-
-        <h3 id="mainSubtitle2" data-default-text="&nbsp;">&nbsp;</h3>
-        <h2 id="mainSubtitle" data-default-text="BITCOIN ARCADE">BITCOIN ARCADE</h2>
-
-      <div class="project-images">
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/hashteroidsCard.png" data-title="Hashteroids" data-subtitle="(GAMES - BROWSER)" data-subtitle2="a bitcoin themed twist on Asteroids. Also at https://bxl909.github.io/hashteroids/">
-                <a href="https://hashteroids.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/HashteroidsButton.png" alt="Hashteroids">
-                </a>
-            </div>
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/ASICLanderCard.png" data-title="ASIC Lander" data-subtitle="(GAMES - BROWSER)" data-subtitle2="a bitcoin themed twist on Lunar Lander. Also at https://bxl909.github.io/asiclander/">
-                <a href="https://asiclander.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/ASICLanderButton.png" alt="ASIC Lander">
-                </a>
-            </div>
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/2048Card.png" data-title="2048 Sats" data-subtitle="(GAMES - BROWSER)" data-subtitle2="a bitcoin themed clone of 2048. Also at https://bxl909.github.io/2048Sats/">
-                <a href="https://2048sats.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/2048SatsButton.png" alt="2048 Sats">
-                </a>
-            </div>
-            <div class="project-card" data-image="https://btcdir.org/github_buttons/HASHCONCard.png" data-title="HASHCON" data-subtitle="(GAMES - BROWSER)" data-subtitle2="a bitcoin themed Galcon remake. Also at https://bxl909.github.io/hashcon/">
-                <a href="https://hashcon.btcdir.org" target="_blank">
-                    <img width="120px" src="https://btcdir.org/github_buttons/HASHCONButton.png" alt="HASHCON">
-                </a>
-            </div>
-        </div>
-
-        <h3 id="mainSubtitle2" data-default-text="&nbsp;">&nbsp;</h3>
-        <div align="center">
-            <h2 style="display: inline-block; margin-right: 10px;">
-                <svg fill="#2349a1" height="16px" width="16px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-                viewBox="0 0 330 330" xml:space="preserve">
-           <g>
-               <path d="M35,270h45v45c0,8.284,6.716,15,15,15h200c8.284,0,15-6.716,15-15V75c0-8.284-6.716-15-15-15h-45V15
-                   c0-8.284-6.716-15-15-15H35c-8.284,0-15,6.716-15,15v240C20,263.284,26.716,270,35,270z M280,300H110V90h170V300z M50,30h170v30H95
-                   c-8.284,0-15,6.716-15,15v165H50V30z"/>
-               <path d="M155,120c-8.284,0-15,6.716-15,15s6.716,15,15,15h80c8.284,0,15-6.716,15-15s-6.716-15-15-15H155z"/>
-               <path d="M235,180h-80c-8.284,0-15,6.716-15,15s6.716,15,15,15h80c8.284,0,15-6.716,15-15S243.284,180,235,180z"/>
-               <path d="M235,240h-80c-8.284,0-15,6.716-15,15c0,8.284,6.716,15,15,15h80c8.284,0,15-6.716,15-15C250,246.716,243.284,240,235,240z
-                   "/>
-           </g>
-           </svg>                 MIRRORS - </h2>
-            <span class="toggle-link" onclick="toggleMirrors()"> EXPAND</span>
-        <div id="mirrorlinks">
-            <div class="project-images">
-                <div class="project-card" data-image="https://btcdir.org/github_buttons/SatadelicaCard.png" data-title="Satadelica" data-subtitle="(MIRROR)" data-subtitle2="a .gitHub mirror of satadelica.btcdir.org">
-                    <a href="https://bxl909.github.io/satadelica" target="_blank">
-                        <img width="120px" src="https://btcdir.org/github_buttons/satadelicaButton.png" alt="Satadelica">
-                    </a>
-                </div>
-                <div class="project-card" data-image="https://btcdir.org/github_buttons/hashteroidsCard.png" data-title="Hashteroids" data-subtitle="(MIRROR)" data-subtitle2="a gitHub mirror of hashteroids.btcdir.org">
-                    <a href="https://bxl909.github.io/hashteroids" target="_blank">
-                        <img width="120px" src="https://btcdir.org/github_buttons/HashteroidsButton.png" alt="Hashteroids">
-                    </a>
-                </div>
-                <div class="project-card" data-image="https://btcdir.org/github_buttons/ASICLanderCard.png" data-title="ASIC Lander" data-subtitle="(MIRROR)" data-subtitle2="a gitHub mirror of asiclander.btcdir.org">
-                    <a href="https://bxl909.github.io/asiclander" target="_blank">
-                        <img width="120px" src="https://btcdir.org/github_buttons/ASICLanderButton.png" alt="ASIC Lander">
-                    </a>
-                </div>
-                <div class="project-card" data-image="https://btcdir.org/github_buttons/2048Card.png" data-title="2048 Sats" data-subtitle="(MIRROR)" data-subtitle2="a gitHub mirror of 2048sats.btcdir.org">
-                    <a href="https://bxl909.github.io/2048sats" target="_blank">
-                        <img width="120px" src="https://btcdir.org/github_buttons/2048SatsButton.png" alt="2048 Sats">
-                    </a>
-                </div>
-                <div class="project-card" data-image="https://btcdir.org/github_buttons/OrangeSignalCard.png" data-title="The Orange Signal" data-subtitle="(MIRROR)" data-subtitle2="a gitHub mirror of theorangesignal.btcdir.org">
-                    <a href="https://bxl909.github.io/theorangesignal" target="_blank">
-                        <img width="120px" src="https://btcdir.org/github_buttons/OrangeSignalButton.png" alt="The Orange Signal">
-                    </a>
-                </div>  
-                <div class="project-card" data-image="https://btcdir.org/github_buttons/9PagesCard.png" data-title="9 Pages" data-subtitle="(MIRROR)" data-subtitle2="a gitHub mirror of 9pages.btcdir.org">
-                    <a href="https://bxl909.github.io/9Pages" target="_blank">
-                        <img width="120px" src="https://btcdir.org/github_buttons/9PagesButton.png" alt="9 Pages">
-                    </a>
-                </div> 
-                <div class="project-card" data-image="https://btcdir.org/github_buttons/BTCPhoebeCard.png" data-title="BTC Phoebe" data-subtitle="(MIRROR)" data-subtitle2="a gitHub mirror of phoebe.btcdir.org">
-                    <a href="https://bxl909.github.io/phoebe" target="_blank">
-                        <img width="120px" src="https://btcdir.org/github_buttons/BTCPhoebeButton.png" alt="BTC Phoebe">
-                    </a>
-                </div> 
-                <div class="project-card" data-image="https://btcdir.org/github_buttons/HASHCONCard.png" data-title="HASHCON" data-subtitle="(MIRROR)" data-subtitle2="a gitHub mirror of hashcon.btcdir.org">
-                    <a href="https://bxl909.github.io/HASHCON" target="_blank">
-                        <img width="120px" src="https://btcdir.org/github_buttons/HASHCONButton.png" alt="HASHCON">
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div align="center">
-            <h2 style="display: inline-block; margin-right: 10px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 200 200" fill="#0D0" style="display: inline-block; vertical-align: middle; margin-right: 5px;">
+    <div class="header">
+        <div class="header-background" id="headerBackground"></div>
+        <div class="header-links">
+            <a href="#" onclick="showModal('newsModal')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 200 200" fill="#0D0">
                     <path d="M156.6 20c-3.3 0-6.3.7-9.2 2.1L84 53.3H52c-16.5 0-30 13.5-30 30v33.3c0 16.5 13.5 30 30 30h32l63.3 31.3c3 1.4 6 2.1 9.2 2.1 11.6 0 21.1-9.5 21.1-21.1V41.1c.1-11.6-9.4-21.1-21-21.1zM52 66.7h20v66.7H52c-9.2 0-16.7-7.5-16.7-16.7V83.3c0-9.1 7.5-16.6 16.7-16.6zm112.2 92.2c0 4.3-3.5 7.8-7.8 7.8-1.2 0-2.4-.3-3.5-.8l-67.6-33.3V67.5l67.6-33.3c1.1-.5 2.2-.8 3.5-.8 4.3 0 7.8 3.5 7.8 7.8v117.7z"/>
                 </svg>
-                PROJECT NEWS / UPDATES - 
-            </h2>
-            <span class="toggle-news" onclick="toggleNews()"> EXPAND</span>
-        <div id="news">
-                <br>20250914 - HASHCON released (v1.0)            
-                <br>20250807 - BTC Phoebe released (v1.0)
-                <br>20250304 - .onion sites retired (server failure)
-                <br>20250227 - 9 Pages released.                  
-                <br>20250213 - The Orange Signal released.                  
-                <br>20250128 - ASIC Lander v1.2.      
-                <br>20250127 - Hashteroids v1.1.      
-                <br>20250126 - 2048 Sats v1.0.  
-                <br>20250126 - ASIC Lander v1.1.  
-                <br>20250111 - ASIC Lander released (v1.0).  
-                <br>20241217 - Hashteroids released (v1.0).  
-                <br>20241129 - Chromaseed v1.01.  
-                <br>20241121 - new .onion address.                              
-                <br>20241121 - onion version of Satadelica.                              
-                <br>20241116 - Satadelica released (v1.0).                
-                <br>20241028 - Chromaseed released (v1.0).                
-                <br>20240922 - Bitvain released (v1.0).
-                <br>20240916 - .onion project site launched.                                
-                <br>20240818 - SATSuma v2.5.                
-                <br>20240805 - BTCdir redesign.                
-                <br>20240224 - SATSuma v2.01.                
-                <br>20240222 - SATSuma v2.                
-                <br>20240123 - Cubit v1.2.                
-                <br>20231007 - SATSuma v1.09.                
-                <br>20231102 - Cubit v1.1.                
-                <br>20231016 - Cubit v1.                
-                <br>20231011 - SATSuma v1.07.                
-                <br>20231008 - SATSuma v1.06.                
-                <br>20231005 - Cubit v0.92.                
-                <br>20231005 - SATSuma v1.04.                
-                <br>20231004 - Cubit released (v0.9).                                
-                <br>20230824 - SATSuma v1.02.                
-                <br>20230819 - BTCdir.org new design.                
-                <br>20230812 - SATSuma v1.01.                
-                <br>20230806 - SATSuma v1.                
-                <br>20230723 - SATSuma v0.98.                
-                <br>20230715 - SATSuma v0.95.                
-                <br>20230709 - SATSuma v0.94.                
-                <br>20230707 - SATSuma v0.93.                
-                <br>20230704 - SATSuma v0.8 (replaces Statamoto).                
-                <br>20230204 - Statamoto v1.2.                
-                <br>20230126 - Statamoto v1.1.
-                <br>20230115 - Statamoto released.
-                <br>20210430 - BTCdir.org launched.
-            
+                PROJECT NEWS
+            </a>
+            <a href="#" onclick="showModal('tipsModal')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#D00">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                TIPS
+            </a>
         </div>
-    
-        <div align="center">
-       
-        <h2 style="display: inline-block; margin-right: 10px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#D00" style="display: inline-block; vertical-align: middle; margin-right: 5px;">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg>
-            TIPS / DONATIONS - 
-        </h2>
-        <span class="toggle-link2" onclick="toggleTips()"> EXPAND</span>
-        <div id="tips">
-                ⚡ Lightning: <a href="https://zbd.gg/BTCdir" target="_blank" style="color: #ff9933; text-decoration: none;">https://zbd.gg/BTCdir</a><br>
-                ⚡ LNURL: bxl909@walletofsatoshi.com (<a href="#" onclick="showModal('lnurlModal')" style="color: #ff9933; text-decoration: none;">QR</a>)<br>
-            🟠 BTC: 1BXL9o99CZVeD8jvd4pwQfDRfky1LvMqP1 (<a href="#" onclick="showModal('btcModal')" style="color: #ff9933; text-decoration: none;">QR</a>)</p>
+        <div class="social-links">
+            <a href="https://github.com/BXL909" target="_blank">
+                <svg fill="#ff9933" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path>
+                </svg>
+            </a>
+            <a href="https://x.com/bxl909" target="_blank">
+                <svg width="20" height="20" viewBox="0 0 1200 1227" fill="#ff9933" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"></path>
+                </svg>
+            </a>
+            <a href="https://primal.net/p/npub1y2sgv8xwg9g63wlxq25735y9xvl4kjmwh5u92c0q2nkhurgjlstql87kmv" target="_blank">
+                <svg fill="#ff9933" viewBox="0 0 875 875" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M684.72 485.57c.22 12.59-11.93 51.47-38.67 81.3-26.74 29.83-56.02 20.85-58.42 20.16s-3.09-4.46-7.89-3.77-9.6 6.17-18.86 7.2-17.49 1.71-26.06-1.37c-4.46.69-5.14.71-7.2 2.24s-17.83 10.79-21.6 11.47c0 7.2-1.37 44.57 0 55.89s3.77 25.71 7.54 36 2.74 10.63 7.54 9.94 13.37.34 15.77 4.11c2.4 3.77 1.37 6.51 5.49 8.23s60.69 17.14 99.43 19.2c26.74.69 42.86 2.74 52.12 19.54 1.37 7.89 7.54 13.03 11.31 14.06s8.23 2.06 12 5.83 1.03 8.23 5.49 11.66c4.46 3.43 14.74 8.57 25.37 13.71 10.63 5.14 15.09 13.37 15.77 16.11s1.71 10.97 1.71 10.97-8.91 0-10.97-2.06-2.74-5.83-2.74-5.83-6.17 1.03-7.54 3.43.69 2.74-7.89.69-11.66-3.77-18.17-8.57c-6.51-4.8-16.46-17.14-25.03-16.8 4.11 8.23 5.83 8.23 10.63 10.97s8.23 5.83 8.23 5.83l-7.2 4.46s-4.46 2.06-14.74-.69-11.66-4.46-12.69-10.63 0-9.26-2.74-14.4-4.11-15.77-22.29-21.26c-18.17-5.49-66.52-21.26-100.12-24.69s-22.63-2.74-28.11-1.37-15.77 4.46-26.4-1.37c-10.63-5.83-16.8-13.71-17.49-20.23s-1.71-10.97 0-19.2 3.43-19.89 1.71-26.74-14.06-55.89-19.89-64.12c-13.03 1.03-50.74-.69-50.74-.69s-2.4-.69-17.49 5.83-36.48 13.76-46.77 19.93-14.4 9.7-16.12 13.13c.12 3-1.23 7.72-2.79 9.06s-12.48 2.42-12.48 2.42-5.85 5.86-8.25 9.97c-6.86 9.6-55.2 125.14-66.52 149.83-13.54 32.57-9.77 27.43-37.71 27.43s-8.06.3-8.06.3-12.34 5.88-16.8 5.88-18.86-2.4-26.4 0-16.46 9.26-23.31 10.29-4.95-1.34-8.38-3.74c-4-.21-14.27-.12-14.27-.12s1.74-6.51 7.91-10.88c8.23-5.83 25.37-16.11 34.63-21.26s17.49-7.89 23.31-9.26 18.51-6.17 30.51-9.94 19.54-8.23 29.83-31.54 50.4-111.43 51.43-116.23c.63-2.96 3.73-6.48 4.8-15.09.66-5.35-2.49-13.04 1.71-22.63 10.97-25.03 21.6-20.23 26.4-20.23s17.14.34 26.4-1.37 15.43-2.74 24.69-7.89 11.31-8.91 11.31-8.91l-19.89-3.43s-18.51.69-25.03-4.46-15.43-15.77-15.43-15.77l-7.54-7.2 1.03 8.57s-5.14-8.91-6.51-10.29-8.57-6.51-11.31-11.31-7.54-25.03-7.54-25.03l-6.17 13.03-1.71-18.86-5.14 7.2-2.74-16.11-4.8 8.23-3.43-14.4-5.83 4.46-2.4-10.29-5.83-3.43s-14.06-9.26-16.46-9.6-4.46 3.43-4.46 3.43l1.37 12-12.2-6.27-7-11.9s2.36 4.01-9.62 7.53c-20.55 0-21.89-2.28-24.93-3.94-1.31-6.56-5.57-10.11-5.57-10.11h-20.57l-.34-6.86-7.89 3.09.69-10.29h-14.06l1.03-11.31h-8.91s3.09-9.26 25.71-22.97 25.03-16.46 46.29-17.14c21.26-.69 32.91 2.74 46.29 8.23s38.74 13.71 43.89 17.49c11.31-9.94 28.46-19.89 34.29-19.89 1.03-2.4 6.19-12.33 17.96-17.6 35.31-15.81 108.13-34 131.53-35.54 31.2-2.06 7.89-1.37 39.09 2.06 31.2 3.43 54.17 7.54 69.6 12.69 12.58 4.19 25.03 9.6 34.29 2.06 4.33-1.81 11.81-1.34 17.83-5.14 30.69-25.09 34.72-32.35 43.63-41.95s20.14-24.91 22.54-45.14 4.46-58.29-10.63-88.12-28.8-45.26-34.63-69.26c-5.83-24-8.23-61.03-6.17-73.03 2.06-12 5.14-22.29 6.86-30.51s9.94-14.74 19.89-16.46c9.94-1.71 17.83 1.37 22.29 4.8 4.46 3.43 11.65 6.28 13.37 10.29.34 1.71-1.37 6.51 8.23 8.23 9.6 1.71 16.05 4.16 16.05 4.16s15.64 4.29 3.11 7.73c-12.69 2.06-20.52-.71-24.29 1.69s-7.21 10.08-9.61 11.1-7.2.34-12 4.11-9.6 6.86-12.69 14.4-5.49 15.77-3.43 26.74 8.57 31.54 14.4 43.2c5.83 11.66 20.23 40.8 24.34 47.66s15.77 29.49 16.8 53.83 1.03 44.23 0 54.86-10.84 51.65-35.53 85.94c-8.16 14.14-23.21 31.9-24.67 35.03-1.45 3.13-3.02 4.88-1.61 7.65 4.62 9.05 12.87 22.13 14.71 29.22 2.29 6.64 6.99 16.13 7.22 28.72Z" style="stroke: #fff; stroke-miterlimit: 10; stroke-width: 6px;"></path>
+                </svg>
+            </a>
+            <a href="mailto:bxl909@pm.me">
+                <svg fill="#ff9933" viewBox="0 0 8 6" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                    <path d="m0 0h8v6h-8zm.75 .75v4.5h6.5v-4.5zM0 0l4 3 4-3v1l-4 3-4-3z"/>
+                </svg>
+            </a>
+        </div>
+        <img id="headerImage" src="https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png" alt="BXL909 Logo">
+        <h1 class="header-title">FREE & OPEN SOURCE BITCOIN PROJECTS by BXL909</h1>
+
+    </div>
+
+    <div class="content">
+        <div class="project-section">
+            <h2>BITCOIN PROJECTS (WEB)</h2>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/BXL909TwitterCard2.png">
+                <a href="https://bxl909.github.io" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/BXL909Button.png" alt="BXL909">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>BXL909</h3>
+                        <p></p>
+                    </div>
+                    <p>You are here. The home of all my projects.</p>
+                    <a href="https://bxl909.github.io" target="_blank">Visit Site</a> | <a href="https://github.com/BXL909/BXL909.github.io" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/BTCdirCard.png">
+                <a href="https://btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/BTCdirButton.png" alt="BTCdir">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>BTCdir</h3>
+                        <p>(DESKTOP & MOBILE)</p>
+                    </div>
+                    <p>An ever-expanding directory of categorized bitcoin resources.</p>
+                    <a href="https://btcdir.org" target="_blank">Visit Site</a>
+                </div>
+            </div>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/SatadelicaCard.png">
+                <a href="https://satadelica.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/satadelicaButton.png" alt="Satadelica">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>Satadelica</h3>
+                        <p>(DESKTOP & MOBILE)</p>
+                    </div>
+                    <p>A trippy price visualiser.</p>
+                    <a href="https://satadelica.btcdir.org" target="_blank">Visit Site</a> | <a href="https://bxl909.github.io/satadelica/" target="_blank">Mirror</a> | <a href="https://github.com/BXL909/Satadelica" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/OrangeSignalCard.png">
+                <a href="https://theorangesignal.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/OrangeSignalButton.png" alt="The Orange Signal">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>The Orange Signal</h3>
+                        <p>(DESKTOP & MOBILE)</p>
+                    </div>
+                    <p>A bitcoin news and podcast aggregator.</p>
+                    <a href="https://theorangesignal.btcdir.org" target="_blank">Visit Site</a> | <a href="https://bxl909.github.io/theorangesignal/" target="_blank">Mirror</a> | <a href="https://github.com/BXL909/TheOrangeSignal" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/9PagesCard.png">
+                <a href="https://9pages.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/9PagesButton.png" alt="9Pages">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>9 Pages</h3>
+                        <p>(DESKTOP & MOBILE)</p>
+                    </div>
+                    <p>A fancy Bitcoin Whitepaper viewer.</p>
+                    <a href="https://9pages.btcdir.org" target="_blank">Visit Site</a> | <a href="https://bxl909.github.io/9pages/" target="_blank">Mirror</a> | <a href="https://github.com/BXL909/9Pages" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/BTCPhoebeCard.png">
+                <a href="https://phoebe.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/BTCPhoebeButton.png" alt="BTC Phoebe">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>BTC Phoebe</h3>
+                        <p>(DESKTOP & MOBILE)</p>
+                    </div>
+                    <p>The Bitcoin fee bee.</p>
+                    <a href="https://phoebe.btcdir.org" target="_blank">Visit Site</a> | <a href="https://bxl909.github.io/phoebe/" target="_blank">Mirror</a> | <a href="https://github.com/BXL909/BTCPhoebe" target="_blank">GitHub repo</a>
+                </div>
+            </div>
         </div>
 
-        <div class="row social-links"><div class="col-sm-12"><a href="https://github.com/BXL909" target="_blank"><svg fill="#ff9933" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg></a><a href="https://x.com/bxl909" target="_blank"><svg width="20" height="20" viewBox="0 0 1200 1227" fill="#ff9933" xmlns="http://www.w3.org/2000/svg" style="width: 17px;"><path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" ></path></svg></a><a href="https://primal.net/p/npub1y2sgv8xwg9g63wlxq25735y9xvl4kjmwh5u92c0q2nkhurgjlstql87kmv" target="_blank"><svg fill="#ff9933" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 875 875"><path d="M684.72 485.57c.22 12.59-11.93 51.47-38.67 81.3-26.74 29.83-56.02 20.85-58.42 20.16s-3.09-4.46-7.89-3.77-9.6 6.17-18.86 7.2-17.49 1.71-26.06-1.37c-4.46.69-5.14.71-7.2 2.24s-17.83 10.79-21.6 11.47c0 7.2-1.37 44.57 0 55.89s3.77 25.71 7.54 36 2.74 10.63 7.54 9.94 13.37.34 15.77 4.11c2.4 3.77 1.37 6.51 5.49 8.23s60.69 17.14 99.43 19.2c26.74.69 42.86 2.74 52.12 19.54 1.37 7.89 7.54 13.03 11.31 14.06s8.23 2.06 12 5.83 1.03 8.23 5.49 11.66c4.46 3.43 14.74 8.57 25.37 13.71 10.63 5.14 15.09 13.37 15.77 16.11s1.71 10.97 1.71 10.97-8.91 0-10.97-2.06-2.74-5.83-2.74-5.83-6.17 1.03-7.54 3.43.69 2.74-7.89.69-11.66-3.77-18.17-8.57c-6.51-4.8-16.46-17.14-25.03-16.8 4.11 8.23 5.83 8.23 10.63 10.97s8.23 5.83 8.23 5.83l-7.2 4.46s-4.46 2.06-14.74-.69-11.66-4.46-12.69-10.63 0-9.26-2.74-14.4-4.11-15.77-22.29-21.26c-18.17-5.49-66.52-21.26-100.12-24.69s-22.63-2.74-28.11-1.37-15.77 4.46-26.4-1.37c-10.63-5.83-16.8-13.71-17.49-20.23s-1.71-10.97 0-19.2 3.43-19.89 1.71-26.74-14.06-55.89-19.89-64.12c-13.03 1.03-50.74-.69-50.74-.69s-2.4-.69-17.49 5.83-36.48 13.76-46.77 19.93-14.4 9.7-16.12 13.13c.12 3-1.23 7.72-2.79 9.06s-12.48 2.42-12.48 2.42-5.85 5.86-8.25 9.97c-6.86 9.6-55.2 125.14-66.52 149.83-13.54 32.57-9.77 27.43-37.71 27.43s-8.06.3-8.06.3-12.34 5.88-16.8 5.88-18.86-2.4-26.4 0-16.46 9.26-23.31 10.29-4.95-1.34-8.38-3.74c-4-.21-14.27-.12-14.27-.12s1.74-6.51 7.91-10.88c8.23-5.83 25.37-16.11 34.63-21.26s17.49-7.89 23.31-9.26 18.51-6.17 30.51-9.94 19.54-8.23 29.83-31.54 50.4-111.43 51.43-116.23c.63-2.96 3.73-6.48 4.8-15.09.66-5.35-2.49-13.04 1.71-22.63 10.97-25.03 21.6-20.23 26.4-20.23s17.14.34 26.4-1.37 15.43-2.74 24.69-7.89 11.31-8.91 11.31-8.91l-19.89-3.43s-18.51.69-25.03-4.46-15.43-15.77-15.43-15.77l-7.54-7.2 1.03 8.57s-5.14-8.91-6.51-10.29-8.57-6.51-11.31-11.31-7.54-25.03-7.54-25.03l-6.17 13.03-1.71-18.86-5.14 7.2-2.74-16.11-4.8 8.23-3.43-14.4-5.83 4.46-2.4-10.29-5.83-3.43s-14.06-9.26-16.46-9.6-4.46 3.43-4.46 3.43l1.37 12-12.2-6.27-7-11.9s2.36 4.01-9.62 7.53c-20.55 0-21.89-2.28-24.93-3.94-1.31-6.56-5.57-10.11-5.57-10.11h-20.57l-.34-6.86-7.89 3.09.69-10.29h-14.06l1.03-11.31h-8.91s3.09-9.26 25.71-22.97 25.03-16.46 46.29-17.14c21.26-.69 32.91 2.74 46.29 8.23s38.74 13.71 43.89 17.49c11.31-9.94 28.46-19.89 34.29-19.89 1.03-2.4 6.19-12.33 17.96-17.6 35.31-15.81 108.13-34 131.53-35.54 31.2-2.06 7.89-1.37 39.09 2.06 31.2 3.43 54.17 7.54 69.6 12.69 12.58 4.19 25.03 9.6 34.29 2.06 4.33-1.81 11.81-1.34 17.83-5.14 30.69-25.09 34.72-32.35 43.63-41.95s20.14-24.91 22.54-45.14 4.46-58.29-10.63-88.12-28.8-45.26-34.63-69.26c-5.83-24-8.23-61.03-6.17-73.03 2.06-12 5.14-22.29 6.86-30.51s9.94-14.74 19.89-16.46c9.94-1.71 17.83 1.37 22.29 4.8 4.46 3.43 11.65 6.28 13.37 10.29.34 1.71-1.37 6.51 8.23 8.23 9.6 1.71 16.05 4.16 16.05 4.16s15.64 4.29 3.11 7.73c-12.69 2.06-20.52-.71-24.29 1.69s-7.21 10.08-9.61 11.1-7.2.34-12 4.11-9.6 6.86-12.69 14.4-5.49 15.77-3.43 26.74 8.57 31.54 14.4 43.2c5.83 11.66 20.23 40.8 24.34 47.66s15.77 29.49 16.8 53.83 1.03 44.23 0 54.86-10.84 51.65-35.53 85.94c-8.16 14.14-23.21 31.9-24.67 35.03-1.45 3.13-3.02 4.88-1.61 7.65 4.62 9.05 12.87 22.13 14.71 29.22 2.29 6.64 6.99 16.13 7.22 28.72Z" style="stroke: #fff; stroke-miterlimit: 10; stroke-width: 6px;"></path></svg></a><a href="mailto:bxl909@pm.me">
-            <svg fill="#ff9933" viewBox="0 0 8 6" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                <path d="m0 0h8v6h-8zm.75 .75v4.5h6.5v-4.5zM0 0l4 3 4-3v1l-4 3-4-3z"/>
-            </svg>
-        </a></div></div>
+        <div class="project-section">
+            <h2>BITCOIN PROJECTS (WINDOWS)</h2>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/SATSumaCard.png">
+                <a href="https://satsuma.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/SatsumaButton.png" alt="SATSuma">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>SATSuma</h3>
+                        <p>(WINDOWS)</p>
+                    </div>
+                    <p>A fully customizable bitcoin explorer with a load of extra tools, charts, features, converters, etc.</p>
+                    <a href="https://satsuma.btcdir.org" target="_blank">Visit Site</a> | <a href="https://github.com/BXL909/SATSuma" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/CubitCard.png">
+                <a href="https://cubit.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/CubitButton.png" alt="Cubit">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>Cubit</h3>
+                        <p>(WINDOWS)</p>
+                    </div>
+                    <p>Keep an accurate record of your bitcoin finances with stats, charts and a miserable droid called Cubit.</p>
+                    <a href="https://cubit.btcdir.org" target="_blank">Visit Site</a> | <a href="https://github.com/BXL909/Cubit" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/bitvainrCard.png">
+                <a href="https://bitvain.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/BitvainButtonBlack.png" alt="Bitvain">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>Bitvain</h3>
+                        <p>(WINDOWS)</p>
+                    </div>
+                    <p>An offline bitcoin vanity address generator.</p>
+                    <a href="https://bitvain.btcdir.org" target="_blank">Visit Site</a> | <a href="https://github.com/BXL909/Bitvain" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/chromaseedCard.png">
+                <a href="https://chromaseed.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/chromassedButton.png" alt="Chromaseed">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>Chromaseed</h3>
+                        <p>(WINDOWS)</p>
+                    </div>
+                    <p>Convert your 12 or 24-word BIP39 seed phrase into a unique, visually coded series of colours.</p>
+                    <a href="https://chromaseed.btcdir.org" target="_blank">Visit Site</a> | <a href="https://github.com/BXL909/Chromaseed" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+        </div>
 
+        <div class="project-section">
+            <h2>BITCOIN ARCADE (WEB)</h2>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/hashteroidsCard.png">
+                <a href="https://hashteroids.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/HashteroidsButton.png" alt="Hashteroids">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>Hashteroids</h3>
+                        <p>(DESKTOP)</p>
+                    </div>
+                    <p>A bitcoin-themed twist on Asteroids.</p>
+                    <a href="https://hashteroids.btcdir.org" target="_blank">Play Now</a> | <a href="https://bxl909.github.io/hashteroids/" target="_blank">Mirror</a> | <a href="https://github.com/BXL909/Hashteroids" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/ASICLanderCard.png">
+                <a href="https://asiclander.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/ASICLanderButton.png" alt="ASIC Lander">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>ASIC Lander</h3>
+                        <p>(DESKTOP)</p>
+                    </div>
+                    <p>A bitcoin-themed twist on Lunar Lander. Deliver ASICS to off-world power planets to maximise mining power.</p>
+                    <a href="https://asiclander.btcdir.org" target="_blank">Play Now</a> | <a href="https://bxl909.github.io/asiclander/" target="_blank">Mirror</a> | <a href="https://github.com/BXL909/ASIC-Lander" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/2048Card.png">
+                <a href="https://2048sats.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/2048SatsButton.png" alt="2048 Sats">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>2048 Sats</h3>
+                        <p>(DESKTOP & MOBILE)</p>
+                    </div>
+                    <p>A bitcoin-themed clone of 2048. Can you make it to 2048 and beyond?</p>
+                    <a href="https://2048sats.btcdir.org" target="_blank">Play Now</a> | <a href="https://bxl909.github.io/2048Sats/" target="_blank">Mirror</a> | <a href="https://github.com/BXL909/2048Sats" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+            <div class="project-row" data-image="https://btcdir.org/github_buttons/HASHCONCard.png">
+                <a href="https://hashcon.btcdir.org" target="_blank">
+                    <img src="https://btcdir.org/github_buttons/HASHCONButton.png" alt="HASHCON">
+                </a>
+                <div class="project-description">
+                    <div class="title-row">
+                        <h3>HASHCON</h3>
+                        <p>(DESKTOP)</p>
+                    </div>
+                    <p>A clone of the classic GalCon with a few bitcoin twists.</p>
+                    <a href="https://hashcon.btcdir.org" target="_blank">Play Now</a> | <a href="https://bxl909.github.io/hashcon/" target="_blank">Mirror</a> | <a href="https://github.com/BXL909/HASHCON" target="_blank">GitHub repo</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-links">
+            <a href="#" onclick="showModal('tipsModal')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#D00">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                TIPS
+            </a>
+        </div>
+    </div>
+
+    <div id="newsModal" class="modal" onclick="hideModal(event)">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ff9933">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </span>
+            <h2>PROJECT NEWS</h2>
+            <p>20250914 - HASHCON released (v1.0)</p>
+            <p>20250807 - BTC Phoebe released (v1.0)</p>
+            <p>20250304 - .onion sites retired (server failure)</p>
+            <p>20250227 - 9 Pages released.</p>
+            <p>20250213 - The Orange Signal released.</p>
+            <p>20250128 - ASIC Lander v1.2.</p>
+            <p>20250127 - Hashteroids v1.1.</p>
+            <p>20250126 - 2048 Sats v1.0.</p>
+            <p>20250126 - ASIC Lander v1.1.</p>
+            <p>20250111 - ASIC Lander released (v1.0).</p>
+            <p>20241217 - Hashteroids released (v1.0).</p>
+            <p>20241129 - Chromaseed v1.01.</p>
+            <p>20241121 - new .onion address.</p>
+            <p>20241121 - onion version of Satadelica.</p>
+            <p>20241116 - Satadelica released (v1.0).</p>
+            <p>20241028 - Chromaseed released (v1.0).</p>
+            <p>20240922 - Bitvain released (v1.0).</p>
+            <p>20240916 - .onion project site launched.</p>
+            <p>20240818 - SATSuma v2.5.</p>
+            <p>20240805 - BTCdir redesign.</p>
+            <p>20240224 - SATSuma v2.01.</p>
+            <p>20240222 - SATSuma v2.</p>
+            <p>20240123 - Cubit v1.2.</p>
+            <p>20231007 - SATSuma v1.09.</p>
+            <p>20231102 - Cubit v1.1.</p>
+            <p>20231016 - Cubit v1.</p>
+            <p>20231011 - SATSuma v1.07.</p>
+            <p>20231008 - SATSuma v1.06.</p>
+            <p>20231005 - Cubit v0.92.</p>
+            <p>20231005 - SATSuma v1.04.</p>
+            <p>20231004 - Cubit released (v0.9).</p>
+            <p>20230824 - SATSuma v1.02.</p>
+            <p>20230819 - BTCdir.org new design.</p>
+            <p>20230812 - SATSuma v1.01.</p>
+            <p>20230806 - SATSuma v1.</p>
+            <p>20230723 - SATSuma v0.98.</p>
+            <p>20230715 - SATSuma v0.95.</p>
+            <p>20230709 - SATSuma v0.94.</p>
+            <p>20230707 - SATSuma v0.93.</p>
+            <p>20230704 - SATSuma v0.8 (replaces Statamoto).</p>
+            <p>20230204 - Statamoto v1.2.</p>
+            <p>20230126 - Statamoto v1.1.</p>
+            <p>20230115 - Statamoto released.</p>
+            <p>20210430 - BTCdir.org launched.</p>
+        </div>
+    </div>
+
+    <div id="tipsModal" class="modal" onclick="hideModal(event)">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ff9933">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </span>
+            <h2>TIPS</h2>
+            <p>⚡ Lightning: <a href="https://zbd.gg/BTCdir" target="_blank">https://zbd.gg/BTCdir</a></p>
+            <p>⚡ LNURL: bxl909@walletofsatoshi.com (<a href="#" onclick="showModal('lnurlModal')">QR</a>)</p>
+            <p>🟠 BTC: 1BXL9o99CZVeD8jvd4pwQfDRfky1LvMqP1 (<a href="#" onclick="showModal('btcModal')">QR</a>)</p>
+        </div>
     </div>
 
     <div id="lnurlModal" class="modal" onclick="hideModal(event)">
         <div class="modal-content">
-            <span class="close" onclick="hideModal(event)">&times;</span>
+            <span class="close" onclick="hideModal(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ff9933">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </span>
             <img src="https://github.com/BXL909/BXL909.github.io/blob/main/qrWOS.png?raw=true" alt="LNURL QR">
             <p>LNURL: bxl909@walletofsatoshi.com</p>
         </div>
@@ -632,186 +731,110 @@
 
     <div id="btcModal" class="modal" onclick="hideModal(event)">
         <div class="modal-content">
-            <span class="close" onclick="hideModal(event)">&times;</span>
+            <span class="close" onclick="hideModal(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ff9933">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </span>
             <img src="https://github.com/BXL909/BXL909.github.io/blob/main/BXL9o9VanityAddress-self-generated.png?raw=true" alt="BTC Address QR">
             <p>1BXL9o99CZVeD8jvd4pwQfDRfky1LvMqP1</p>
         </div>
     </div>
 
     <script>
+        // Initialize particles.js
         particlesJS("particles-js", {
-            "particles": {
-                "number": {
-                    "value": 60,
-                    "density": {
-                        "enable": true,
-                        "value_area": 800
-                    }
-                },
-                "color": {
-                    "value": "#d78b00"
-                },
-                "shape": {
-                    "type": "circle",
-                    "stroke": {
-                        "width": 0,
-                        "color": "#000000"
-                    }
-                },
-                "opacity": {
-                    "value": 0.2,
-                    "random": false
-                },
-                "size": {
-                    "value": 3,
-                    "random": true
-                },
-                "line_linked": {
-                    "enable": true,
-                    "distance": 160,
-                    "color": "#878787",
-                    "opacity": 0.2,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 5,
-                    "direction": "none",
-                    "random": false,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 1000 } },
+                color: { value: "#ff9933" },
+                shape: { type: "triangle", stroke: { width: 0, color: "#000000" } },
+                opacity: { value: 0.3, random: true },
+                size: { value: 4, random: true },
+                line_linked: { enable: false },
+                move: {
+                    enable: true,
+                    speed: 3,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
                 }
             },
-            "retina_detect": true
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
+                }
+            },
+            retina_detect: true
         });
 
-        document.querySelectorAll('.project-card').forEach(function (card) {
-            card.addEventListener('mouseenter', function () {
-                const newImage = card.getAttribute('data-image');
-                const newTitle = card.getAttribute('data-title');
-                const newSubtitle2 = card.getAttribute('data-subtitle2');
-
-                document.getElementById('mainImage').src = newImage;
-                document.getElementById('mainTitle').textContent = newTitle;
-                document.getElementById('mainSubtitle2').textContent = newSubtitle2;
-
-                document.getElementById('mainImage').classList.add('hovering');
+        document.querySelectorAll('.project-row').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                const newImage = row.getAttribute('data-image');
+                const headerImage = document.getElementById('headerImage');
+                const headerBackground = document.getElementById('headerBackground');
+                headerImage.style.opacity = 0;
+                headerBackground.style.opacity = 0;
+                setTimeout(() => {
+                    headerImage.src = newImage;
+                    headerBackground.style.backgroundImage = `url(${newImage})`;
+                    headerImage.style.opacity = 1;
+                    headerBackground.style.opacity = 0.1;
+                }, 300);
             });
 
-            card.addEventListener('mouseleave', function () {
-                const defaultImage = document.getElementById('mainImage').getAttribute('data-default-src');
-                const defaultTitle = document.getElementById('mainTitle').getAttribute('data-default-text');
-                const defaultSubtitle2 = document.getElementById('mainSubtitle2').getAttribute('data-default-text');
-
-                document.getElementById('mainImage').src = defaultImage;
-                document.getElementById('mainTitle').textContent = defaultTitle;
-                document.getElementById('mainSubtitle2').textContent = defaultSubtitle2;
-
-                document.getElementById('mainImage').classList.remove('hovering');
+            row.addEventListener('mouseleave', () => {
+                const headerImage = document.getElementById('headerImage');
+                const headerBackground = document.getElementById('headerBackground');
+                headerImage.style.opacity = 0;
+                headerBackground.style.opacity = 0;
+                setTimeout(() => {
+                    headerImage.src = "https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png";
+                    headerBackground.style.backgroundImage = `url(https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png)`;
+                    headerImage.style.opacity = 1;
+                    headerBackground.style.opacity = 0.1;
+                }, 300);
             });
         });
+
+        document.getElementById('headerBackground').style.backgroundImage = 
+            `url(https://raw.githubusercontent.com/BXL909/BXL909.github.io/main/PnVlfRPD_400x400.png)`;
 
         function showModal(modalId) {
             document.getElementById(modalId).style.display = "flex";
         }
 
         function hideModal(event) {
-            if (event.target.classList.contains('modal') || event.target.classList.contains('close')) {
+            if (event.target.classList.contains('modal') || event.target.classList.contains('close') || event.target.closest('.close')) {
                 event.target.closest('.modal').style.display = "none";
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            preloadHoverImages();
+        const images = [
+            "https://btcdir.org/github_buttons/SATSumaCard.png",
+            "https://btcdir.org/github_buttons/BTCdirCard.png",
+            "https://btcdir.org/github_buttons/bitvainrCard.png",
+            "https://btcdir.org/github_buttons/chromaseedCard.png",
+            "https://btcdir.org/github_buttons/BXL909TwitterCard2.png",
+            "https://btcdir.org/github_buttons/SatadelicaCard.png",
+            "https://btcdir.org/github_buttons/ASICLanderCard.png",
+            "https://btcdir.org/github_buttons/2048Card.png",
+            "https://btcdir.org/github_buttons/OrangeSignalCard.png",
+            "https://btcdir.org/github_buttons/9PagesCard.png",
+            "https://btcdir.org/github_buttons/hashteroidsCard.png",
+            "https://btcdir.org/github_buttons/BTCPhoebeCard.png",
+            "https://btcdir.org/github_buttons/HASHCONCard.png",
+            "https://btcdir.org/github_buttons/CubitCard.png"
+        ];
+
+        images.forEach(src => {
+            const img = new Image();
+            img.src = src;
         });
-    
-        function preloadHoverImages() {
-            const images = [
-                "https://btcdir.org/github_buttons/SATSumaCard.png",
-                "https://btcdir.org/github_buttons/SatsumaButton.png",
-            
-                "https://btcdir.org/github_buttons/BTCdirCard.png",
-                "https://btcdir.org/github_buttons/BTCdirButton.png",
-            
-                "https://btcdir.org/github_buttons/BitvainButtonBlack.png",
-                "https://btcdir.org/github_buttons/bitvainrCard.png",
-            
-                "https://btcdir.org/github_buttons/chromassedButton.png",
-                "https://btcdir.org/github_buttons/chromaseedCard.png",
-            
-                "https://btcdir.org/github_buttons/BXL909Button.png",
-                "https://btcdir.org/github_buttons/BXL909TwitterCard2.png",
-            
-                "https://btcdir.org/github_buttons/SatadelicaCard.png",
-                "https://btcdir.org/github_buttons/satadelicaButton.png",
-            
-                "https://btcdir.org/github_buttons/ASICLanderButton.png",
-                "https://btcdir.org/github_buttons/ASICLanderCard.png",
-            
-                "https://btcdir.org/github_buttons/2048SatsButton.png",
-                "https://btcdir.org/github_buttons/2048Card.png",
-            
-                "https://btcdir.org/github_buttons/OrangeSignalButton.png",
-                "https://btcdir.org/github_buttons/OrangeSignalCard.png",    
-            
-                "https://btcdir.org/github_buttons/9PagesButton.png",
-                "https://btcdir.org/github_buttons/9PagesCard.png",
-
-                "https://btcdir.org/github_buttons/HashteroidsButton.png",
-                "https://btcdir.org/github_buttons/hashteroidsCard.png",
-
-                "https://btcdir.org/github_buttons/CubitButton.png",
-                "https://btcdir.org/github_buttons/CubitCard.png"
-            ];
-    
-            images.forEach((src) => {
-                const img = new Image();
-                img.src = src;
-            });
-        }
-
-        function toggleNews() {
-        const newsDiv = document.getElementById('news');
-        const toggleLink = document.querySelector('.toggle-news');
-
-        if (newsDiv.classList.contains('show')) {
-            newsDiv.classList.remove('show');
-            toggleLink.textContent = 'EXPAND';
-        } else {
-            newsDiv.classList.add('show');
-            toggleLink.textContent = 'COLLAPSE';
-        }
-    }
-
-        function toggleTips() {
-        const tipsDiv = document.getElementById('tips');
-        const toggleLink2 = document.querySelector('.toggle-link2');
-
-        if (tipsDiv.classList.contains('show')) {
-            tipsDiv.classList.remove('show');
-            toggleLink2.textContent = 'EXPAND';
-        } else {
-            tipsDiv.classList.add('show');
-            toggleLink2.textContent = 'COLLAPSE';
-        }
-    }
-
-    function toggleMirrors() {
-        const mirrorDiv = document.getElementById('mirrorlinks');
-        const toggleLink = event.target;
-
-        if (mirrorDiv.classList.contains('show')) {
-            mirrorDiv.classList.remove('show');
-            toggleLink.textContent = 'EXPAND';
-        } else {
-            mirrorDiv.classList.add('show');
-            toggleLink.textContent = 'COLLAPSE';
-        }
-    }
-        
     </script>
-
 </body>
-
 </html>

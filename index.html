@@ -744,35 +744,69 @@
     </div>
 
     <script>
-        // Initialize particles.js
+
         particlesJS("particles-js", {
             particles: {
-                number: { value: 80, density: { enable: true, value_area: 1000 } },
-                color: { value: "#ff9933" },
-                shape: { type: "triangle", stroke: { width: 0, color: "#000000" } },
-                opacity: { value: 0.3, random: true },
-                size: { value: 4, random: true },
-                line_linked: { enable: false },
+                number: { value: 100, density: { enable: true, value_area: 1200 } },
+                color: { value: ["#ff9933", "#ffcc99", "#ffffff"] }, // Orange, light orange, white for holographic sheen
+                shape: { type: "circle", stroke: { width: 0 } },
+                opacity: { 
+                    value: 0.4, 
+                    random: true, 
+                    anim: { 
+                        enable: true, 
+                        speed: 0.3, 
+                        opacity_min: 0.1, 
+                        sync: false 
+                    } 
+                },
+                size: { 
+                    value: 1.5, 
+                    random: true, 
+                    anim: { 
+                        enable: true, 
+                        speed: 1, 
+                        size_min: 0.5, 
+                        sync: false 
+                    } 
+                },
+                line_linked: { enable: false }, 
                 move: {
                     enable: true,
-                    speed: 3,
+                    speed: 1.0, 
                     direction: "none",
                     random: true,
                     straight: false,
                     out_mode: "out",
-                    bounce: false
+                    bounce: false,
+                    attract: { enable: false }
                 }
             },
             interactivity: {
                 detect_on: "canvas",
                 events: {
-                    onhover: { enable: true, mode: "repulse" },
-                    onclick: { enable: true, mode: "push" },
+                    onhover: { enable: true, mode: "bubble" },
+                    onclick: { enable: true, mode: "repulse" },
                     resize: true
+                },
+                modes: {
+                    bubble: { distance: 100, size: 2, duration: 0.5, opacity: 0.6 },
+                    repulse: { distance: 50, duration: 0.3 }
                 }
             },
             retina_detect: true
         });
+
+        setInterval(() => {
+            const particles = window.pJSDom[0].particles.array;
+            particles.forEach(particle => {
+                if (Math.random() < 0.05) {
+                    const colors = ["#ff9933", "#ffcc99", "#ffffff", "#ffd700"];
+                    particle.color.value = colors[Math.floor(Math.random() * colors.length)]; 
+                    particle.opacity.value = Math.random() * 0.3 + 0.1;
+                }
+            });
+        }, 200);
 
         document.querySelectorAll('.project-row').forEach(row => {
             row.addEventListener('mouseenter', () => {
@@ -837,6 +871,9 @@
             const img = new Image();
             img.src = src;
         });
+
+
+
     </script>
 </body>
 </html>

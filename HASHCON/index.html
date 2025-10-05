@@ -1,0 +1,4091 @@
+<!--HASHCON by BXL909 -->
+<!--BXL909.GITHUB.IO  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HASHCON - Hash Conquest</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Roboto Condensed', 'Arial', sans-serif;
+            background: #080808;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; 
+            background-image: url("background.png");
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-size: cover;
+        }
+
+        #outerContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100vw;
+            max-height: 100vh;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        #gameContainer {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 100vw;
+            max-height: 100vh;
+            border: 1px solid #ff8800;
+            box-sizing: border-box;
+        }
+
+        #gameCanvas {
+            background: transparent;
+            display: block;
+            cursor: crosshair;
+            max-width: 100%;
+            max-height: 100%;
+            box-sizing: border-box;
+        }
+
+        #gameCanvas:hover {
+            cursor: default;
+        }
+
+        #bottomRow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 96vw;
+            margin-top: 8px; 
+        }
+
+        #textContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        #xLink {
+            color: #ff8800;
+            font-size: 12px; 
+            text-decoration: none;
+            margin-bottom: 4px;
+        }
+
+        #xLink:hover {
+            text-decoration: underline;
+        }
+
+        #placeholderText {
+            font-size: 12px; 
+            color: #ccc;
+            margin: 0;
+        }
+
+        #gameImage {
+            display: block;
+            max-width: 100%;
+            width: 80px; 
+        }
+
+.footer {
+    width: 100vw; /* Full viewport width to match #outerContainer */
+    max-width: 100vw; /* Ensure it doesn't exceed viewport */
+    margin: 0; /* Remove auto margins */
+    padding: 0.4rem 10px; /* Add padding to align content with gameContainer */
+    box-sizing: border-box;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+    color: #c0c0c0;
+    max-width: calc(100vw - 20px); /* Match gameContainer's content width */
+    margin: 0 auto; /* Center content within footer */
+}
+
+        .social-links {
+            display: flex;
+            gap: 0.8rem; 
+            justify-content: flex-start;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-links svg {
+            width: 18px; 
+            height: 18px;
+            transition: transform 0.2s ease;
+        }
+
+        .social-links a:hover svg {
+            transform: scale(1.1);
+        }
+
+        .footer-text-container {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem; 
+        }
+
+        .footer-logo {
+            height: 20px; 
+            width: auto;
+        }
+
+        .footer-text {
+            font-size: 0.7em;
+            margin: 0;
+            color: #c0c0c0;
+            text-align: left;
+        }
+
+        .footer-text a {
+            color: #fbba24;
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1000px) {
+            .title-image {
+                width: 25vw; 
+                max-width: 180px; 
+                min-width: 70px; 
+                margin-right: 8px; 
+            }
+            #sourceSelectorContainer {
+                padding-top: 4px; 
+            }
+            #sourceSelector {
+                max-width: 65%; 
+            }
+            .footer-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.4rem; 
+            }
+            .footer-text-container {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+            .footer-text {
+                font-size: 0.7em; 
+                text-align: left;
+            }
+            .social-links svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        body.no-scroll {
+            overflow: hidden;
+        }
+
+        #tipsModal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            z-index: 9999;
+        }
+
+        #tipsModal.is-open {
+            display: block;
+        }
+
+        #tipsModal .modal__backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(2px);
+        }
+
+        #tipsModal .modal__dialog {
+            position: relative;
+            width: min(500px, 90vw); 
+            background: #111;
+            border: 1px solid #ff8800;
+            border-radius: 10px; 
+            padding: 15px; 
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6); 
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #tipsModal .modal__close {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            font-size: 20px; 
+            line-height: 1;
+            background: transparent;
+            border: 0;
+            color: #ff8800;
+            cursor: pointer;
+        }
+
+        #tipsModal a {
+            color: #fbba24;
+        }
+
+        #tipsModal a:hover {
+            text-decoration: underline;
+        }
+
+        #tipsModal h2 {
+            font-size: 1.2em; 
+            margin: 0 0 0.4rem 0;
+        }
+
+        #tipsModal p {
+            font-size: 0.9em; 
+            margin: 0 0 0.6rem 0;
+        }
+
+        #tipsModal ul {
+            font-size: 0.9em; 
+            margin: 0 0 0.6rem 0.8rem; 
+        }    
+    </style>
+    <script>
+        async function updateVisitorCounter() {
+            const visitorCounter = document.getElementById('visitorCounter');
+            try {
+                const response = await fetch('https://api.counterapi.dev/v1/bxl909/hashteroids/up');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const result = await response.json();
+                visitorCounter.textContent = result.count || '0'; 
+            } catch (error) {
+                console.error('CounterAPI error:', error.message);
+                visitorCounter.textContent = 'Error';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            updateVisitorCounter();
+        });
+    </script>
+</head>
+<body>
+    <div id="outerContainer">
+        <div id="gameContainer">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-text-container">
+                    <p class="footer-text">
+                      v1.02 - Made with 🧡 by BXL909.
+                      <a href="#" id="tipsLink">Click for tips</a> 🙏. <span style="color: #c0c0c0; font-size: 12px; ">You are player #<span id="visitorCounter">Loading...</span></span><br>
+                      Go to <a target="_blank" href="https://bxl909.github.io">bxl909.github.io</a> for more bitcoin apps, games, etc<
+                    </p>
+                </div>
+                <div class="social-links">
+                    
+                    <a target="_blank" href="https://bxl909.github.io">
+                    <img src="https://bxl909.github.io/images/BXL909.png" alt="BXL909 Logo" class="footer-logo">
+                    </a>
+                    <a href="https://github.com/BXL909" target="_blank" aria-label="GitHub">
+                        <svg fill="#ff9933" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <title>GitHub</title>
+                            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path>
+                        </svg>
+                    </a>
+                    <a href="https://x.com/bxl909" target="_blank" aria-label="X">
+                        <svg fill="#ff9933" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://primal.net/p/npub1y2sgv8xwg9g63wlxq25735y9xvl4kjmwh5u92c0q2nkhurgjlstql87kmv" target="_blank" aria-label="Nostr">
+                        <svg fill="#ff9933" viewBox="0 0 875 875" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M684.72 485.57c.22 12.59-11.93 51.47-38.67 81.3-26.74 29.83-56.02 20.85-58.42 20.16s-3.09-4.46-7.89-3.77-9.6 6.17-18.86 7.2-17.49 1.71-26.06-1.37c-4.46.69-5.14.71-7.2 2.24s-17.83 10.79-21.6 11.47c0 7.2-1.37 44.57 0 55.89s3.77 25.71 7.54 36 2.74 10.63 7.54 9.94 13.37.34 15.77 4.11c2.4 3.77 1.37 6.51 5.49 8.23s60.69 17.14 99.43 19.2c26.74.69 42.86 2.74 52.12 19.54 1.37 7.89 7.54 13.03 11.31 14.06s8.23 2.06 12 5.83 1.03 8.23 5.49 11.66c4.46 3.43 14.74 8.57 25.37 13.71 10.63 5.14 15.09 13.37 15.77 16.11s1.71 10.97 1.71 10.97-8.91 0-10.97-2.06-2.74-5.83-2.74-5.83-6.17 1.03-7.54 3.43.69 2.74-7.89.69-11.66-3.77-18.17-8.57c-6.51-4.8-16.46-17.14-25.03-16.8 4.11 8.23 5.83 8.23 10.63 10.97s8.23 5.83 8.23 5.83l-7.2 4.46s-4.46 2.06-14.74-.69-11.66-4.46-12.69-10.63 0-9.26-2.74-14.4-4.11-15.77-22.29-21.26c-18.17-5.49-66.52-21.26-100.12-24.69s-22.63-2.74-28.11-1.37-15.77 4.46-26.4-1.37c-10.63-5.83-16.8-13.71-17.49-20.23s-1.71-10.97 0-19.2 3.43-19.89 1.71-26.74-14.06-55.89-19.89-64.12c-13.03 1.03-50.74-.69-50.74-.69s-2.4-.69-17.49 5.83-36.48 13.76-46.77 19.93-14.4 9.7-16.12 13.13c.12 3-1.23 7.72-2.79 9.06s-12.48 2.42-12.48 2.42-5.85 5.86-8.25 9.97c-6.86 9.6-55.2 125.14-66.52 149.83-13.54 32.57-9.77 27.43-37.71 27.43s-8.06.3-8.06.3-12.34 5.88-16.8 5.88-18.86-2.4-26.4 0-16.46 9.26-23.31 10.29-4.95-1.34-8.38-3.74c-4-.21-14.27-.12-14.27-.12s1.74-6.51 7.91-10.88c8.23-5.83 25.37-16.11 34.63-21.26s17.49-7.89 23.31-9.26 18.51-6.17 30.51-9.94 19.54-8.23 29.83-31.54 50.4-111.43 51.43-116.23c.63-2.96 3.73-6.48 4.8-15.09.66-5.35-2.49-13.04 1.71-22.63 10.97-25.03 21.6-20.23 26.4-20.23s17.14.34 26.4-1.37 15.43-2.74 24.69-7.89 11.31-8.91 11.31-8.91l-19.89-3.43s-18.51.69-25.03-4.46-15.43-15.77-15.43-15.77l-7.54-7.2 1.03 8.57s-5.14-8.91-6.51-10.29-8.57-6.51-11.31-11.31-7.54-25.03-7.54-25.03l-6.17 13.03-1.71-18.86-5.14 7.2-2.74-16.11-4.8 8.23-3.43-14.4-5.83 4.46-2.4-10.29-5.83-3.43s-14.06-9.26-16.46-9.6-4.46 3.43-4.46 3.43l1.37 12-12.2-6.27-7-11.9s2.36 4.01-9.62 7.53c-20.55 0-21.89-2.28-24.93-3.94-1.31-6.56-5.57-10.11-5.57-10.11h-20.57l-.34-6.86-7.89 3.09.69-10.29h-14.06l1.03-11.31h-8.91s3.09-9.26 25.71-22.97 25.03-16.46 46.29-17.14c21.26-.69 32.91 2.74 46.29 8.23s38.74 13.71 43.89 17.49c11.31-9.94 28.46-19.89 34.29-19.89 1.03-2.4 6.19-12.33 17.96-17.60 35.31-15.81 108.13-34 131.53-35.54 31.2-2.06 7.89-1.37 39.09 2.06 31.2 3.43 54.17 7.54 69.6 12.69 12.58 4.19 25.03 9.6 34.29 2.06 4.33-1.81 11.81-1.34 17.83-5.14 30.69-25.09 34.72-32.35 43.63-41.95s20.14-24.91 22.54-45.14 4.46-58.29-10.63-88.12-28.80-45.26-34.63-69.26c-5.83-24-8.23-61.03-6.17-73.03 2.06-12 5.14-22.29 6.86-30.51s9.94-14.74 19.89-16.46c9.94-1.71 17.83 1.37 22.29 4.80 4.46 3.43 11.65 6.28 13.37 10.29.34 1.71-1.37 6.51 8.23 8.23 9.6 1.71 16.05 4.16 16.05 4.16s15.64 4.29 3.11 7.73c-12.69 2.06-20.52-.71-24.29 1.69s-7.21 10.08-9.61 11.10-7.20 .34-12 4.11-9.60 6.86-12.69 14.40-5.49 15.77-3.43 26.74 8.57 31.54 14.40 43.20c5.83 11.66 20.23 40.80 24.34 47.66s15.77 29.49 16.80 53.83 1.03 44.23 0 54.86-10.84 51.65-35.53 85.94c-8.16 14.14-23.21 31.90-24.67 35.03-1.45 3.13-3.02 4.88-1.61 7.65 4.62 9.05 12.87 22.13 14.71 29.22 2.29 6.64 6.99 16.13 7.22 28.72Z" style="stroke: #fff; stroke-miterlimit: 10; stroke-width: 6px;"></path>
+                        </svg>
+                    </a>
+                    <a href="mailto:bxl909@pm.me" aria-label="Email">
+                        <svg fill="#ff9933" viewBox="0 0 8 6" xmlns="http://www.w3.org/2000/svg">
+                            <path d="m0 0h8v6h-8zm.75 .75v4.5h6.5v-4.5zM0 0l4 3 4-3v1l-4 3-4-3z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const CONFIG = {
+            CANVAS_ASPECT_RATIO: 16 / 10,
+            MAX_SHIP_SPEED: 120,
+            PLAYER_SHIP_PRODUCTION_RATE: 0.8,
+            AI_SHIP_PRODUCTION_RATE: 0.8,
+            PLANET_MIN_RADIUS: 18,
+            PLANET_MAX_RADIUS: 45,
+            AI_DECISION_INTERVAL: 1500,
+            PARTICLE_COUNT: 400,
+            NEBULA_COUNT: 5,
+            SHOOTING_STAR_CHANCE: 0.0015,
+            COLORS: {
+                NEUTRAL: '#666688',
+                PLAYER: '#ff8800',
+                ENEMY_1: '#ff4444',
+                ENEMY_2: '#44ff88',
+                ENEMY_3: '#4488ff',
+                ENEMY_4: '#ff44ff',
+                ENEMY_5: '#ffff44',
+                ENEMY_6: '#44ffff',
+                ENEMY_7: '#800080',
+                ENEMY_8: '#8844ff',
+                ENEMY_9: '#44ff44',
+                ENEMY_10: '#ff4488'
+            }
+        };
+
+        let canvas, ctx;
+        let gameState;
+        let animationId;
+        let lastTime = 0;
+        let keys = {};
+        let selectedAICount = 6;
+        let selectedPlanetCount = 15;
+        let selectedDifficulty = 'MEDIUM';
+        let gameStartTime = null;
+        let achievements = {
+            'first-win': false,
+            'speed-win': false,
+            'swift-defeat': false,
+            'galactic-overlord': false,
+            'undefeated-defender': false,
+            'blitzkrieg': false,
+            'ship-swarm': false,
+            'hard-mode-hero': false,
+            'crowded-cosmos': false,
+            'conquer-500-planets': { completed: false, progress: 0 },
+            'launch-10000-ships': { completed: false, progress: 0 },
+            'win-5-games': { completed: false, progress: 0 },
+            'win-20-games': { completed: false, progress: 0 },
+            'win-50-games': { completed: false, progress: 0 },
+            'lose-5-games': { completed: false, progress: 0 },
+            'conquer-100-planets': { completed: false, progress: 0 },
+            'launch-50000-ships': { completed: false, progress: 0 },
+            'amass-1000-ships': false,
+            'close-call': false,
+            'rapid-expansion': false,
+            'massive-fleet': false,
+            'stealth-victory': false,
+            'billiards-victory': false,
+            'first-merge': { completed: false, progress: 0 },
+            'massive-transit': false,
+            'billiards-sparse': false,
+            'iron-defense': false,
+            'no-neutral': false,
+            'long-game': false,
+            'cosmic-collector': false,
+            'win-medium': false, 
+            'billiards-medium': false, 
+            'billiards-hard': false, 
+            'stealth-medium': false, 
+            'stealth-hard': false, 
+            'stealth-all-planets': false,
+            'billiards-all-planets': false,
+            'stealth-iron-defense': false, 
+            'billiards-iron-defense': false,
+            'there-is-no-spoon': false,
+            'so-long-thanks': false,
+            'we-come-in-peace': false,
+            'survive-first-hash-surge': false,
+            'conquer-50-planets-billiards': { completed: false, progress: 0 },
+            'conquer-50-planets-stealth': { completed: false, progress: 0 },
+            'no-neutral-billiards': false,
+            'no-neutral-stealth': false,
+            'crowded-stealth': false,
+            'undefeated-billiards': false,
+            'amass-5000-ships': false,
+            'gamesWon': 0,
+            'gamesLost': 0
+        };
+        const achievementList = [
+            { id: 'first-win', title: 'First Victory', description: 'Win your first game' },
+            { id: 'speed-win', title: 'Speed Conqueror', description: 'Win a game in under 2 minutes' },
+            { id: 'swift-defeat', title: 'Swift Defeat', description: 'Lose a game in less than 20 seconds' },
+            { id: 'galactic-overlord', title: 'All Your Base Are Belong To Us', description: 'Conquer 30 planets in one game' },
+            { id: 'undefeated-defender', title: 'Undefeated Defender', description: 'Win a game without losing starting planet' },
+            { id: 'blitzkrieg', title: 'Blitzkrieg', description: 'Conquer an enemy planet within 10 seconds' },
+            { id: 'ship-swarm', title: 'Ship Swarm', description: 'Have a fleet valued 100 or more in transit at once' },
+            { id: 'hard-mode-hero', title: 'Hard Mode Hero', description: 'Win a game on Hard difficulty' },
+            { id: 'crowded-cosmos', title: 'Crowded Cosmos', description: 'Win a game against 10 AI opponents' },
+            { id: 'conquer-500-planets', title: 'Planetary Dominator', description: 'Conquer 500 planets', target: 500 },
+            { id: 'launch-10000-ships', title: 'Fleet Commander', description: 'Launch 10000 ships', target: 10000 },
+            { id: 'win-5-games', title: 'Penta Victor', description: 'Win 5 games', target: 5 },
+            { id: 'win-20-games', title: 'Viginti Victor', description: 'Win 20 games', target: 20 },
+            { id: 'win-50-games', title: 'Quinquaginta Victor', description: 'Win 50 games', target: 50 },
+            { id: 'lose-5-games', title: 'Persistent Challenger', description: 'Lose 5 games to the AI', target: 5 },
+            { id: 'conquer-100-planets', title: 'Centurion Conqueror', description: 'Conquer 100 planets', target: 100 },
+            { id: 'launch-50000-ships', title: 'Grand Fleet Admiral', description: 'Launch 50000 ships', target: 50000 },
+            { id: 'amass-1000-ships', title: 'Ship Hoarder', description: 'Amass more than 1000 ships on one planet' },
+            { id: 'close-call', title: 'Close Call', description: 'Win a game with only one planet remaining' },
+            { id: 'rapid-expansion', title: 'Rapid Expansion', description: 'Conquer 3 planets within the first 30 seconds' },
+            { id: 'massive-fleet', title: 'Massive Fleet', description: 'Have a fleet valued 500 or more in transit at once' },
+            { id: 'stealth-victory', title: 'Stealth Master', description: 'Stealth mode - Win your first game' },
+            { id: 'billiards-victory', title: 'Planetary Collider', description: 'Collision mode - Win your first game' },
+            { id: 'first-merge', title: 'Planetary Fusion', description: 'Collision mode - Merge your first planets', target: 1 },
+            { id: 'massive-transit', title: 'Armada in Motion', description: 'Have a fleet valued 1500 or more in transit at once' },
+            { id: 'billiards-sparse', title: 'Sparse Cosmos', description: 'Collision mode - Start with 30 planets, finish with 3' },
+            { id: 'iron-defense', title: 'Iron Defense', description: 'Win a game without losing any planets once taken' },
+            { id: 'no-neutral', title: 'Direct Assault', description: 'Win a game without ever taking a neutral planet' },
+            { id: 'long-game', title: 'Marathon Conqueror', description: 'Win a game that lasts more than 10 minutes' },
+            { id: 'cosmic-collector', title: 'Cosmic Collector', description: 'Conquer 10 neutral planets in a single game' },
+            { id: 'win-medium', title: 'Mid-Tier Conqueror', description: 'Win a game on Medium difficulty' },
+            { id: 'billiards-medium', title: 'Collision Mid-Tier', description: 'Collision mode - Win a game on Medium difficulty' },
+            { id: 'billiards-hard', title: 'Collision Master', description: 'Collision mode - Win a game on Hard difficulty' },
+            { id: 'stealth-medium', title: 'Stealth Mid-Tier', description: 'Stealth mode - Win a game on Medium difficulty' },
+            { id: 'stealth-hard', title: 'Stealth Master Elite', description: 'Stealth mode - Win a game on Hard difficulty' },
+            { id: 'stealth-all-planets', title: 'Stealth Dominator', description: 'Stealth mode - Conquer every planet' },
+            { id: 'billiards-all-planets', title: 'Collision Dominator', description: 'Collision mode - Conquer every planet' },
+            { id: 'stealth-iron-defense', title: 'Stealth Iron Defense', description: 'Stealth mode - Never lose a planet once taken' },
+            { id: 'billiards-iron-defense', title: 'Collision Iron Defense', description: 'Collision mode - Never lose a planet once taken' },
+            { id: 'there-is-no-spoon', title: 'There Is No Spoon', description: '???' },
+            { id: 'so-long-thanks', title: 'So long and thanks for all the fish!', description: '???' },
+            { id: 'we-come-in-peace', title: 'We Come In Peace', description: '???' },
+            { id: 'survive-first-hash-surge', title: 'Hash Surge Survivor', description: 'Survive your first hash surge' },
+            { id: 'conquer-50-planets-billiards', title: 'Collision Conqueror', description: 'Collision mode - Conquer 50 planets', target: 50 },
+            { id: 'conquer-50-planets-stealth', title: 'Stealth Conqueror', description: 'Stealth mode - Conquer 50 planets', target: 50 },
+            { id: 'no-neutral-billiards', title: 'Direct Assault 2', description: 'Collision mode - Win game without taking a neutral planet' },
+            { id: 'no-neutral-stealth', title: 'Direct Assault 3', description: 'Stealth mode - Win game without taking a neutral planet' },
+            { id: 'crowded-stealth', title: 'Stealth Overlord', description: 'Stealth mode - Win a game against 10 AI opponents' },
+            { id: 'amass-5000-ships', title: 'Fleet Overlord', description: 'Amass more than 5000 ships on one planet' },
+            { id: 'undefeated-billiards', title: 'Undefeated 2', description: 'Collision mode - Win game without losing starting planet' }
+        ];
+
+        function loadAchievements() {
+            const saved = localStorage.getItem('hashcon-achievements');
+            if (saved) {
+                const loadedAchievements = JSON.parse(saved);
+                Object.keys(achievements).forEach(key => {
+                    if (loadedAchievements[key] !== undefined) {
+                        if (key === 'cosmic-collector') {
+                            achievements[key] = typeof loadedAchievements[key] === 'object' 
+                                ? !!loadedAchievements[key].completed 
+                                : !!loadedAchievements[key];
+                        } else if (typeof loadedAchievements[key] === 'object') {
+                            achievements[key] = {
+                                completed: loadedAchievements[key].completed || false,
+                                progress: loadedAchievements[key].progress || 0
+                            };
+                        } else {
+                            achievements[key] = loadedAchievements[key];
+                        }
+                    }
+                });
+            }
+        }
+
+        function saveAchievements() {
+            localStorage.setItem('hashcon-achievements', JSON.stringify(achievements));
+        }
+
+        function unlockAchievement(achievementId) {
+            let isUnlocked = typeof achievements[achievementId] === 'object' 
+                ? achievements[achievementId].completed 
+                : achievements[achievementId];
+            if (achievementId === 'cosmic-collector' && typeof achievements[achievementId] === 'object') {
+                isUnlocked = achievements[achievementId].completed; 
+                achievements[achievementId] = isUnlocked;
+            }
+            if (!isUnlocked) {
+                achievements[achievementId] = true; 
+                saveAchievements();
+                const achievement = achievementList.find(a => a.id === achievementId);
+                if (!achievement) {
+                    return;
+                }
+                if (!gameState) {
+                    return;
+                }
+                if (gameState.gamePhase === 'menu') {
+                    return;
+                }
+                gameState.notifications.push(
+                    new Notification(
+                        `Achievement Unlocked: ${achievement.title}!`,
+                        canvas.width / 2,
+                        canvas.height - 50 - (gameState.notifications.length * 20),
+                        28
+                    )
+                );
+            } else {
+            }
+        }
+
+        function checkGameCompletion() {
+            if (gameState && gameState.gamePhase === 'victory') {
+                const gameTime = (Date.now() - gameState.gameStartTime) / 1000;
+                achievements.gamesWon += 1;
+                saveAchievements();
+                updateAchievementProgress('win-5-games', 1);
+                updateAchievementProgress('win-20-games', 1);
+                updateAchievementProgress('win-50-games', 1);
+                unlockAchievement('first-win');
+
+                if (gameTime < 120) {
+                    unlockAchievement('speed-win');
+                }
+
+                if (gameState.planetCount >= 30) {
+                    unlockAchievement('galactic-overlord');
+                }
+
+                if (!gameState.lostStartingPlanet) {
+                    unlockAchievement('undefeated-defender');
+                    if (gameState.billiardsMode) {
+                        unlockAchievement('undefeated-billiards'); 
+                    }
+                }
+
+                if (gameState.difficulty === 'HARD') {
+                    unlockAchievement('hard-mode-hero');
+                }
+
+                if (gameState.aiCount === 10) {
+                    unlockAchievement('crowded-cosmos');
+                    if (gameState.stealthMode) {
+                        unlockAchievement('crowded-stealth'); 
+                    }
+                }
+
+                if (gameState.playerPlanets === 1) {
+                    unlockAchievement('close-call');
+                }
+
+                if (gameState.stealthMode) {
+                    unlockAchievement('stealth-victory');
+                    if (!gameState.tookNeutralPlanet) {
+                        unlockAchievement('no-neutral-stealth');
+                    }
+                }
+
+                if (gameState.billiardsMode) {
+                    unlockAchievement('billiards-victory');
+                    if (!gameState.tookNeutralPlanet) {
+                        unlockAchievement('no-neutral-billiards');
+                    }
+                }
+
+                if (gameState.billiardsMode && gameState.planetCount >= 30 && gameState.planets.length <= 3) {
+                    unlockAchievement('billiards-sparse');
+                }
+
+                if (!gameState.lostCapturedPlanet) {
+                    unlockAchievement('iron-defense');
+                }
+
+                if (!gameState.tookNeutralPlanet) {
+                    unlockAchievement('no-neutral');
+                }
+
+                if (gameTime > 600) {
+                    unlockAchievement('long-game');
+                }
+
+                if (gameState.difficulty === 'MEDIUM') {
+                    unlockAchievement('win-medium');
+                }
+
+                if (gameState.billiardsMode && gameState.difficulty === 'MEDIUM') {
+                    unlockAchievement('billiards-medium');
+                }
+
+                if (gameState.billiardsMode && gameState.difficulty === 'HARD') {
+                    unlockAchievement('billiards-hard');
+                }
+
+                if (gameState.stealthMode && gameState.difficulty === 'MEDIUM') {
+                    unlockAchievement('stealth-medium');
+                }
+
+                if (gameState.stealthMode && gameState.difficulty === 'HARD') {
+                    unlockAchievement('stealth-hard');
+                }
+
+                if (gameState.stealthMode && gameState.planets.every(p => p.owner && p.owner.id === 0)) {
+                    unlockAchievement('stealth-all-planets');
+                }
+
+                if (gameState.billiardsMode && gameState.planets.every(p => p.owner && p.owner.id === 0)) {
+                    unlockAchievement('billiards-all-planets');
+                }
+
+                if (gameState.stealthMode && !gameState.lostCapturedPlanet) {
+                    unlockAchievement('stealth-iron-defense');
+                }
+
+                if (gameState.billiardsMode && !gameState.lostCapturedPlanet) {
+                    unlockAchievement('billiards-iron-defense');
+                }
+
+            } else if (gameState && gameState.gamePhase === 'defeat') {
+                const gameTime = (Date.now() - gameState.gameStartTime) / 1000;
+
+                achievements.gamesLost += 1;
+                saveAchievements();
+
+                updateAchievementProgress('lose-5-games', 1);
+
+                if (gameTime < 20) {
+                    unlockAchievement('swift-defeat');
+                }
+            }
+        }
+
+        class Planet {
+            constructor(x, y, radius) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.ships = 0;
+                this.owner = null;
+                this.baseProductionRate = (this.radius / CONFIG.PLANET_MAX_RADIUS) * 
+                    (this.owner && this.owner.isAI ? CONFIG.AI_SHIP_PRODUCTION_RATE : CONFIG.PLAYER_SHIP_PRODUCTION_RATE);
+                this.productionRate = this.baseProductionRate;
+                this.productionProgress = 0;
+                this.selected = false;
+                this.pulsePhase = Math.random() * Math.PI * 2;
+                this.rotationAngle = 0;
+                this.vx = 0;
+                this.vy = 0;
+                this.productionMultiplier = 1; 
+                this.multiplierDuration = 0;
+            }
+
+            darkenColor(hex, factor) {
+                hex = hex.replace('#', '');
+                const r = parseInt(hex.substr(0, 2), 16);
+                const g = parseInt(hex.substr(2, 2), 16);
+                const b = parseInt(hex.substr(4, 2), 16);
+                return `#${Math.floor(r * factor).toString(16).padStart(2, '0')}${Math.floor(g * factor).toString(16).padStart(2, '0')}${Math.floor(b * factor).toString(16).padStart(2, '0')}`;
+            }
+
+            update(deltaTime) {
+                if (this.owner) {
+                    this.baseProductionRate = (this.radius / CONFIG.PLANET_MAX_RADIUS) * 
+                        (this.owner.isAI ? CONFIG.AI_SHIP_PRODUCTION_RATE : CONFIG.PLAYER_SHIP_PRODUCTION_RATE);
+                    this.productionRate = this.baseProductionRate * this.productionMultiplier;
+                    this.productionProgress += deltaTime * this.productionRate;
+                    if (this.productionProgress >= 1) {
+                        this.ships++;
+                        this.productionProgress = 0;
+                    }
+                    if (this.multiplierDuration > 0) {
+                        this.multiplierDuration -= deltaTime;
+                        if (this.multiplierDuration <= 0) {
+                            this.productionMultiplier = 1;
+                            this.multiplierDuration = 0;
+                            this.productionRate = this.baseProductionRate;
+                        }
+                    }
+                }
+                this.pulsePhase += deltaTime * 3;
+                this.rotationAngle += deltaTime * 0.5;
+
+                if (gameState.billiardsMode) {
+                    this.x += this.vx * deltaTime * 1.2;
+                    this.y += this.vy * deltaTime * 1.2;
+
+                    const friction = 0.99;
+                    this.vx *= friction;
+                    this.vy *= friction;
+
+                    if (this.x - this.radius < 0) {
+                        this.x = this.radius;
+                        this.vx = Math.abs(this.vx);
+                    } else if (this.x + this.radius > canvas.width) {
+                        this.x = canvas.width - this.radius;
+                        this.vx = -Math.abs(this.vx);
+                    }
+
+                    if (this.y - this.radius < 0) {
+                        this.y = this.radius;
+                        this.vy = Math.abs(this.vy);
+                    } else if (this.y + this.radius > canvas.height) {
+                        this.y = canvas.height - this.radius;
+                        this.vy = -Math.abs(this.vy);
+                    }
+                }
+            }
+
+            applyProductionBoost(multiplier, duration) {
+                this.productionMultiplier *= multiplier;
+                this.multiplierDuration = Math.max(this.multiplierDuration, duration);
+                this.productionRate = this.baseProductionRate * this.productionMultiplier;
+            }
+
+            mergeWith(otherPlanet) {
+                this.ships += otherPlanet.ships;
+                const newArea = Math.PI * this.radius * this.radius + Math.PI * otherPlanet.radius * otherPlanet.radius;
+                this.radius = Math.min(CONFIG.PLANET_MAX_RADIUS, Math.sqrt(newArea / Math.PI));
+                this.baseProductionRate = (this.radius / CONFIG.PLANET_MAX_RADIUS) * 
+                    (this.owner && this.owner.isAI ? CONFIG.AI_SHIP_PRODUCTION_RATE : CONFIG.PLAYER_SHIP_PRODUCTION_RATE);
+                this.productionRate = this.baseProductionRate * this.productionMultiplier;
+                const mass1 = this.radius * this.radius;
+                const mass2 = otherPlanet.radius * otherPlanet.radius;
+                const totalMass = mass1 + mass2;
+                this.vx = (this.vx * mass1 + otherPlanet.vx * mass2) / totalMass;
+                this.vy = (this.vy * mass1 + otherPlanet.vy * mass2) / totalMass;
+            }
+
+            draw(ctx) {
+                if (this.radius <= 0) return;
+
+                const pulseSize = this.owner ? 1 + Math.sin(this.pulsePhase) * 0.1 : 1;
+                const currentRadius = Math.max(1.1, this.radius * pulseSize);
+
+                const glowRadius = currentRadius + 8;
+                if (glowRadius <= 0) return;
+
+                const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowRadius);
+                
+                const color = this.owner ? this.owner.color : CONFIG.COLORS.NEUTRAL;
+                gradient.addColorStop(0, color + '88');
+                gradient.addColorStop(0.6, color + '44');
+                gradient.addColorStop(1, color + '00');
+
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, glowRadius, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotationAngle);
+                
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(0, 0, currentRadius, 0, Math.PI * 2);
+                ctx.fill();
+
+                const bodyGradient = ctx.createRadialGradient(
+                    -currentRadius * 0.6,
+                    -currentRadius * 0.6,
+                    0,
+                    0,
+                    0,
+                    currentRadius * 2.5
+                );
+                bodyGradient.addColorStop(0, color + 'FF');
+                bodyGradient.addColorStop(0.15, color + 'FF');
+                bodyGradient.addColorStop(0.5, this.darkenColor(color, 0.2) + 'FF');
+                bodyGradient.addColorStop(1, this.darkenColor(color, 0.1) + 'FF');
+                
+                ctx.fillStyle = bodyGradient;
+                ctx.beginPath();
+                ctx.arc(0, 0, currentRadius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.strokeStyle = color + '55';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(0, 0, currentRadius - 1, 0, Math.PI * 2);
+                ctx.stroke();
+
+                if (this.owner && this.owner.id === 0) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+                    ctx.font = `bold ${Math.max(24, currentRadius * 1.4)}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('₿', 0, 0);
+                    
+                    ctx.shadowColor = '#000000';
+                    ctx.shadowBlur = 4;
+                    ctx.fillText('₿', 0, 0);
+                    ctx.shadowBlur = 0;
+                }
+
+                ctx.restore();
+
+                if (this.selected) {
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, currentRadius + 5, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `bold ${Math.max(14, currentRadius / 2.5)}px Inter, Roboto Condensed, Arial, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 3;
+                ctx.strokeText(this.ships.toString(), this.x, this.y);
+                ctx.fillText(this.ships.toString(), this.x, this.y);
+
+                if (this.owner && this.productionProgress > 0) {
+                    const angle = (this.productionProgress * 2 * Math.PI) - Math.PI / 2;
+                    ctx.strokeStyle = this.owner.color;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, currentRadius + 8, -Math.PI / 2, angle);
+                    ctx.stroke();
+                }
+            }
+
+            containsPoint(x, y) {
+                const distance = Math.sqrt((x - this.x) ** 2 + (y - this.y) ** 2);
+                return distance <= this.radius;
+            }
+        }
+
+        class Ship {
+            constructor(startX, startY, targetPlanet, owner) {
+                this.x = startX;
+                this.y = startY;
+                this.targetPlanet = targetPlanet;
+                this.owner = owner;
+                this.speed = CONFIG.MAX_SHIP_SPEED + Math.random() * 10 - 5; 
+                this.vx = 0;
+                this.vy = 0;
+                this.updateVelocity();
+                this.trail = [];
+                this.maxTrailLength = 8;
+                this.arrived = false;
+                this.age = 0;
+                this.launchTime = Date.now() / 1000;
+                this.travelTime = this.calculateTravelTime();
+            }
+
+            updateVelocity() {
+                if (!this.targetPlanet) {
+                    this.vx = 0;
+                    this.vy = 0;
+                    return;
+                }
+                const dx = this.targetPlanet.x - this.x;
+                const dy = this.targetPlanet.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance > 0) {
+                    this.vx = (dx / distance) * this.speed;
+                    this.vy = (dy / distance) * this.speed;
+                } else {
+                    this.vx = 0;
+                    this.vy = 0;
+                }
+            }
+
+            calculateTravelTime() {
+                if (!this.targetPlanet) return 0;
+                const dx = this.targetPlanet.x - this.x;
+                const dy = this.targetPlanet.y - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                return distance / this.speed;
+            }
+
+            update(deltaTime) {
+                if (this.arrived) return;
+                this.age += deltaTime;
+
+                const currentTime = Date.now() / 1000; 
+                const timeSinceLaunch = currentTime - this.launchTime;
+
+                if (!this.targetPlanet || !gameState.planets.includes(this.targetPlanet)) {
+                    const mergeAnimation = gameState.mergeAnimations.find(
+                        anim => anim.losingPlanet === this.targetPlanet && gameState.planets.includes(anim.winningPlanet)
+                    );
+                    if (mergeAnimation) {
+                        this.targetPlanet = mergeAnimation.winningPlanet;
+                        this.updateVelocity();
+                    } else {
+                        this.arrived = true;
+                        this.vx = 0;
+                        this.vy = 0;
+                        gameState.explosions.push(new Explosion(this.x, this.y, this.owner.color, 'grey'));
+                    }
+                    return;
+                }
+
+                this.updateVelocity();
+
+                if (this.trail.length === 0 || 
+                    Math.sqrt((this.x - this.trail[this.trail.length - 1].x) ** 2 + 
+                             (this.y - this.trail[this.trail.length - 1].y) ** 2) > 5) {
+                    this.trail.push({ x: this.x, y: this.y });
+                    if (this.trail.length > this.maxTrailLength) {
+                        this.trail.shift();
+                    }
+                }
+
+                this.x += this.vx * deltaTime;
+                this.y += this.vy * deltaTime;
+
+                if (this.targetPlanet && Math.sqrt((this.targetPlanet.x - this.x) ** 2 + (this.targetPlanet.y - this.y) ** 2) < 8) {
+                    this.arrived = true;
+                }
+
+                this.timeSinceLaunch = timeSinceLaunch;
+            }
+
+            draw(ctx) {
+                if (gameState.stealthMode && this.owner.isAI) {
+                    const currentTime = Date.now() / 1000;
+                    const timeSinceLaunch = currentTime - this.launchTime;
+                    const distanceToTarget = this.targetPlanet 
+                        ? Math.sqrt((this.targetPlanet.x - this.x) ** 2 + (this.targetPlanet.y - this.y) ** 2)
+                        : Infinity;
+
+                    if (this.timeSinceLaunch > 0.3 && distanceToTarget > 20) {
+                        return; 
+                    }
+                }
+
+                if (this.trail.length > 1) {
+                    for (let i = 0; i < this.trail.length - 1; i++) {
+                        const alpha = (i + 1) / this.trail.length;
+                        const alphaHex = Math.floor(alpha * 255).toString(16).padStart(2, '0');
+                        ctx.strokeStyle = this.owner.color + alphaHex;
+                        ctx.lineWidth = alpha * 3;
+                        ctx.beginPath();
+                        ctx.moveTo(this.trail[i].x, this.trail[i].y);
+                        ctx.lineTo(this.trail[i + 1].x, this.trail[i + 1].y);
+                        ctx.stroke();
+                    }
+                }
+
+                const glowGradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 8);
+                glowGradient.addColorStop(0, this.owner.color);
+                glowGradient.addColorStop(1, this.owner.color + '00');
+                ctx.fillStyle = glowGradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 8, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = this.owner.color;
+                ctx.beginPath();
+                const angle = Math.atan2(this.vy, this.vx);
+                const size = 5;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(angle);
+                ctx.moveTo(size * 1.5, 0);
+                ctx.lineTo(-size, size * 0.7);
+                ctx.lineTo(-size * 0.5, 0);
+                ctx.lineTo(-size, -size * 0.7);
+                ctx.closePath();
+                ctx.fill();
+                
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                ctx.restore();
+            }
+        }
+
+        class SuperShip extends Ship {
+            constructor(startX, startY, targetPlanet, owner, shipCount) {
+                super(startX, startY, targetPlanet, owner);
+                this.shipCount = shipCount;
+                this.size = 9; 
+                this.speed = CONFIG.MAX_SHIP_SPEED - 10 + Math.random() * 10 - 5;
+                this.updateVelocity();
+                this.maxTrailLength = 10;
+            }
+
+            draw(ctx) {
+                if (gameState.stealthMode && this.owner.isAI) {
+                    const currentTime = Date.now() / 1000;
+                    const timeSinceLaunch = currentTime - this.launchTime;
+                    const distanceToTarget = this.targetPlanet 
+                        ? Math.sqrt((this.targetPlanet.x - this.x) ** 2 + (this.targetPlanet.y - this.y) ** 2)
+                        : Infinity;
+
+                    if (timeSinceLaunch > 0.5 && distanceToTarget > 20) return;
+                }
+
+                if (this.trail.length > 1) {
+                    for (let i = 0; i < this.trail.length - 1; i++) {
+                        const alpha = (i + 1) / this.trail.length;
+                        const alphaHex = Math.floor(alpha * 255).toString(16).padStart(2, '0');
+                        ctx.strokeStyle = this.owner.color + alphaHex;
+                        ctx.lineWidth = alpha * 3.5;
+                        ctx.beginPath();
+                        ctx.moveTo(this.trail[i].x, this.trail[i].y);
+                        ctx.lineTo(this.trail[i + 1].x, this.trail[i + 1].y);
+                        ctx.stroke();
+                    }
+                }
+
+                const glowGradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 12);
+                glowGradient.addColorStop(0, this.owner.color);
+                glowGradient.addColorStop(1, this.owner.color + '00');
+                ctx.fillStyle = glowGradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 12, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = this.owner.color;
+                ctx.beginPath();
+                const angle = Math.atan2(this.vy, this.vx);
+                const size = this.size;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(angle);
+
+                ctx.moveTo(size * 1.5, 0); 
+                ctx.lineTo(-size * 1.0, size * 1.2); 
+                ctx.lineTo(-size * 0.8, size * 0.6); 
+                ctx.lineTo(-size * 1.2, 0); 
+                ctx.lineTo(-size * 0.8, -size * 0.6);
+                ctx.lineTo(-size * 1.0, -size * 1.2);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(0, 0, size * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff66'; 
+                ctx.beginPath();
+                ctx.moveTo(-size * 1.2, size * 0.3);
+                ctx.lineTo(-size * 1.5, size * 0.2);
+                ctx.lineTo(-size * 1.5, -size * 0.2);
+                ctx.lineTo(-size * 1.2, -size * 0.3);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.2;
+                ctx.stroke(); 
+
+                ctx.restore();
+            }
+        }
+
+        class MotherShip extends Ship {
+
+            constructor(startX, startY, targetPlanet, owner, shipCount) {
+                super(startX, startY, targetPlanet, owner);
+                this.shipCount = shipCount;
+                this.size = 12; 
+                this.speed = CONFIG.MAX_SHIP_SPEED - 20 + Math.random() * 10 - 5;
+                this.updateVelocity();
+                this.maxTrailLength = 15;
+            }
+
+            draw(ctx) {
+                if (gameState.stealthMode && this.owner.isAI) {
+                    const currentTime = Date.now() / 1000;
+                    const timeSinceLaunch = currentTime - this.launchTime;
+                    const distanceToTarget = this.targetPlanet 
+                        ? Math.sqrt((this.targetPlanet.x - this.x) ** 2 + (this.targetPlanet.y - this.y) ** 2)
+                        : Infinity;
+
+                        if (timeSinceLaunch > 0.5 && distanceToTarget > 20) return;
+                    }
+
+                if (this.trail.length > 1) {
+                    for (let i = 0; i < this.trail.length - 1; i++) {
+                        const alpha = (i + 1) / this.trail.length;
+                        const alphaHex = Math.floor(alpha * 255).toString(16).padStart(2, '0');
+                        ctx.strokeStyle = this.owner.color + alphaHex;
+                        ctx.lineWidth = alpha * 5;
+                        ctx.beginPath();
+                        ctx.moveTo(this.trail[i].x, this.trail[i].y);
+                        ctx.lineTo(this.trail[i + 1].x, this.trail[i + 1].y);
+                        ctx.stroke();
+                    }
+                }
+
+                const glowGradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, 15);
+                glowGradient.addColorStop(0, this.owner.color);
+                glowGradient.addColorStop(1, this.owner.color + '00');
+                ctx.fillStyle = glowGradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 15, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = this.owner.color;
+                ctx.beginPath();
+                const angle = Math.atan2(this.vy, this.vx);
+                const size = this.size;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(angle);
+
+                ctx.moveTo(size * 2.0, 0); 
+                ctx.lineTo(-size * 1.5, size * 0.5); 
+                ctx.lineTo(-size * 1.5, -size * 0.5);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(size * 0.5, size * 0.8); 
+                ctx.lineTo(-size * 1.0, size * 0.8);
+                ctx.lineTo(-size * 1.0, size * 0.4);
+                ctx.lineTo(size * 0.5, size * 0.4);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(size * 0.5, -size * 0.8);
+                ctx.lineTo(-size * 1.0, -size * 0.8);
+                ctx.lineTo(-size * 1.0, -size * 0.4);
+                ctx.lineTo(size * 0.5, -size * 0.4);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(0, size * 0.9);
+                ctx.lineTo(-size * 0.8, size * 1.3);
+                ctx.lineTo(-size * 0.8, size * 0.7);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(0, -size * 0.9); 
+                ctx.lineTo(-size * 0.8, -size * 1.3);
+                ctx.lineTo(-size * 0.8, -size * 0.7);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(size * 1.5, 0, size * 0.3, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff66';
+                ctx.beginPath();
+                ctx.moveTo(-size * 1.5, size * 0.3);
+                ctx.lineTo(-size * 1.8, size * 0.2);
+                ctx.lineTo(-size * 1.8, -size * 0.2);
+                ctx.lineTo(-size * 1.5, -size * 0.3);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke(); 
+
+                ctx.restore();
+            }
+        }
+
+        class YouAreHereSign {
+            constructor(planet) {
+                this.planet = planet;
+                this.x = planet.x;
+                this.y = planet.y - planet.radius - 30; 
+                this.duration = 5; 
+                this.life = 0;
+                this.text = 'YOU ARE HERE';
+                this.arrowLength = 15;
+                this.arrowWidth = 2.5;
+                this.arrowheadSize = 5;
+            }
+
+            update(deltaTime) {
+                this.life += deltaTime;
+                this.x = this.planet.x;
+                this.y = this.planet.y - this.planet.radius - 30;
+            }
+
+            draw(ctx, scale) {
+                if (!this.planet) return;
+
+                const alpha = Math.max(0, 1 - (this.life / this.duration));
+                ctx.globalAlpha = alpha;
+
+                ctx.fillStyle = '#ff8800';
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2 * scale;
+                ctx.font = `${10 * scale}px Inter, Roboto Condensed, Arial, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                const textY = this.y - 10 * scale;
+                ctx.strokeText(this.text, this.x, textY);
+                ctx.fillText(this.text, this.x, textY);
+
+                const arrowStartY = textY; 
+                const arrowEndY = this.planet.y - this.planet.radius;
+                const shaftLength = this.arrowLength * scale * 0.75; 
+                const arrowheadLength = this.arrowLength * scale * 0.50;
+
+                ctx.beginPath();
+                ctx.moveTo(this.x - (this.arrowWidth * scale) / 2, arrowStartY);
+                ctx.lineTo(this.x - (this.arrowWidth * scale) / 2, arrowStartY + shaftLength);
+                ctx.lineTo(this.x - (this.arrowheadSize * scale), arrowStartY + shaftLength);
+                ctx.lineTo(this.x, arrowStartY + shaftLength + arrowheadLength); 
+                ctx.lineTo(this.x + (this.arrowheadSize * scale), arrowStartY + shaftLength);
+                ctx.lineTo(this.x + (this.arrowWidth * scale) / 2, arrowStartY + shaftLength);
+                ctx.lineTo(this.x + (this.arrowWidth * scale) / 2, arrowStartY);
+                ctx.closePath();
+                ctx.fillStyle = '#ff8800';
+                ctx.fill();
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 1 * scale;
+                ctx.stroke();
+
+                ctx.globalAlpha = 1.0;
+            }
+
+            isDead() {
+                return this.life >= this.duration;
+            }
+        }
+
+        class BackgroundParticle {
+
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.size = Math.random() * 0.7 + 0.3;
+                this.baseAlpha = Math.random() * 0.5 + 0.3;
+                this.twinkleSpeed = Math.random() * 2 + 1;
+                this.twinklePhase = Math.random() * Math.PI * 2;
+                this.color = Math.random() < 0.1 ? this.getNebulaColor() : '#ffffff';
+            }
+
+            getNebulaColor() {
+                const colors = ['#4488ff', '#ff6644', '#44ff88', '#ff44aa', '#ffaa44'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update(deltaTime) {
+                this.twinklePhase += deltaTime * this.twinkleSpeed;
+            }
+
+            draw(ctx) {
+                const twinkle = Math.sin(this.twinklePhase) * 0.3 + 0.7;
+                const currentAlpha = this.baseAlpha * twinkle;
+                
+                ctx.fillStyle = this.color === '#ffffff' ? 
+                    `rgba(255, 255, 255, ${currentAlpha})` : 
+                    `${this.color}${Math.floor(currentAlpha * 255).toString(16).padStart(2, '0')}`;
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                if (this.color === '#ffffff' && this.size > 0.5) {
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${currentAlpha * 0.5})`;
+                    ctx.lineWidth = 0.3;
+                    ctx.beginPath();
+                    ctx.moveTo(this.x - this.size * 1.5, this.y);
+                    ctx.lineTo(this.x + this.size * 1.5, this.y);
+                    ctx.moveTo(this.x, this.y - this.size * 1.5);
+                    ctx.lineTo(this.x, this.y + this.size * 1.5);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        class NebulaCloud {
+
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 100 + 50;
+                this.color = this.getNebulaColor();
+                this.alpha = Math.random() * 0.4 + 0.5;
+                this.vx = (Math.random() - 0.5) * 5;
+                this.vy = (Math.random() - 0.5) * 5;
+            }
+
+            getNebulaColor() {
+                const colors = ['#2244aa', '#aa2244', '#22aa44', '#aa4422', '#4422aa'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update(deltaTime) {
+                this.x += this.vx * deltaTime;
+                this.y += this.vy * deltaTime;
+
+                if (this.x < -this.size - canvas.width / 2) this.x = canvas.width * 1.5 + this.size;
+                if (this.x > canvas.width * 1.5 + this.size) this.x = -this.size - canvas.width / 2;
+                if (this.y < -this.size - canvas.height / 2) this.y = canvas.height * 1.5 + this.size;
+                if (this.y > canvas.height * 1.5 + this.size) this.y = -this.size - canvas.height / 2;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+                gradient.addColorStop(0, this.color + '33');
+                gradient.addColorStop(0.7, this.color + '11');
+                gradient.addColorStop(1, this.color + '00');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class ShootingStar {
+
+            constructor() {
+                const side = Math.floor(Math.random() * 4);
+                let x, y, vx, vy;
+                const speed = 200 + Math.random() * 100;
+                
+                const offsetX = gameState.cameraOffsetX;
+                const offsetY = gameState.cameraOffsetY;
+                
+                if (side === 0) {
+                    x = -offsetX;
+                    y = Math.random() * canvas.height - offsetY;
+                    vx = speed;
+                    vy = (Math.random() - 0.5) * speed * 0.5;
+                } else if (side === 1) {
+                    x = canvas.width - offsetX;
+                    y = Math.random() * canvas.height - offsetY;
+                    vx = -speed;
+                    vy = (Math.random() - 0.5) * speed * 0.5;
+                } else if (side === 2) {
+                    x = Math.random() * canvas.width - offsetX;
+                    y = -offsetY;
+                    vx = (Math.random() - 0.5) * speed * 0.5;
+                    vy = speed;
+                } else {
+                    x = Math.random() * canvas.width - offsetX;
+                    y = canvas.height - offsetY;
+                    vx = (Math.random() - 0.5) * speed * 0.5;
+                    vy = -speed;
+                }
+
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.life = 0;
+                this.maxLife = 3 + Math.random() * 2;
+                this.trail = [];
+                this.maxTrailLength = 20;
+            }
+
+            update(deltaTime) {
+                this.x += this.vx * deltaTime;
+                this.y += this.vy * deltaTime;
+                this.life += deltaTime;
+
+                this.trail.push({ x: this.x, y: this.y });
+                if (this.trail.length > this.maxTrailLength) {
+                    this.trail.shift();
+                }
+            }
+
+            draw(ctx) {
+                if (this.trail.length > 1) {
+                    for (let i = 0; i < this.trail.length - 1; i++) {
+                        const alpha = (i + 1) / this.trail.length * (1 - this.life / this.maxLife) * 0.8;
+                        const alphaHex = Math.floor(alpha * 255).toString(16).padStart(2, '0');
+                        ctx.strokeStyle = `#ffffff${alphaHex}`;
+                        ctx.lineWidth = (this.size * (i + 1) / this.trail.length) * 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(this.trail[i].x, this.trail[i].y);
+                        ctx.lineTo(this.trail[i + 1].x, this.trail[i + 1].y);
+                        ctx.stroke();
+                    }
+                }
+
+                ctx.fillStyle = `rgba(255, 255, 255, ${(1 - this.life / this.maxLife) * 0.8})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            isDead() {
+                return this.life > this.maxLife || 
+                       this.x < -50 - gameState.cameraOffsetX || 
+                       this.x > canvas.width + 50 - gameState.cameraOffsetX || 
+                       this.y < -50 - gameState.cameraOffsetY || 
+                       this.y > canvas.height + 50 - gameState.cameraOffsetY;
+            }
+        }
+
+        class Spoon {
+
+            constructor() {
+                const side = Math.floor(Math.random() * 4);
+                let x, y, vx, vy;
+                const speed = 50 + Math.random() * 25; 
+
+                const offsetX = gameState.cameraOffsetX;
+                const offsetY = gameState.cameraOffsetY;
+
+                if (side === 0) {
+                    x = -offsetX;
+                    y = Math.random() * canvas.height - offsetY;
+                    vx = speed;
+                    vy = (Math.random() - 0.5) * speed * 0.3;
+                } else if (side === 1) { 
+                    x = canvas.width - offsetX;
+                    y = Math.random() * canvas.height - offsetY;
+                    vx = -speed;
+                    vy = (Math.random() - 0.5) * speed * 0.3;
+                } else if (side === 2) { 
+                    x = Math.random() * canvas.width - offsetX;
+                    y = -offsetY;
+                    vx = (Math.random() - 0.5) * speed * 0.3;
+                    vy = speed;
+                } else { 
+                    x = Math.random() * canvas.width - offsetX;
+                    y = canvas.height - offsetY;
+                    vx = (Math.random() - 0.5) * speed * 0.3;
+                    vy = -speed;
+                }
+
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.size = 20;
+                this.life = 0;
+                this.maxLife = 5 + Math.random() * 10; 
+                this.rotation = 0; 
+                this.rotationSpeed = (Math.random() - 0.5) * 4; 
+            }
+
+            update(deltaTime) {
+                this.x += this.vx * deltaTime;
+                this.y += this.vy * deltaTime;
+                this.life += deltaTime;
+                this.rotation += this.rotationSpeed * deltaTime; 
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(Math.atan2(this.vy, this.vx) + this.rotation);
+                const alpha = (1 - this.life / this.maxLife) * 0.8;
+                ctx.fillStyle = `rgba(200, 200, 200, ${alpha})`; 
+                
+                ctx.font = `${this.size * 0.75}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🥄', 0, 0);
+
+                ctx.restore();
+            }
+
+            isDead() {
+                return this.life > this.maxLife ||
+                       this.x < -50 - gameState.cameraOffsetX ||
+                       this.x > canvas.width + 50 - gameState.cameraOffsetX ||
+                       this.y < -50 - gameState.cameraOffsetY ||
+                       this.y > canvas.height + 50 - gameState.cameraOffsetY;
+            }
+
+            containsPoint(x, y) {
+                const dx = x - this.x;
+                const dy = y - this.y;
+                const angle = Math.atan2(this.vy, this.vx) + this.rotation; 
+                const rotX = dx * Math.cos(-angle) - dy * Math.sin(-angle);
+                const rotY = dx * Math.sin(-angle) + dy * Math.cos(-angle);
+                const hitboxWidth = this.size * 2.0;
+                const hitboxHeight = this.size * 0.8;
+                return Math.abs(rotX) <= hitboxWidth / 2 && Math.abs(rotY) <= hitboxHeight / 2;
+            }
+        }
+
+        class Dolphin {
+
+            constructor() {
+                const side = Math.floor(Math.random() * 4);
+                let x, y, vx, vy;
+                const speed = 50 + Math.random() * 25; 
+
+                const offsetX = gameState.cameraOffsetX;
+                const offsetY = gameState.cameraOffsetY;
+
+                if (side === 0) { 
+                    x = -offsetX;
+                    y = Math.random() * canvas.height - offsetY;
+                    vx = speed;
+                    vy = (Math.random() - 0.5) * speed * 0.3;
+                } else if (side === 1) { 
+                    x = canvas.width - offsetX;
+                    y = Math.random() * canvas.height - offsetY;
+                    vx = -speed;
+                    vy = (Math.random() - 0.5) * speed * 0.3;
+                } else if (side === 2) { 
+                    x = Math.random() * canvas.width - offsetX;
+                    y = -offsetY;
+                    vx = (Math.random() - 0.5) * speed * 0.3;
+                    vy = speed;
+                } else { 
+                    x = Math.random() * canvas.width - offsetX;
+                    y = canvas.height - offsetY;
+                    vx = (Math.random() - 0.5) * speed * 0.3;
+                    vy = -speed;
+                }
+
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.size = 20;
+                this.life = 0;
+                this.maxLife = 5 + Math.random() * 10; 
+                this.rotation = 0; 
+                this.rotationSpeed = (Math.random() - 0.5) * 4; 
+            }
+
+            update(deltaTime) {
+                this.x += this.vx * deltaTime;
+                this.y += this.vy * deltaTime;
+                this.life += deltaTime;
+                this.rotation += this.rotationSpeed * deltaTime; 
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                
+                ctx.rotate(Math.atan2(this.vy, this.vx) + this.rotation);
+                const alpha = (1 - this.life / this.maxLife) * 0.8;
+                ctx.fillStyle = `rgba(200, 200, 200, ${alpha})`; 
+
+                ctx.font = `${this.size * 0.75}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🐬', 0, 0); 
+
+                ctx.restore();
+            }
+
+            isDead() {
+                return this.life > this.maxLife ||
+                       this.x < -50 - gameState.cameraOffsetX ||
+                       this.x > canvas.width + 50 - gameState.cameraOffsetX ||
+                       this.y < -50 - gameState.cameraOffsetY ||
+                       this.y > canvas.height + 50 - gameState.cameraOffsetY;
+            }
+
+            containsPoint(x, y) {
+                const dx = x - this.x;
+                const dy = y - this.y;
+                const angle = Math.atan2(this.vy, this.vx) + this.rotation; 
+                const rotX = dx * Math.cos(-angle) - dy * Math.sin(-angle);
+                const rotY = dx * Math.sin(-angle) + dy * Math.cos(-angle);
+                const hitboxWidth = this.size * 2.0;
+                const hitboxHeight = this.size * 0.8;
+                return Math.abs(rotX) <= hitboxWidth / 2 && Math.abs(rotY) <= hitboxHeight / 2;
+            }
+        }
+
+        class UFO {
+
+            constructor() {
+                const side = Math.floor(Math.random() * 4);
+                let x, y;
+                const speed = 50 + Math.random() * 25; 
+
+                const offsetX = gameState.cameraOffsetX;
+                const offsetY = gameState.cameraOffsetY;
+
+                if (side === 0) {
+                    x = -offsetX;
+                    y = Math.random() * canvas.height - offsetY;
+                } else if (side === 1) { 
+                    x = canvas.width - offsetX;
+                    y = Math.random() * canvas.height - offsetY;
+                } else if (side === 2) { 
+                    x = Math.random() * canvas.width - offsetX;
+                    y = -offsetY;
+                } else { 
+                    x = Math.random() * canvas.width - offsetX;
+                    y = canvas.height - offsetY;
+                }
+
+                this.x = x;
+                this.y = y;
+                this.baseX = x;
+                this.baseY = y;
+                this.speed = speed;
+                this.size = 20; 
+                this.life = 0;
+                this.maxLife = 5 + Math.random() * 10; 
+                this.time = 0; 
+                this.patternAmplitude = 50; 
+                this.patternFrequency = 0.5;
+                this.vx = side === 0 ? speed : side === 1 ? -speed : (Math.random() - 0.5) * speed * 0.3;
+                this.vy = side === 2 ? speed : side === 3 ? -speed : (Math.random() - 0.5) * speed * 0.3;
+            }
+
+            update(deltaTime) {
+                this.time += deltaTime;
+                this.life += deltaTime;
+
+                this.baseX += this.vx * deltaTime;
+                this.baseY += this.vy * deltaTime;
+
+                if (Math.abs(this.vx) > Math.abs(this.vy)) {
+                    this.x = this.baseX;
+                    this.y = this.baseY + Math.sin(this.time * this.patternFrequency * Math.PI * 2) * this.patternAmplitude;
+                } else {
+                    this.x = this.baseX + Math.sin(this.time * this.patternFrequency * Math.PI * 2) * this.patternAmplitude;
+                    this.y = this.baseY;
+                }
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                const alpha = (1 - this.life / this.maxLife) * 0.8;
+                ctx.fillStyle = `rgba(200, 200, 200, ${alpha})`; 
+
+                ctx.font = `${this.size * 0.75}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🛸', 0, 0); 
+
+                ctx.restore();
+            }
+
+            isDead() {
+                return this.life > this.maxLife ||
+                       this.x < -50 - gameState.cameraOffsetX ||
+                       this.x > canvas.width + 50 - gameState.cameraOffsetX ||
+                       this.y < -50 - gameState.cameraOffsetY ||
+                       this.y > canvas.height + 50 - gameState.cameraOffsetY;
+            }
+
+            containsPoint(x, y) {
+                const dx = x - this.x;
+                const dy = y - this.y;
+                const hitboxWidth = this.size * 2.0;
+                const hitboxHeight = this.size * 0.8;
+                return Math.abs(dx) <= hitboxWidth / 2 && Math.abs(dy) <= hitboxHeight / 2;
+            }
+        }
+
+        class Explosion {
+
+            constructor(x, y, color, type = 'colorful') {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.type = type;
+                this.particles = [];
+                this.life = 0;
+                this.maxLife = 1.5;
+
+                if (this.type === 'colorful') {
+                    for (let i = 0; i < 12; i++) {
+                        const angle = (i / 12) * Math.PI * 2;
+                        const speed = 50 + Math.random() * 100;
+                        this.particles.push({
+                            x: x,
+                            y: y,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed,
+                            life: 0,
+                            maxLife: 0.5 + Math.random() * 1,
+                            size: Math.random() * 4 + 2,
+                            type: 'large'
+                        });
+                    }
+
+                    for (let i = 0; i < 20; i++) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const speed = 30 + Math.random() * 80;
+                        this.particles.push({
+                            x: x + (Math.random() - 0.5) * 10,
+                            y: y + (Math.random() - 0.5) * 10,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed,
+                            life: 0,
+                            maxLife: 0.3 + Math.random() * 0.8,
+                            size: Math.random() * 1.5 + 0.5,
+                            type: 'tiny'
+                        });
+                    }
+
+                    for (let i = 0; i < 15; i++) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const speed = 80 + Math.random() * 120;
+                        this.particles.push({
+                            x: x + (Math.random() - 0.5) * 5,
+                            y: y + (Math.random() - 0.5) * 5,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed,
+                            life: 0,
+                            maxLife: 1 + Math.random() * 1.5,
+                            size: Math.random() * 1 + 0.3,
+                            type: 'grey_tiny'
+                        });
+                    }
+                } else if (this.type === 'grey') {
+                    for (let i = 0; i < 8; i++) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const speed = 100 + Math.random() * 150;
+                        this.particles.push({
+                            x: x + (Math.random() - 0.5) * 5,
+                            y: y + (Math.random() - 0.5) * 5,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed,
+                            life: 0,
+                            maxLife: 1.2 + Math.random() * 1.8,
+                            size: Math.random() * 0.6 + 0.4,
+                            type: 'grey_tiny'
+                        });
+                    }
+                }
+            }
+
+            update(deltaTime) {
+                this.life += deltaTime;
+
+                this.particles.forEach(particle => {
+                    particle.x += particle.vx * deltaTime;
+                    particle.y += particle.vy * deltaTime;
+                    particle.vx *= 0.95;
+                    particle.vy *= 0.95;
+                    particle.life += deltaTime;
+                });
+            }
+
+            draw(ctx) {
+                this.particles.forEach(particle => {
+                    if (particle.life < particle.maxLife) {
+                        const alpha = 1 - (particle.life / particle.maxLife);
+                        const alphaHex = Math.floor(alpha * 255).toString(16).padStart(2, '0');
+
+                        if (particle.type === 'large') {
+                            ctx.fillStyle = this.color + alphaHex;
+                            ctx.beginPath();
+                            ctx.arc(particle.x, particle.y, particle.size * alpha, 0, Math.PI * 2);
+                            ctx.fill();
+                        } else if (particle.type === 'tiny') {
+                            ctx.fillStyle = '#ffffff' + alphaHex;
+                            ctx.beginPath();
+                            ctx.arc(particle.x, particle.y, particle.size * alpha, 0, Math.PI * 2);
+                            ctx.fill();
+                        } else if (particle.type === 'grey_tiny') {
+                            ctx.fillStyle = '#888888' + alphaHex;
+                            ctx.beginPath();
+                            ctx.arc(particle.x, particle.y, particle.size * alpha, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                });
+            }
+
+            isDead() {
+                return this.life > this.maxLife;
+            }
+        }
+
+        function updateAICount(value) {
+            selectedAICount = parseInt(value);
+            gameState.aiCount = selectedAICount;
+            gameState.planetSlider.min = selectedAICount + 1;
+            if (selectedPlanetCount < selectedAICount + 1) {
+                selectedPlanetCount = selectedAICount + 1;
+                gameState.planetCount = selectedPlanetCount;
+            }
+        }
+
+        function updatePlanetCount(value) {
+            const minPlanets = selectedAICount + 2;
+            selectedPlanetCount = Math.max(parseInt(value), minPlanets);
+            gameState.planetCount = selectedPlanetCount;
+        }
+
+        function updateDifficulty(value) {
+            selectedDifficulty = value;
+            gameState.difficulty = value;
+            switch (value) {
+                case 'EASY':
+                    CONFIG.PLAYER_SHIP_PRODUCTION_RATE = 1.2;
+                    CONFIG.AI_SHIP_PRODUCTION_RATE = 0.6;
+                    CONFIG.AI_DECISION_INTERVAL = 2500;
+                    break;
+                case 'MEDIUM':
+                    CONFIG.PLAYER_SHIP_PRODUCTION_RATE = 0.8;
+                    CONFIG.AI_SHIP_PRODUCTION_RATE = 0.8;
+                    CONFIG.AI_DECISION_INTERVAL = 1500;
+                    break;
+                case 'HARD':
+                    CONFIG.PLAYER_SHIP_PRODUCTION_RATE = 0.6;
+                    CONFIG.AI_SHIP_PRODUCTION_RATE = 1.0;
+                    CONFIG.AI_DECISION_INTERVAL = 800;
+                    break;
+            }
+        }
+
+        class MergeAnimation {
+            constructor(winningPlanet, losingPlanet) {
+                this.winningPlanet = winningPlanet;
+                this.losingPlanet = losingPlanet;
+                this.duration = 0.5; 
+                this.life = 0;
+                this.startWinningRadius = winningPlanet.radius;
+                this.startWinningShips = winningPlanet.ships;
+                this.startLosingRadius = losingPlanet.radius;
+                this.startLosingShips = losingPlanet.ships;
+                this.startLosingX = losingPlanet.x;
+                this.startLosingY = losingPlanet.y;
+                this.finalShips = winningPlanet.ships + losingPlanet.ships;
+                const newArea = Math.PI * winningPlanet.radius * winningPlanet.radius +
+                                Math.PI * losingPlanet.radius * losingPlanet.radius;
+                this.finalRadius = Math.sqrt(newArea / Math.PI); 
+            }
+
+update(deltaTime) {
+    this.life += deltaTime;
+    const progress = Math.min(this.life / this.duration, 1);
+
+    this.losingPlanet.x = this.startLosingX + (this.winningPlanet.x - this.startLosingX) * progress;
+    this.losingPlanet.y = this.startLosingY + (this.winningPlanet.y - this.startLosingY) * progress;
+    const newRadius = Math.max(0.1, this.startLosingRadius * (1 - progress));
+    this.losingPlanet.radius = newRadius;
+    this.losingPlanet.ships = Math.round(this.startLosingShips * (1 - progress));
+
+    this.winningPlanet.radius = Math.max(this.startWinningRadius, this.startWinningRadius + (this.finalRadius - this.startWinningRadius) * progress);
+    if (progress < 1) {
+        this.winningPlanet.ships = Math.round(this.startWinningShips + (this.finalShips - this.startWinningShips) * progress);
+    } else {
+        this.winningPlanet.ships = this.finalShips; 
+    }
+
+    this.winningPlanet.productionRate = (this.winningPlanet.radius / CONFIG.PLANET_MAX_RADIUS) *
+        (this.winningPlanet.owner && this.winningPlanet.owner.isAI ? CONFIG.AI_SHIP_PRODUCTION_RATE : CONFIG.PLAYER_SHIP_PRODUCTION_RATE);
+}
+
+
+        draw(ctx) {
+            if (this.losingPlanet.radius > 0) {
+                this.losingPlanet.draw(ctx);
+            }
+            this.winningPlanet.draw(ctx);
+        }
+
+        isDead() {
+    if (this.life >= this.duration) {
+        this.winningPlanet.ships = this.finalShips; 
+        return true;
+    }
+    return false;
+}
+        }
+
+        class Notification {
+
+            constructor(text, x, y, duration = 28) { 
+                this.text = text;
+                this.x = x;
+                this.y = y;
+                this.initialY = y;
+                this.duration = duration;
+                this.life = 0;
+                this.scrollSpeed = 25;
+            }
+
+            update(deltaTime) {
+                this.life += deltaTime;
+                this.y -= this.scrollSpeed * deltaTime;
+            }
+
+            draw(ctx, scale) {
+                const alpha = Math.max(0, 1 - (this.life / this.duration));
+                ctx.fillStyle = `rgba(200, 200, 200, ${alpha * 0.7})`;
+                ctx.font = `bold ${18 * scale}px Inter, Roboto Condensed, Arial, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.text, this.x, this.y);
+            }
+
+            isDead() {
+                return this.life > this.duration || this.y < this.initialY - 100;
+            }
+        }
+
+        let lastGlobalNotifiedHeight = null;
+        const processedBlockHeights = new Set();
+        let blockHeightDisplayInstance = null;
+
+        class BlockHeightDisplay {
+
+            constructor() {
+                if (blockHeightDisplayInstance) {
+                    return blockHeightDisplayInstance;
+                }
+                blockHeightDisplayInstance = this;
+
+                this.blockHeight = 0;
+                this.lastBlockHeight = 0;
+                this.animationTime = 0;
+                this.animationDuration = 1.5;
+                this.isAnimating = false;
+                this.isFetching = false;
+                this.initialized = false;
+                this.hashSurgeDuration = 0;
+                this.hashSurgeActive = false;
+                this.processedBlockHeights = new Set();
+                this.scheduleFetch();
+            }
+
+            async fetchBlockHeight() {
+                if (this.isFetching) {
+                    return;
+                }
+                this.isFetching = true;
+                try {
+                    const response = await fetch('https://mempool.space/api/blocks/tip/height');
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    const newHeight = await response.json();
+
+                    if (!this.initialized) {
+                        this.blockHeight = newHeight;
+                        this.processedBlockHeights.add(newHeight);
+                        this.initialized = true;
+                    } else if (newHeight > this.blockHeight && !this.processedBlockHeights.has(newHeight)) {
+                        this.processedBlockHeights.add(newHeight);
+                        this.lastBlockHeight = this.blockHeight;
+                        this.blockHeight = newHeight;
+                        this.isAnimating = true;
+                        this.animationTime = 0;
+
+                        if (this.hashSurgeActive) {
+                            this.hashSurgeDuration += 30;
+                        } else {
+                            this.hashSurgeActive = true;
+                            this.hashSurgeDuration = 30;
+                            if (gameState.planets) {
+                                gameState.planets.forEach(planet => {
+                                    planet.productionMultiplier = 1;
+                                    planet.multiplierDuration = 0;
+                                    planet.applyProductionBoost(2, 30);
+                                });
+                            }
+                        }
+
+                        if (gameState && gameState.gamePhase !== 'menu') {
+                            gameState.notifications.push(
+                                new Notification(
+                                    `New Block Height: ${this.blockHeight}!`,
+                                    canvas.width / 2,
+                                    canvas.height - 50 - (gameState.notifications.length * 20),
+                                    28
+                                )
+                            );
+                        }
+                    } else {
+                    }
+                } catch (error) {
+                } finally {
+                    this.isFetching = false;
+                }
+            }
+
+            scheduleFetch() {
+                if (this.fetchInterval) {
+                    clearInterval(this.fetchInterval);
+                }
+                this.fetchBlockHeight();
+                this.fetchInterval = setInterval(() => {
+                    this.fetchBlockHeight();
+                }, 10000); 
+            }
+
+            update(deltaTime) {
+                if (this.isAnimating) {
+                    this.animationTime += deltaTime;
+                    if (this.animationTime >= this.animationDuration) {
+                        this.isAnimating = false;
+                        this.animationTime = 0;
+                    }
+                }
+                if (this.hashSurgeActive) {
+                    this.hashSurgeDuration -= deltaTime;
+                    if (this.hashSurgeDuration <= 0) {
+                        this.hashSurgeActive = false;
+                        this.hashSurgeDuration = 0;
+                        if (gameState.planets) {
+                            gameState.planets.forEach(planet => {
+                                planet.productionMultiplier = 1;
+                                planet.multiplierDuration = 0;
+                                planet.productionRate = planet.baseProductionRate;
+                            });
+                        }
+                        
+                        if (!achievements['survive-first-hash-surge'] && gameState.gamePhase === 'playing') {
+                            unlockAchievement('survive-first-hash-surge');
+                        }
+                    }
+                }
+            }
+
+            draw(ctx, scale) {
+                const x = canvas.width - 15 * scale;
+                const y = 15 * scale;
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'top';
+                ctx.font = `bold ${12 * scale}px Inter, Roboto Condensed, Arial, sans-serif`;
+
+                let alpha = this.isAnimating ? 0.5 + 0.5 * Math.sin((this.animationTime / this.animationDuration) * Math.PI * 4) : 1;
+                ctx.fillStyle = `rgba(255, 136, 0, ${alpha})`;
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2 * scale;
+
+                ctx.shadowColor = '#000000';
+                ctx.shadowBlur = 2;
+                ctx.strokeText(`Block Height: ${this.blockHeight}`, x, y);
+                ctx.fillText(`Block Height: ${this.blockHeight}`, x, y);
+                ctx.shadowBlur = 0;
+
+                if (this.hashSurgeActive && gameState.gamePhase !== 'menu') {
+                    const countdown = Math.ceil(this.hashSurgeDuration);
+                    ctx.fillStyle = `rgba(255, 136, 0, ${alpha})`;
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 2 * scale;
+                    ctx.strokeText(`Hash Surge: ${countdown}s`, x, y + 20 * scale);
+                    ctx.fillText(`Hash Surge: ${countdown}s`, x, y + 20 * scale);
+                }
+            }
+
+            destroy() {
+                if (this.fetchInterval) {
+                    clearInterval(this.fetchInterval);
+                    this.fetchInterval = null;
+                }
+                this.hashSurgeActive = false;
+                this.hashSurgeDuration = 0;
+                blockHeightDisplayInstance = null; 
+            }
+        }
+
+        class GameState {
+
+            constructor() {
+                this.gamePhase = 'menu';
+                this.planets = [];
+                this.ships = [];
+                this.particles = [];
+                this.nebulae = [];
+                this.shootingStars = [];
+                this.explosions = [];
+                this.mergeAnimations = [];
+                this.players = [];
+                this.selectedPlanets = [];
+                this.mousePos = { x: 0, y: 0 };
+                this.aiTimer = 0;
+                const savedShowControls = localStorage.getItem('hashcon-showControls');
+                this.showControls = savedShowControls !== null ? JSON.parse(savedShowControls) : true; 
+                this.shiftPressed = false;
+                this.isPaused = false;
+                this.showQuitConfirm = false;
+                this.lastClickTime = 0;
+                this.cameraOffsetX = 0;
+                this.cameraOffsetY = 0;
+                this.cameraDriftPhase = Math.random() * Math.PI * 2;
+                this.lostStartingPlanet = false;
+                this.notifications = [];
+                this.stealthModeButton = { x: 0, y: 0, width: 200, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.stealthMode = false;
+                this.billiardsModeButton = { x: 0, y: 0, width: 200, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.billiardsMode = false;
+                this.showMenuInstructions = false;
+                this.showAchievements = false;
+                this.achievementsPanel = { x: 0, y: 0, width: 600, height: 600 };
+                this.achievementsCloseButton = { x: 0, y: 0, width: 200, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.scrollOffset = 0;
+                this.maxScrollOffset = 0;
+                this.resetAchievementsButton = { x: 0, y: 0, width: 200, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.showResetConfirm = false;
+                this.resetConfirmPanel = { x: 0, y: 0, width: 300, height: 120 };
+                this.resetYesButton = { x: 0, y: 0, width: 100, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.resetNoButton = { x: 0, y: 0, width: 100, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.aiCount = selectedAICount;
+                this.planetCount = selectedPlanetCount;
+                this.difficulty = selectedDifficulty;
+                this.difficultyOptions = ['EASY', 'MEDIUM', 'HARD'];
+                this.startButton = { x: 0, y: 0, width: 200, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.instructionsButton = { x: 0, y: 0, width: 200, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.achievementsButton = { x: 0, y: 0, width: 200, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.aiSlider = { x: 0, y: 0, width: 200, height: 10, min: 1, max: 10, value: selectedAICount };
+                this.planetSlider = { x: 0, y: 0, width: 200, height: 10, min: selectedAICount + 1, max: 30, value: selectedPlanetCount };
+                this.difficultySlider = { x: 0, y: 0, width: 200, height: 10, min: 0, max: 2, value: this.difficultyOptions.indexOf(selectedDifficulty) };
+                this.instructionsPanel = { x: 0, y: 0, width: 600, height: 400 };
+                this.mainMenuButton = { x: 0, y: 0, width: 200, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.yesButton = { x: 0, y: 0, width: 100, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.noButton = { x: 0, y: 0, width: 100, height: 50, fadeProgress: 0, targetFade: 0 };
+                this.isDragging = false;
+                this.draggingSlider = null;
+                this.sheenPhase = 0;
+                this.playerPlanets = 0;
+                this.enemyPlanets = 0;
+                this.playerShips = 0;
+                this.enemyShips = 0;
+                this.gameTime = '0:00';
+                this.gameStartTime = null;
+                this.tookNeutralPlanet = false;
+                this.lostCapturedPlanet = false;
+                this.mergeCount = 0;
+                this.neutralPlanetsConquered = 0; 
+                this.blockHeightDisplay = new BlockHeightDisplay();
+                this.spoon = null; 
+                this.gamesSinceLastSpoon = 0;
+                this.spoonSpawnChance = 0.2; 
+                this.spoonSpawnTimer = -1;
+                this.dolphin = null; 
+                this.gamesSinceLastDolphin = 0; 
+                this.dolphinSpawnChance = 0.2; 
+                this.dolphinSpawnTimer = -1;
+                this.ufo = null; 
+                this.gamesSinceLastUFO = 0;
+                this.ufoSpawnChance = 0.2; 
+                this.ufoSpawnTimer = -1;
+                this.planetsConqueredThisGame = 0; 
+                this.pieChartData = [];
+                this.achievementsUpArrow = { x: 0, y: 0, width: 20, height: 20, fadeProgress: 0, targetFade: 0 };
+                this.achievementsDownArrow = { x: 0, y: 0, width: 20, height: 20, fadeProgress: 0, targetFade: 0 };
+                this.youAreHereSign = null;
+                 this.hasShownYouAreHereSign = false;
+            }
+
+            reset() {
+                this.gamePhase = 'playing';
+                this.planets = [];
+                this.ships = [];
+                this.particles = [];
+                this.nebulae = [];
+                this.shootingStars = [];
+                this.explosions = [];
+                this.mergeAnimations = [];
+                this.selectedPlanets = [];
+                this.aiTimer = 0;
+                this.isPaused = false;
+                this.showQuitConfirm = false;
+                this.showMenuInstructions = false;
+                this.showAchievements = false;
+                this.lastClickTime = 0;
+                this.gameStartTime = Date.now();
+                this.cameraOffsetX = 0;
+                this.cameraOffsetY = 0;
+                this.cameraDriftPhase = Math.random() * Math.PI * 2;
+                this.lostStartingPlanet = false;
+                this.tookNeutralPlanet = false;
+                this.lostCapturedPlanet = false;
+                this.mergeCount = 0;
+                this.neutralPlanetsConquered = 0; 
+                this.startButton.fadeProgress = 0;
+                this.startButton.targetFade = 0;
+                this.instructionsButton.fadeProgress = 0;
+                this.instructionsButton.targetFade = 0;
+                this.achievementsButton.fadeProgress = 0;
+                this.achievementsButton.targetFade = 0;
+                this.mainMenuButton.fadeProgress = 0;
+                this.mainMenuButton.targetFade = 0;
+                this.yesButton.fadeProgress = 0;
+                this.yesButton.targetFade = 0;
+                this.noButton.fadeProgress = 0;
+                this.noButton.targetFade = 0;
+                this.sheenPhase = 0;
+                this.playerPlanets = 0;
+                this.enemyPlanets = 0;
+                this.playerShips = 0;
+                this.enemyShips = 0;
+                this.gameTime = '0:00';
+                this.planetsConqueredThisGame = 0;
+                this.spoon = null;
+                this.spoonSpawnTimer = -1;
+                this.gamesSinceLastSpoon += 1;
+                    const spawnChance = achievements['there-is-no-spoon']
+                    ? 0.2 
+                    : this.gamesSinceLastSpoon >= 10 ? 0.2 : this.spoonSpawnChance;
+                if (Math.random() < spawnChance) {
+                    this.spoonSpawnTimer = Math.random() * 120;
+                    this.gamesSinceLastSpoon = 0;}
+
+                this.dolphin = null;
+                this.dolphinSpawnTimer = -1;
+                this.gamesSinceLastDolphin += 1;
+
+                 this.youAreHereSign = null;
+                 this.hasShownYouAreHereSign = false;
+
+                const dolphinSpawnChance = achievements['so-long-thanks']
+                    ? 0.2 
+                    : this.gamesSinceLastDolphin >= 10 ? 0.2 : this.dolphinSpawnChance;
+                if (Math.random() < dolphinSpawnChance) {
+                    this.dolphinSpawnTimer = Math.random() * 120;
+                    this.gamesSinceLastDolphin = 0;
+                }
+
+                this.ufo = null;
+                this.ufoSpawnTimer = -1;
+                this.gamesSinceLastUFO += 1;
+                const ufoSpawnChance = achievements['we-come-in-peace']
+                    ? 0.2
+                    : this.gamesSinceLastUFO >= 10 ? 0.2 : this.ufoSpawnChance;
+                if (Math.random() < ufoSpawnChance) {
+                    this.ufoSpawnTimer = Math.random() * 120;
+                    this.gamesSinceLastUFO = 0;
+                }
+
+                this.initializePlayers();
+                this.generatePlanets();
+                this.generateBackground();
+            }
+
+            initializePlayers() {
+                const colorKeys = Object.keys(CONFIG.COLORS).filter(key => key.startsWith('ENEMY_'));
+                this.players = [
+                    { id: 0, name: 'Player', color: CONFIG.COLORS.PLAYER, isAI: false }
+                ];
+                
+                for (let i = 0; i < this.aiCount; i++) {
+                    const colorKey = colorKeys[i % colorKeys.length];
+                    this.players.push({
+                        id: i + 1,
+                        name: `Enemy ${i + 1}`,
+                        color: CONFIG.COLORS[colorKey],
+                        isAI: true
+                    });
+                }
+            }
+
+            calculatePieChartData() {
+                const shipCounts = new Map();
+                this.players.forEach(player => shipCounts.set(player.id, { owner: player, color: player.color, ships: 0 }));
+                shipCounts.set(-1, { owner: null, color: CONFIG.COLORS.NEUTRAL, ships: 0 });
+
+                this.planets.forEach(planet => {
+                    const ownerId = planet.owner ? planet.owner.id : -1;
+                    if (shipCounts.has(ownerId)) {
+                        shipCounts.get(ownerId).ships += planet.ships;
+                    } else {
+                        shipCounts.set(ownerId, { owner: planet.owner, color: planet.owner ? planet.owner.color : CONFIG.COLORS.NEUTRAL, ships: planet.ships });
+                    }
+                });
+
+                let totalShips = 0;
+                shipCounts.forEach(data => totalShips += data.ships);
+
+                this.pieChartData = [];
+                shipCounts.forEach(data => {
+                    if (data.ships > 0) {
+                        data.proportion = totalShips > 0 ? data.ships / totalShips : 0;
+                        this.pieChartData.push(data);
+                    }
+                });
+            }
+
+            drawPieChart(ctx, scale) {
+                const safeScale = scale || 1.0;
+                const radius = 40 * safeScale; 
+                const centerX = canvas.width - radius - 15 * safeScale; 
+                const centerY = canvas.height - radius - 15 * safeScale;
+                const pieChartRadius = radius + 2 * safeScale;
+
+                this.calculatePieChartData();
+
+                let isOverlapping = false;
+                for (const planet of this.planets) {
+                    const planetX = planet.x || 0;
+                    const planetY = planet.y || 0;
+                    const planetRadius = planet.radius || 10; 
+
+                    const distance = Math.hypot(planetX - centerX, planetY - centerY);
+
+                    if (distance < planetRadius + pieChartRadius) {
+                        isOverlapping = true;
+                        break;
+                    }
+                }
+
+                ctx.save();
+                ctx.globalAlpha = isOverlapping ? 0.5 : 1.0;
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius + 2 * safeScale, 0, 2 * Math.PI);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fill();
+
+                let startAngle = -Math.PI / 2;
+                ctx.shadowColor = '#000000';
+                ctx.shadowBlur = 4;
+
+                this.pieChartData.forEach(data => {
+                    const angle = data.proportion * 2 * Math.PI;
+                    const endAngle = startAngle + angle;
+
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                    ctx.closePath();
+                    ctx.fillStyle = data.color;
+                    ctx.fill();
+
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 0.5 * safeScale;
+                    ctx.stroke();
+
+                    startAngle = endAngle;
+                });
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1 * safeScale;
+                ctx.stroke();
+
+                ctx.font = `10px Inter, Roboto Condensed, Arial, sans-serif`;
+                ctx.fillStyle = 'rgba(204, 204, 204, 0.5)';
+                ctx.textAlign = 'center'; 
+                ctx.textBaseline = 'bottom';
+                const headingX = centerX; 
+                const headingY = centerY - radius - 5 * safeScale;
+                ctx.fillText('HASH DISTRIBUTION', headingX, headingY);
+
+                ctx.restore();
+            }
+
+            generatePlanets() {
+                for (let i = 0; i < this.planetCount; i++) {
+                    let attempts = 0;
+                    let validPosition = false;
+                    let x, y, radius;
+
+                    while (!validPosition && attempts < 100) {
+                        x = Math.random() * (canvas.width - 120) + 60;
+                        y = Math.random() * (canvas.height - 120) + 60;
+                        radius = CONFIG.PLANET_MIN_RADIUS + Math.random() * (CONFIG.PLANET_MAX_RADIUS - CONFIG.PLANET_MIN_RADIUS);
+
+                        validPosition = this.planets.every(planet => {
+                            const distance = Math.sqrt((x - planet.x) ** 2 + (y - planet.y) ** 2);
+                            return distance > (radius + planet.radius + 80);
+                        });
+                        attempts++;
+                    }
+
+                    if (validPosition) {
+                        const planet = new Planet(x, y, radius);
+                        if (i < this.players.length) {
+                            planet.owner = this.players[i];
+                            planet.ships = Math.floor(30 + Math.random() * 40);
+                            if (this.difficulty === 'EASY' && !planet.owner.isAI) {
+                                planet.ships += 15;
+                            } else if (this.difficulty === 'EASY' && planet.owner.isAI) {
+                                planet.ships = Math.max(5, planet.ships - 5);
+                            } else if (this.difficulty === 'HARD' && planet.owner.isAI) {
+                                planet.ships += 15;
+                            }
+                        } else {
+                            planet.ships = Math.floor(Math.random() * 25) + 5;
+                            if (this.difficulty === 'HARD') {
+                                planet.ships += 10;
+                            }
+                        }
+                        this.planets.push(planet);
+                    }
+                }
+            }
+
+            generateBackground() {
+                this.particles = [];
+                for (let i = 0; i < CONFIG.PARTICLE_COUNT; i++) {
+                    this.particles.push(new BackgroundParticle(
+                        Math.random() * canvas.width * 2 - canvas.width / 2,
+                        Math.random() * canvas.height * 2 - canvas.height / 2
+                    ));
+                }
+                
+                this.nebulae = [];
+                for (let i = 0; i < CONFIG.NEBULA_COUNT; i++) {
+                    this.nebulae.push(new NebulaCloud(
+                        Math.random() * canvas.width * 2 - canvas.width / 2,
+                        Math.random() * canvas.height * 2 - canvas.height / 2
+                    ));
+                }
+                
+                this.shootingStars = [];
+            }
+
+            update(deltaTime) {
+                this.blockHeightDisplay.update(deltaTime);
+                this.sheenPhase += deltaTime * 0.3;
+                const fadeSpeed = 2;
+                const buttons = [
+                    this.startButton,
+                    this.instructionsButton,
+                    this.achievementsButton,
+                    this.mainMenuButton,
+                    this.yesButton,
+                    this.noButton,
+                    this.achievementsCloseButton,
+                    this.resetAchievementsButton,
+                    this.resetYesButton,
+                    this.resetNoButton,
+                    this.stealthModeButton,
+                    this.billiardsModeButton,
+                    this.achievementsUpArrow,
+                    this.achievementsDownArrow
+                ];
+                buttons.forEach(button => {
+                    if (button.fadeProgress < button.targetFade) {
+                        button.fadeProgress = Math.min(button.fadeProgress + deltaTime * fadeSpeed, button.targetFade);
+                    } else if (button.fadeProgress > button.targetFade) {
+                        button.fadeProgress = Math.max(button.fadeProgress - deltaTime * fadeSpeed, button.targetFade);
+                    }
+                });
+                if (this.spoonSpawnTimer > 0) {
+                    this.spoonSpawnTimer -= deltaTime;
+                    if (this.spoonSpawnTimer <= 0) {
+                        this.spoon = new Spoon();
+                        this.spoonSpawnTimer = -1;
+                    }
+                }
+                if (this.spoon) {
+                    this.spoon.update(deltaTime);
+                    if (this.spoon.isDead()) {
+                        this.spoon = null;
+                    }
+                }
+
+                    if (this.dolphinSpawnTimer > 0) {
+                    this.dolphinSpawnTimer -= deltaTime;
+                    if (this.dolphinSpawnTimer <= 0) {
+                        this.dolphin = new Dolphin();
+                        this.dolphinSpawnTimer = -1;
+                    }
+                }
+                if (this.dolphin) {
+                    this.dolphin.update(deltaTime);
+                    if (this.dolphin.isDead()) {
+                        this.dolphin = null;
+                    }
+                }
+
+                    if (this.ufoSpawnTimer > 0) {
+                    this.ufoSpawnTimer -= deltaTime;
+                    if (this.ufoSpawnTimer <= 0) {
+                        this.ufo = new UFO();
+                        this.ufoSpawnTimer = -1;
+                    }
+                }
+                if (this.ufo) {
+                    this.ufo.update(deltaTime);
+                    if (this.ufo.isDead()) {
+                        this.ufo = null;
+                    }
+                }
+
+                
+
+                const planetsToRemove = [];
+                const processedPairs = new Set();
+
+                if (this.billiardsMode) {
+                    for (let i = this.planets.length - 1; i >= 0; i--) {
+                        for (let j = i - 1; j >= 0; j--) {
+                            const planet1 = this.planets[i];
+                            const planet2 = this.planets[j];
+                            const pairKey = Math.min(planet1, planet2) + '-' + Math.max(planet1, planet2);
+                            if (processedPairs.has(pairKey)) continue;
+
+                            const dx = planet1.x - planet2.x;
+                            const dy = planet1.y - planet2.y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            if (distance < planet1.radius + planet2.radius) {
+                                processedPairs.add(pairKey);
+
+                                const winningPlanet = planet1.ships > planet2.ships ? planet1 :
+                                                      planet2.ships > planet1.ships ? planet2 :
+                                                      (planet1.radius >= planet2.radius ? planet1 : planet2);
+                                const losingPlanet = planet1.ships > planet2.ships ? planet2 :
+                                                     planet2.ships > planet1.ships ? planet1 :
+                                                     (planet1.radius >= planet2.radius ? planet2 : planet1);
+
+                                this.mergeAnimations.push(new MergeAnimation(winningPlanet, losingPlanet));
+
+                                winningPlanet.mergeWith(losingPlanet);
+
+                                if (winningPlanet.owner && winningPlanet.owner.id === 0) {
+                                    this.mergeCount += 1;
+                                    updateAchievementProgress('first-merge', 1);
+                                }
+
+                                this.ships.forEach(ship => {
+                                    if (ship.targetPlanet === losingPlanet) {
+                                        if (this.planets.includes(winningPlanet)) {
+                                            ship.targetPlanet = winningPlanet;
+                                            ship.updateVelocity();
+                                        } else {
+                                            ship.arrived = true;
+                                        }
+                                    }
+                                });
+
+                                planetsToRemove.push(losingPlanet);
+
+                                if (this.selectedPlanets.includes(losingPlanet)) {
+                                    this.selectedPlanets = this.selectedPlanets.filter(p => p !== losingPlanet);
+                                    if (!this.selectedPlanets.includes(winningPlanet) && this.planets.includes(winningPlanet)) {
+                                        winningPlanet.selected = true;
+                                        this.selectedPlanets.push(winningPlanet);
+                                    }
+                                }
+
+                                if (this.planets.includes(winningPlanet)) {
+                                    this.explosions.push(new Explosion(
+                                        winningPlanet.x,
+                                        winningPlanet.y,
+                                        winningPlanet.owner ? winningPlanet.owner.color : CONFIG.COLORS.NEUTRAL,
+                                        'colorful'
+                                    ));
+                                }
+                            }
+                        }
+                    }
+
+                    for (let i = this.mergeAnimations.length - 1; i >= 0; i--) {
+                        const animation = this.mergeAnimations[i];
+                        animation.update(deltaTime);
+                        if (animation.isDead()) {
+                            const index = this.planets.indexOf(animation.losingPlanet);
+                            if (index !== -1) {
+                                animation.losingPlanet.radius = 0;
+                                this.planets.splice(index, 1);
+                            }
+                            this.mergeAnimations.splice(i, 1);
+                        }
+                    }
+                }
+
+                this.cameraDriftPhase += deltaTime * 0.3;
+                this.cameraOffsetX = Math.sin(this.cameraDriftPhase) * 40;
+                this.cameraOffsetY = Math.cos(this.cameraDriftPhase) * 40;
+
+                this.particles.forEach(particle => particle.update(deltaTime));
+                this.nebulae.forEach(nebula => nebula.update(deltaTime));
+
+                for (let i = this.shootingStars.length - 1; i >= 0; i--) {
+                    this.shootingStars[i].update(deltaTime);
+                    if (this.shootingStars[i].isDead()) {
+                        this.shootingStars.splice(i, 1);
+                    }
+                }
+
+                if (Math.random() < CONFIG.SHOOTING_STAR_CHANCE) {
+                    this.shootingStars.push(new ShootingStar());
+                }
+
+                if (this.gamePhase === 'playing' && (this.isPaused || this.showQuitConfirm)) return;
+
+                this.planets.forEach(planet => planet.update(deltaTime));
+
+                const arrivalsByPlanet = new Map();
+                for (let i = this.ships.length - 1; i >= 0; i--) {
+                    const ship = this.ships[i];
+                    ship.update(deltaTime);
+                    if (ship.arrived) {
+                        if (ship.targetPlanet && this.planets.includes(ship.targetPlanet)) {
+                            if (!arrivalsByPlanet.has(ship.targetPlanet)) {
+                                arrivalsByPlanet.set(ship.targetPlanet, []);
+                            }
+                            arrivalsByPlanet.get(ship.targetPlanet).push(ship);
+                        } else {
+                            this.explosions.push(new Explosion(ship.x, ship.y, ship.owner.color, 'grey'));
+                            this.ships.splice(i, 1);
+                        }
+                    }
+                }
+
+                arrivalsByPlanet.forEach((ships, targetPlanet) => {
+                    this.handleShipArrivals(targetPlanet, ships);
+                    ships.forEach(ship => {
+                        const index = this.ships.indexOf(ship);
+                        if (index !== -1) {
+                            this.ships.splice(index, 1);
+                        }
+                    });
+                });
+
+                for (let i = this.explosions.length - 1; i >= 0; i--) {
+                    const explosion = this.explosions[i];
+                    explosion.update(deltaTime);
+                    if (explosion.isDead()) {
+                        this.explosions.splice(i, 1);
+                    }
+                }
+
+                this.aiTimer += deltaTime * 1000;
+                if (this.aiTimer > CONFIG.AI_DECISION_INTERVAL) {
+                    this.runAI();
+                    this.aiTimer = 0;
+                }
+
+ if (this.gamePhase === 'playing') {
+        const playerPlanet = this.planets.find(p => p.owner && p.owner.id === 0);
+        if (playerPlanet && !this.youAreHereSign && !this.hasShownYouAreHereSign) {
+            this.youAreHereSign = new YouAreHereSign(playerPlanet);
+            console.log("YouAreHereSign created for planet at:", playerPlanet.x, playerPlanet.y);
+            this.hasShownYouAreHereSign = true; 
+        }
+        if (this.youAreHereSign) {
+            this.youAreHereSign.update(deltaTime);
+            if (this.youAreHereSign.isDead()) {
+                this.youAreHereSign = null;
+            }
+        }
+    }
+
+                if (this.gamePhase === 'playing') {
+                    this.checkVictoryCondition();
+                    this.updateUI();
+                    const playerShipCount = this.ships
+                        .filter(s => s.owner && s.owner.id === 0)
+                        .reduce((total, ship) => total + (ship.shipCount || 1), 0);
+                    if (playerShipCount >= 100) {
+                        unlockAchievement('ship-swarm');
+                    }
+                    if (playerShipCount >= 500) {
+                        unlockAchievement('massive-fleet');
+                    }
+                    if (playerShipCount >= 1500) {
+                        unlockAchievement('massive-transit');
+                    }
+                    const hasThousandShipPlanet = this.planets.some(p => p.owner && p.owner.id === 0 && p.ships > 1000);
+                    if (hasThousandShipPlanet) {
+                        unlockAchievement('amass-1000-ships');
+                    }
+                    const hasFiveThousandShipPlanet = this.planets.some(p => p.owner && p.owner.id === 0 && p.ships > 5000);
+                    if (hasFiveThousandShipPlanet) {
+                        unlockAchievement('amass-5000-ships');
+                    }
+                }
+
+                for (let i = this.notifications.length - 1; i >= 0; i--) {
+                    this.notifications[i].update(deltaTime);
+                    if (this.notifications[i].isDead()) {
+                        this.notifications.splice(i, 1);
+                    }
+                }
+            }
+
+            handleShipArrivals(targetPlanet, ships) {
+                if (!targetPlanet || !this.planets.includes(targetPlanet)) return;
+
+                const mergeAnimation = this.mergeAnimations.find(
+                    anim => anim.losingPlanet === targetPlanet && this.planets.includes(anim.winningPlanet)
+                );
+
+                if (mergeAnimation) {
+                    ships.forEach(ship => {
+                        ship.targetPlanet = mergeAnimation.winningPlanet;
+                        ship.updateVelocity();
+                    });
+                    return;
+                }
+
+                const impactsByOwner = new Map();
+                ships.forEach(ship => {
+                    const shipImpact = ship instanceof SuperShip || ship instanceof MotherShip ? ship.shipCount : 1;
+                    const ownerId = ship.owner.id;
+                    if (!impactsByOwner.has(ownerId)) {
+                        impactsByOwner.set(ownerId, { owner: ship.owner, impact: 0 });
+                    }
+                    impactsByOwner.get(ownerId).impact += shipImpact;
+                });
+
+                let explosionType = 'grey';
+                let planetChanged = false;
+
+                const sortedOwners = Array.from(impactsByOwner.keys()).sort((a, b) => a - b); 
+                for (const ownerId of sortedOwners) {
+                    const { owner, impact } = impactsByOwner.get(ownerId);
+
+                    if (!targetPlanet.owner) {
+                        targetPlanet.ships -= impact;
+                        if (targetPlanet.ships <= 0) {
+                            targetPlanet.owner = owner;
+                            targetPlanet.ships = Math.abs(targetPlanet.ships) || 1;
+                            explosionType = 'colorful';
+                            planetChanged = true;
+                                            targetPlanet.productionMultiplier = 1;
+                            targetPlanet.multiplierDuration = 0;
+                            targetPlanet.baseProductionRate = (targetPlanet.radius / CONFIG.PLANET_MAX_RADIUS) * 
+                                (owner.isAI ? CONFIG.AI_SHIP_PRODUCTION_RATE : CONFIG.PLAYER_SHIP_PRODUCTION_RATE);
+                            targetPlanet.productionRate = targetPlanet.baseProductionRate;
+                            if (owner.id === 0) {
+                                this.tookNeutralPlanet = true;
+                                this.neutralPlanetsConquered += 1;
+                                if (this.neutralPlanetsConquered >= 10) {
+                                    unlockAchievement('cosmic-collector');
+                                }
+                                updateAchievementProgress('conquer-500-planets', 1);
+                                updateAchievementProgress('conquer-100-planets', 1);
+                                if (this.billiardsMode) {
+                                    updateAchievementProgress('conquer-50-planets-billiards', 1); 
+                                }
+                                if (this.stealthMode) {
+                                    updateAchievementProgress('conquer-50-planets-stealth', 1); 
+                                }
+                                this.planetsConqueredThisGame += 1; 
+                                const gameTime = (Date.now() - this.gameStartTime) / 1000;
+                                if (gameTime < 30 && this.planetsConqueredThisGame >= 3) { 
+                                    unlockAchievement('rapid-expansion');
+                                }
+                            }
+                        }
+                    } else if (targetPlanet.owner.id === owner.id) {
+                        targetPlanet.ships += impact;
+                        explosionType = 'grey';
+                    } else {
+                        targetPlanet.ships -= impact;
+                        if (targetPlanet.ships <= 0) {
+                            if (targetPlanet.owner.id === 0) {
+                                this.lostStartingPlanet = true;
+                                this.lostCapturedPlanet = true;
+                            }
+                            targetPlanet.owner = owner;
+                            targetPlanet.ships = Math.abs(targetPlanet.ships) || 1;
+                            explosionType = 'colorful';
+                            planetChanged = true;
+                            targetPlanet.productionMultiplier = 1;
+                            targetPlanet.multiplierDuration = 0;
+                            targetPlanet.baseProductionRate = (targetPlanet.radius / CONFIG.PLANET_MAX_RADIUS) * 
+                                (owner.isAI ? CONFIG.AI_SHIP_PRODUCTION_RATE : CONFIG.PLAYER_SHIP_PRODUCTION_RATE);
+                            targetPlanet.productionRate = targetPlanet.baseProductionRate;
+                            if (owner.id === 0) {
+                                updateAchievementProgress('conquer-500-planets', 1);
+                                updateAchievementProgress('conquer-100-planets', 1);
+                                if (this.billiardsMode) {
+                                    updateAchievementProgress('conquer-50-planets-billiards', 1); 
+                                }
+                                if (this.stealthMode) {
+                                    updateAchievementProgress('conquer-50-planets-stealth', 1); 
+                                }
+                                this.planetsConqueredThisGame += 1;
+                                const gameTime = (Date.now() - this.gameStartTime) / 1000;
+                                if (gameTime < 10) {
+                                    unlockAchievement('blitzkrieg');
+                                }
+                                if (gameTime < 30 && this.planetsConqueredThisGame >= 3) { 
+                                    unlockAchievement('rapid-expansion');
+                                }
+                            }
+                        }
+                    }
+
+                    if (this.billiardsMode && impact > 0) {
+                        const avgDx = ships.reduce((sum, ship) => sum + (targetPlanet.x - ship.x), 0) / ships.length;
+                        const avgDy = ships.reduce((sum, ship) => sum + (targetPlanet.y - ship.y), 0) / ships.length;
+                        const distance = Math.sqrt(avgDx * avgDx + avgDy * avgDy);
+                        if (distance > 0) {
+                            const impulseStrength = 0.6 * impact;
+                            targetPlanet.vx += (avgDx / distance) * impulseStrength;
+                            targetPlanet.vy += (avgDy / distance) * impulseStrength;
+                        }
+                    }
+                }
+
+                if (ships.length > 0) {
+                    this.explosions.push(new Explosion(targetPlanet.x, targetPlanet.y, ships[0].owner.color, explosionType));
+                }
+            }
+
+            runAI() {
+                for (let player of this.players) {
+                    if (!player.isAI) continue;
+
+                    const myPlanets = this.planets.filter(p => p.owner && p.owner.id === player.id);
+                    const enemyPlanets = this.planets.filter(p => !p.owner || p.owner.id !== player.id);
+
+                    if (myPlanets.length === 0) continue;
+
+                    const shipThreshold = this.difficulty === 'EASY' ? 15 : this.difficulty === 'MEDIUM' ? 5 : 2;
+
+                    if (this.difficulty === 'HARD' && myPlanets.length > 1) {
+                        const sortedPlanets = myPlanets.sort((a, b) => b.ships - a.ships);
+                        const attackPlanets = sortedPlanets.slice(0, Math.min(2, sortedPlanets.length));
+                        const weakestTarget = enemyPlanets.reduce((min, planet) => 
+                            planet.ships < min.ships ? planet : min, enemyPlanets[0]);
+
+                        if (attackPlanets.reduce((sum, p) => sum + p.ships, 0) > weakestTarget.ships + shipThreshold) {
+                            this.sendShips(attackPlanets, weakestTarget);
+                        }
+                    } else {
+                        const strongestPlanet = myPlanets.reduce((max, planet) => 
+                            planet.ships > max.ships ? planet : max, myPlanets[0]);
+                        const weakestTarget = enemyPlanets.reduce((min, planet) => 
+                            planet.ships < min.ships ? planet : min, enemyPlanets[0]);
+
+                        if (strongestPlanet && weakestTarget && strongestPlanet.ships > weakestTarget.ships + shipThreshold) {
+                            this.sendShips([strongestPlanet], weakestTarget);
+                        }
+                    }
+                }
+            }
+
+            checkVictoryCondition() {
+                const playerPlanets = this.planets.filter(p => p.owner && p.owner.id === 0).length;
+                const playerShips = this.ships.filter(s => s.owner && s.owner.id === 0).length;
+                const totalPlayerUnits = playerPlanets + playerShips;
+
+                const enemyPlanets = this.planets.filter(p => p.owner && p.owner.id !== 0).length;
+                const enemyShips = this.ships.filter(s => s.owner && s.owner.id !== 0).length;
+                const totalEnemyUnits = enemyPlanets + enemyShips;
+
+                if (totalPlayerUnits === 0) {
+                    this.gamePhase = 'defeat';
+                    checkGameCompletion();
+                } else if (totalEnemyUnits === 0) {
+                    this.gamePhase = 'victory';
+                    checkGameCompletion();
+                }
+            }
+
+            updateUI() {
+                this.playerShips = this.ships.filter(s => s.owner && s.owner.id === 0).length;
+                this.playerPlanets = this.planets.filter(p => p.owner && p.owner.id === 0).length;
+                this.enemyPlanets = this.planets.filter(p => p.owner && p.owner.id !== 0).length;
+                this.enemyShips = this.ships.filter(s => s.owner && s.owner.id !== 0).length;
+
+                if (this.gamePhase === 'playing') {
+                    const gameTime = Math.floor((Date.now() - this.gameStartTime) / 1000);
+                    const minutes = Math.floor(gameTime / 60);
+                    const seconds = gameTime % 60;
+                    this.gameTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+
+            selectAllPlayerPlanets() {
+                this.selectedPlanets.forEach(planet => planet.selected = false);
+                this.selectedPlanets = [];
+                
+                const playerPlanets = this.planets.filter(p => p.owner && p.owner.id === 0);
+                playerPlanets.forEach(planet => {
+                    planet.selected = true;
+                    this.selectedPlanets.push(planet);
+                });
+            }
+
+            sendShips(fromPlanets, toPlanet) {
+                fromPlanets.forEach(planet => {
+                    if (planet === toPlanet) {
+                        return;
+                    }
+                    
+                    if (planet.ships > 1) {
+                        let shipsToSend = Math.floor(planet.ships / 2);
+                        planet.ships -= shipsToSend;
+
+                        if (planet.owner.id === 0) {
+                            updateAchievementProgress('launch-10000-ships', shipsToSend);
+                            updateAchievementProgress('launch-50000-ships', shipsToSend);
+                        }
+
+                        const motherShips = Math.floor(shipsToSend / 100);
+                        const remainingAfterMother = shipsToSend % 100;
+                        const superShips = Math.floor(remainingAfterMother / 25);
+                        const regularShips = remainingAfterMother % 25;
+
+                        for (let i = 0; i < motherShips; i++) {
+                            setTimeout(() => {
+                                const angle = (i / Math.max(1, motherShips)) * Math.PI * 2;
+                                const offset = 15;
+                                const startX = planet.x + Math.cos(angle) * offset;
+                                const startY = planet.y + Math.sin(angle) * offset;
+                                
+                                this.ships.push(new MotherShip(
+                                    startX,
+                                    startY,
+                                    toPlanet,
+                                    planet.owner,
+                                    100
+                                ));
+                            }, i * 30); 
+                        }
+
+                        for (let i = 0; i < superShips; i++) {
+                            setTimeout(() => {
+                                const angle = (i / Math.max(1, superShips)) * Math.PI * 2;
+                                const offset = 15;
+                                const startX = planet.x + Math.cos(angle) * offset;
+                                const startY = planet.y + Math.sin(angle) * offset;
+                                
+                                this.ships.push(new SuperShip(
+                                    startX,
+                                    startY,
+                                    toPlanet,
+                                    planet.owner,
+                                    25
+                                ));
+                            }, i * 20); 
+                        }
+
+                        for (let i = 0; i < regularShips; i++) {
+                            setTimeout(() => {
+                                const angle = (i / Math.max(1, regularShips)) * Math.PI * 2;
+                                const offset = 15;
+                                const startX = planet.x + Math.cos(angle) * offset;
+                                const startY = planet.y + Math.sin(angle) * offset;
+                                
+                                this.ships.push(new Ship(
+                                    startX,
+                                    startY,
+                                    toPlanet,
+                                    planet.owner
+                                ));
+                            }, i * 10);
+                        }
+                    }
+                });
+            }
+
+            drawSlider(ctx, slider, scale) {
+                const handleSize = 10 * scale;
+                const handleX = slider.x + (slider.value - slider.min) / (slider.max - slider.min) * slider.width;
+
+                ctx.fillStyle = '#ff880060';
+                ctx.fillRect(slider.x, slider.y - slider.height / 2, slider.width, slider.height);
+
+                ctx.fillStyle = '#ff8800';
+                ctx.beginPath();
+                ctx.arc(handleX, slider.y, handleSize / 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            drawButton(ctx, button, text, scale) {
+                const buttonWidth = button.width;
+                const buttonHeight = button.height;
+
+                ctx.fillStyle = '#002255';
+                ctx.fillRect(button.x, button.y, buttonWidth, buttonHeight);
+
+                if (button.fadeProgress > 0) {
+                    const sheenOffset = (Math.sin(this.sheenPhase) * 0.5 + 0.5) * buttonWidth;
+                    const gradient = ctx.createLinearGradient(
+                        button.x - buttonWidth * 0.5 + sheenOffset,
+                        button.y,
+                        button.x + buttonWidth * 1.5 + sheenOffset,
+                        button.y
+                    );
+                    gradient.addColorStop(0, `rgba(255, 255, 255, 0)`);
+                    gradient.addColorStop(0.4, `rgba(255, 255, 255, ${0.4 * button.fadeProgress})`);
+                    gradient.addColorStop(0.6, `rgba(255, 255, 255, 0)`);
+                    ctx.globalAlpha = button.fadeProgress;
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(button.x, button.y, buttonWidth, buttonHeight);
+                    ctx.globalAlpha = 1.0;
+                }
+
+                ctx.strokeStyle = '#ff8800';
+                ctx.lineWidth = 1.0 * scale; 
+                ctx.strokeRect(button.x, button.y, buttonWidth, buttonHeight);
+
+                ctx.font = `bold ${10 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                ctx.fillStyle = '#ff8800';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(text, button.x + buttonWidth / 2, button.y + buttonHeight / 2);
+            }
+
+            isPointInRect(x, y, rect) {
+                return x >= rect.x && x <= rect.x + rect.width && y >= rect.y && y <= rect.y + rect.height;
+            }
+
+            isPointInSlider(x, y, slider) {
+                const handleSize = 16 * (canvas.width / 1000);
+                const handleX = slider.x + (slider.value - slider.min) / (slider.max - slider.min) * slider.width;
+                const distance = Math.sqrt((x - handleX) ** 2 + (y - slider.y) ** 2);
+                return distance <= handleSize / 2 || (x >= slider.x && x <= slider.x + slider.width && y >= slider.y - slider.height && y <= slider.y + slider.height);
+            }
+
+            draw(ctx) {
+                const scale = canvas.width / 1000;
+                const fontSizeTitle = 120 * scale;
+                const fontSizeLabel = 10 * scale;
+                const fontSizeInstruction = 10 * scale;
+                const buttonWidth = 160 * scale; 
+                const buttonHeight = 20 * scale; 
+                const sliderWidth = 160 * scale; 
+                const sliderHeight = 4 * scale; 
+                const panelWidth = 400 * scale; 
+                const panelHeight = 320 * scale; 
+                const panelWidthInstructions = 600 * scale; 
+                const panelHeightInstructions = 525 * scale;                 
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+
+                ctx.fillStyle = '#000007';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.save();
+                ctx.translate(this.cameraOffsetX, this.cameraOffsetY);
+                this.nebulae.forEach(nebula => nebula.draw(ctx));
+                this.particles.forEach(particle => particle.draw(ctx));
+                this.shootingStars.forEach(star => star.draw(ctx));
+                ctx.restore();
+                ctx.globalAlpha = 1.0;
+                ctx.globalCompositeOperation = 'source-over';
+
+                const buttons = [
+                    this.startButton,
+                    this.instructionsButton,
+                    this.achievementsButton,
+                    this.mainMenuButton,
+                    this.yesButton,
+                    this.noButton,
+                    this.resetYesButton,
+                    this.resetNoButton,
+                    this.stealthModeButton,
+                    this.billiardsModeButton
+                ];
+
+                const Achievementsbuttons = [
+                    this.achievementsCloseButton,
+                    this.resetAchievementsButton,
+                    this.achievementsUpArrow,
+                    this.achievementsDownArrow
+                ];
+
+                const AchieveResetbuttons = [
+                    this.resetYesButton,
+                    this.resetNoButton
+                ];
+
+                const Instructionsbuttons = [
+                    this.instructionsButton
+                ];
+
+                canvas.style.cursor = buttons.some(button => this.isPointInRect(this.mousePos.x, this.mousePos.y, button)) ? 'pointer' : 'crosshair';
+
+                if (this.gamePhase !== 'menu') {
+                    if (this.gamePhase === 'playing' && this.selectedPlanets.length > 0) {
+                        ctx.strokeStyle = CONFIG.COLORS.PLAYER + '33';
+                        ctx.lineWidth = 1;
+                        ctx.setLineDash([3, 3]);
+                        this.selectedPlanets.forEach(selectedPlanet => {
+                            this.planets.forEach(targetPlanet => {
+                                if (targetPlanet !== selectedPlanet) {
+                                    ctx.beginPath();
+                                    ctx.moveTo(selectedPlanet.x, selectedPlanet.y);
+                                    ctx.lineTo(targetPlanet.x, targetPlanet.y);
+                                    ctx.stroke();
+                                }
+                            });
+                        });
+
+                        ctx.strokeStyle = CONFIG.COLORS.PLAYER + '88';
+                        ctx.lineWidth = 2;
+                        ctx.setLineDash([5, 5]);
+                        this.selectedPlanets.forEach(planet => {
+                            ctx.beginPath();
+                            ctx.moveTo(planet.x, planet.y);
+                            ctx.lineTo(this.mousePos.x, this.mousePos.y);
+                            ctx.stroke();
+                        });
+                        ctx.setLineDash([]);
+                    }
+
+                    this.planets.forEach(planet => planet.draw(ctx));
+                    this.mergeAnimations.forEach(animation => animation.draw(ctx));
+
+                    this.planets.forEach(planet => planet.draw(ctx));
+                    this.mergeAnimations.forEach(animation => animation.draw(ctx));
+                    if (this.youAreHereSign) {
+                        this.youAreHereSign.draw(ctx, canvas.width / 1000);
+                    }
+                    this.ships.forEach(ship => ship.draw(ctx));
+
+                    this.ships.forEach(ship => ship.draw(ctx));
+                    this.explosions.forEach(explosion => explosion.draw(ctx));
+                    this.notifications.forEach(notification => notification.draw(ctx, scale));
+                    this.blockHeightDisplay.draw(ctx, scale);
+                }
+
+                if (this.gamePhase !== 'menu') {
+
+                    if (this.spoon) {
+                        this.spoon.draw(ctx);
+                    }
+
+                    if (this.dolphin) {
+                        this.dolphin.draw(ctx);
+                    }
+
+                    if (this.ufo) {
+                        this.ufo.draw(ctx);
+                    }
+                    this.drawPieChart(ctx, scale);
+                    ctx.font = `10px Inter, Roboto Condensed, Arial, sans-serif`; 
+                    ctx.fillStyle = 'rgba(204, 204, 204, 0.5)';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'top';
+                    const uiX = 15;
+                    let uiY = 15; 
+                    const uiLines = [
+                        `Player Planets: ${this.playerPlanets}`,
+                        `Enemy Planets: ${this.enemyPlanets}`,
+                        `Player Ships: ${this.playerShips}`,
+                        `Enemy Ships: ${this.enemyShips}`,
+                        `Game Time: ${this.gameTime}`,
+                        `Stealth Mode: ${this.stealthMode ? 'ON' : 'OFF'}`,
+                        `Collision Mode: ${this.billiardsMode ? 'ON' : 'OFF'}`
+                    ];
+                    uiLines.forEach(line => {
+                        ctx.fillText(line, uiX, uiY);
+                        uiY += 12;
+                    });
+
+                    if (this.gamePhase !== 'menu' && this.showControls) { 
+                        ctx.font = `10px Inter, Roboto Condensed, Arial, sans-serif`; 
+                        ctx.fillStyle = 'rgba(204, 204, 204, 0.5)';
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'bottom';
+                        const instX = 15; 
+                        let instY = canvas.height - 8; 
+                        const instLines = [
+                            '• Q - quit',
+                            '• P - pause/continue',
+                            '• H - toggle controls', 
+                            '• Double-click to select all planets',
+                            '• Hold SHIFT for multi-select',
+                            '• Click target to send ships',
+                            '• Click planet to select',
+                            'CONTROLS'
+                        ];
+                        instLines.forEach(line => {
+                            instY -= 12; 
+                            ctx.fillText(line, instX, instY);
+                        });
+                    }
+                }
+
+                if (this.gamePhase === 'menu') {
+                    ctx.fillStyle = 'rgba(0, 0, 4, 0)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    const spacing = 50 * scale; 
+
+                    ctx.font = `bold ${fontSizeTitle}px Courier New`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = '#ff880080';
+                    ctx.strokeStyle = '#ff8800';
+                    ctx.lineWidth = 3;
+                    ctx.strokeText('HASHCON', Math.round(centerX), Math.round(centerY - 3.2 * spacing));
+                    ctx.fillText('HASHCON', Math.round(centerX), Math.round(centerY - 3.2 * spacing));
+
+                    const { completed, total } = getAchievementCount();
+                    const completionPercentage = Math.round((completed / total) * 100);
+                    ctx.font = `bold ${16 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                    ctx.fillStyle = '#ff880080'; 
+                    ctx.fillText(`MISSION PROGRESS: ${completionPercentage}%`, centerX, centerY - 1.5 * spacing);
+
+                    ctx.font = `bold ${10 * scale}px Inter, Roboto Condensed, Arial, sans-serif`;
+                    ctx.fillStyle = '#ff8800';
+                    
+                    ctx.save();
+
+                    ctx.textAlign = 'right';
+                    ctx.font = `bold ${fontSizeTitle}px Courier New`;
+                    const hashconWidth = ctx.measureText('HASHCON').width;
+                    const rightEdgeX = centerX + hashconWidth / 2;
+                    ctx.font = ` ${10 * scale}px Inter, Roboto Condensed, Arial, sans-serif`;
+                    ctx.fillStyle = '#ff8800';
+                    ctx.fillText('bxl909.github.io', rightEdgeX, centerY - 2.4 * spacing);
+                    ctx.restore();
+
+                    this.notifications.forEach(notification => notification.draw(ctx, scale));
+
+                    if (this.showAchievements) {
+                        canvas.style.cursor = Achievementsbuttons.some(button => this.isPointInRect(this.mousePos.x, this.mousePos.y, button)) ? 'pointer' : 'crosshair';
+                        this.achievementsPanel.x = centerX - panelWidth / 2;
+                        this.achievementsPanel.y = centerY - this.achievementsPanel.height / 2;
+                        this.achievementsPanel.width = panelWidth;
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+                        ctx.strokeStyle = '#ccc';
+                        ctx.lineWidth = 1 * scale;
+                        ctx.fillRect(this.achievementsPanel.x, this.achievementsPanel.y, panelWidth, this.achievementsPanel.height);
+                        ctx.strokeRect(this.achievementsPanel.x, this.achievementsPanel.y, panelWidth, this.achievementsPanel.height);
+
+                        const { completed, total } = getAchievementCount();
+                        ctx.font = `bold ${fontSizeLabel}px Inter, Roboto Condensed, Arial, sans-serif`;
+                        ctx.fillStyle = '#ff8800';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(`ACHIEVEMENTS ${completed}/${total}`, centerX, this.achievementsPanel.y + 24 * scale); 
+
+                        const contentHeight = this.achievementsPanel.height - 80 * scale; 
+                        const contentY = this.achievementsPanel.y + 45 * scale;
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(this.achievementsPanel.x + 8 * scale, contentY, panelWidth - 16 * scale, contentHeight); 
+                        ctx.clip();
+
+                        ctx.textAlign = 'left';
+                        let y = this.achievementsPanel.y + 45 * scale - this.scrollOffset;
+                        const itemHeight = 18 * scale; 
+                        const checkboxSize = 8 * scale;
+                        const margin = 8 * scale; 
+                        const textX = this.achievementsPanel.x + 16 * scale;
+                        const numberWidth = 25 * scale; 
+
+                        this.maxScrollOffset = Math.max(0, (achievementList.length * (itemHeight + 4 * scale)) - contentHeight);
+
+                        achievementList.forEach((achievement, index) => {
+                            if (y + itemHeight >= contentY && y <= contentY + contentHeight) {
+                            ctx.fillStyle = 'rgba(255, 136, 0, 0.1)';
+                            ctx.fillRect(this.achievementsPanel.x + margin, y, panelWidth - 2 * margin, itemHeight);
+                            ctx.strokeStyle = '#ff8800';
+                            ctx.lineWidth = 1.5 * scale;
+                            ctx.beginPath();
+                            ctx.moveTo(this.achievementsPanel.x + margin, y);
+                            ctx.lineTo(this.achievementsPanel.x + margin, y + itemHeight);
+                            ctx.stroke();
+
+                            ctx.font = `bold ${9 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                            ctx.fillStyle = '#ff8800';
+                            ctx.textAlign = 'left';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(`${index + 1}.`, textX, y + itemHeight / 2);
+
+                            ctx.strokeStyle = '#ff8800';
+                            ctx.lineWidth = 1 * scale;
+                            ctx.strokeRect(textX + numberWidth, y + (itemHeight - checkboxSize) / 2, checkboxSize, checkboxSize);
+                            const isCompleted = typeof achievements[achievement.id] === 'object' 
+                                ? achievements[achievement.id].completed 
+                                : achievements[achievement.id];
+                            if (isCompleted) {
+                                ctx.fillStyle = '#ff8800';
+                                ctx.fillRect(textX + numberWidth, y + (itemHeight - checkboxSize) / 2, checkboxSize, checkboxSize);
+                                ctx.fillStyle = '#000000';
+                                ctx.font = `bold ${checkboxSize * 0.8}px Inter, Roboto Condensed, Arial, sans-serif`;
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                ctx.fillText('✓', textX + numberWidth + checkboxSize / 2, y + itemHeight / 2);
+                            }
+
+                            ctx.font = `bold ${9 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                            ctx.fillStyle = '#ff8800';
+                            ctx.textAlign = 'left';
+                            ctx.textBaseline = 'middle';
+                            const progressText = achievement.target && achievement.id !== 'cosmic-collector'
+                                ? ` (${achievements[achievement.id].progress}/${achievement.target})`
+                                : '';
+                            ctx.fillText(
+                                `${achievement.title}: ${achievement.description}${progressText}`,
+                                textX + numberWidth + checkboxSize + 8 * scale,
+                                y + itemHeight / 2
+                            );
+                        }
+
+                        y += itemHeight + 4 * scale; 
+                    });
+
+                    ctx.restore();
+
+                    const buttonMargin = 8 * scale;
+                    this.achievementsUpArrow.x = this.achievementsPanel.x + panelWidth - this.achievementsUpArrow.width - buttonMargin;
+                    this.achievementsUpArrow.y = this.achievementsPanel.y + 45 * scale;
+                    this.achievementsUpArrow.width = 20 * scale;
+                    this.achievementsUpArrow.height = 20 * scale;
+                    ctx.font = `bold ${12 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                    this.drawButton(ctx, this.achievementsUpArrow, '↑', scale);
+
+                    this.achievementsDownArrow.x = this.achievementsPanel.x + panelWidth - this.achievementsDownArrow.width - buttonMargin;
+                    this.achievementsDownArrow.y = this.achievementsPanel.y + this.achievementsPanel.height - 60 * scale;
+                    this.achievementsDownArrow.width = 20 * scale;
+                    this.achievementsDownArrow.height = 20 * scale;
+                    ctx.font = `bold ${12 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                    this.drawButton(ctx, this.achievementsDownArrow, '↓', scale);
+
+                    this.resetAchievementsButton.x = this.achievementsPanel.x + margin;
+                    this.resetAchievementsButton.y = this.achievementsPanel.y + this.achievementsPanel.height - 32 * scale;
+                    this.resetAchievementsButton.width = buttonWidth;
+                    this.resetAchievementsButton.height = buttonHeight;
+                    this.drawButton(ctx, this.resetAchievementsButton, 'RESET ACHIEVEMENTS', scale);
+
+                    this.achievementsCloseButton.x = this.achievementsPanel.x + this.achievementsPanel.width - buttonWidth - margin;
+                    this.achievementsCloseButton.y = this.achievementsPanel.y + this.achievementsPanel.height - 32 * scale;
+                    this.achievementsCloseButton.width = buttonWidth;
+                    this.achievementsCloseButton.height = buttonHeight;
+                    this.drawButton(ctx, this.achievementsCloseButton, 'CLOSE', scale);
+
+                    if (this.showResetConfirm) {
+                        canvas.style.cursor = AchieveResetbuttons.some(button => this.isPointInRect(this.mousePos.x, this.mousePos.y, button)) ? 'pointer' : 'crosshair';
+                        this.resetConfirmPanel.x = centerX - 130 * scale;
+                        this.resetConfirmPanel.y = centerY - 50 * scale; 
+                        this.resetConfirmPanel.width = 260 * scale; 
+                        this.resetConfirmPanel.height = 100 * scale; 
+
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+                        ctx.strokeStyle = '#ff8800';
+                        ctx.lineWidth = 1 * scale;
+                        ctx.fillRect(this.resetConfirmPanel.x, this.resetConfirmPanel.y, this.resetConfirmPanel.width, this.resetConfirmPanel.height);
+                        ctx.strokeRect(this.resetConfirmPanel.x, this.resetConfirmPanel.y, this.resetConfirmPanel.width, this.resetConfirmPanel.height);
+
+                        ctx.fillStyle = '#ff8800';
+                        ctx.font = `bold ${12 * scale}px Inter, Roboto Condensed, Arial, sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('Reset all achievements?', centerX, this.resetConfirmPanel.y + 35 * scale);
+
+                        this.resetYesButton.x = centerX - 100 * scale; 
+                        this.resetYesButton.y = this.resetConfirmPanel.y + 65 * scale;
+                        this.resetYesButton.width = 60 * scale; 
+                        this.resetYesButton.height = 22 * scale;
+                        this.drawButton(ctx, this.resetYesButton, 'YES', scale);
+
+                        this.resetNoButton.x = centerX + 40 * scale; 
+                        this.resetNoButton.y = this.resetConfirmPanel.y + 65 * scale;
+                        this.resetNoButton.width = 60 * scale; 
+                        this.resetNoButton.height = 22 * scale;
+                        this.drawButton(ctx, this.resetNoButton, 'NO', scale);
+                    }
+                } else if (!this.showMenuInstructions) {
+                    ctx.font = `BOLD ${fontSizeLabel}px Inter, Roboto Condensed, Arial, sans-serif`;
+                    ctx.fillStyle = '#ff8800';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(`AI OPPONENTS: ${this.aiCount}`, centerX - sliderWidth / 2, centerY - 0.5 * spacing);
+                    this.aiSlider.x = centerX - sliderWidth / 2;
+                    this.aiSlider.y = centerY - 0.3 * spacing + 3 * scale; 
+                    this.aiSlider.width = sliderWidth;
+                    this.aiSlider.height = sliderHeight;
+                    this.aiSlider.value = this.aiCount;
+                    this.drawSlider(ctx, this.aiSlider, scale);
+
+                    ctx.fillStyle = '#ff8800';
+                    ctx.fillText(`PLANETS: ${this.planetCount}`, centerX - sliderWidth / 2, centerY + 0.3 * spacing);
+                    this.planetSlider.x = centerX - sliderWidth / 2;
+                    this.planetSlider.y = centerY + 0.5 * spacing + 3 * scale; 
+                    this.planetSlider.width = sliderWidth;
+                    this.planetSlider.height = sliderHeight;
+                    this.planetSlider.min = this.aiCount + 1;
+                    this.planetSlider.value = this.planetCount;
+                    this.drawSlider(ctx, this.planetSlider, scale);
+
+                    ctx.fillStyle = '#ff8800';
+                    ctx.fillText(`DIFFICULTY: ${this.difficultyOptions[this.difficultySlider.value]}`, centerX - sliderWidth / 2, centerY + 1.1 * spacing);
+                    this.difficultySlider.x = centerX - sliderWidth / 2;
+                    this.difficultySlider.y = centerY + 1.3 * spacing + 3.5 * scale; 
+                    this.difficultySlider.width = sliderWidth;
+                    this.difficultySlider.height = sliderHeight;
+                    this.difficultySlider.min = 0;
+                    this.difficultySlider.max = 2;
+                    this.drawSlider(ctx, this.difficultySlider, scale);
+
+                    this.instructionsButton.x = centerX - buttonWidth / 2;
+                    this.instructionsButton.y = centerY + 1.8 * spacing;
+                    this.instructionsButton.width = buttonWidth;
+                    this.instructionsButton.height = buttonHeight;
+                    this.drawButton(ctx, this.instructionsButton, 'INSTRUCTIONS', scale);
+
+                    const { completed, total } = getAchievementCount();
+                    this.achievementsButton.x = centerX - buttonWidth / 2;
+                    this.achievementsButton.y = centerY + 2.5 * spacing;
+                    this.achievementsButton.width = buttonWidth;
+                    this.achievementsButton.height = buttonHeight;
+                    this.drawButton(ctx, this.achievementsButton, `ACHIEVEMENTS ${completed}/${total}`, scale);
+
+                    this.stealthModeButton.x = centerX - buttonWidth / 2;
+                    this.stealthModeButton.y = centerY + 3.2 * spacing;
+                    this.stealthModeButton.width = buttonWidth;
+                    this.stealthModeButton.height = buttonHeight;
+                    this.drawButton(ctx, this.stealthModeButton, `STEALTH MODE: ${this.stealthMode ? 'ON' : 'OFF'}`, scale);
+
+                    this.billiardsModeButton.x = centerX - buttonWidth / 2;
+                    this.billiardsModeButton.y = centerY + 3.9 * spacing;
+                    this.billiardsModeButton.width = buttonWidth;
+                    this.billiardsModeButton.height = buttonHeight;
+                    this.drawButton(ctx, this.billiardsModeButton, `COLLISION MODE: ${this.billiardsMode ? 'ON' : 'OFF'}`, scale);
+
+                    this.startButton.x = centerX - buttonWidth / 2;
+                    this.startButton.y = centerY + 4.6 * spacing;
+                    this.startButton.width = buttonWidth;
+                    this.startButton.height = buttonHeight;
+                    this.drawButton(ctx, this.startButton, 'START GAME', scale);
+
+                } else {
+                    canvas.style.cursor = Instructionsbuttons.some(button => this.isPointInRect(this.mousePos.x, this.mousePos.y, button)) ? 'pointer' : 'crosshair';
+                    this.instructionsPanel.x = centerX - panelWidthInstructions / 2;
+                    this.instructionsPanel.y = centerY - panelHeightInstructions / 2;
+                    this.instructionsPanel.width = panelWidthInstructions;
+                    this.instructionsPanel.height = panelHeightInstructions;
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+                    ctx.strokeStyle = '#ccc';
+                    ctx.lineWidth = 1 * scale;
+                    ctx.fillRect(this.instructionsPanel.x, this.instructionsPanel.y, panelWidthInstructions, panelHeightInstructions);
+                    ctx.strokeRect(this.instructionsPanel.x, this.instructionsPanel.y, panelWidthInstructions, panelHeightInstructions);
+
+                    ctx.font = `bold ${fontSizeLabel}px Inter, Roboto Condensed, Arial, sans-serif`;
+                    ctx.fillStyle = '#ff8800';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('HASHCON: The Great Hash War', this.instructionsPanel.x + 16 * scale, this.instructionsPanel.y + 20 * scale);
+                    ctx.fillStyle = '#ccc';
+                    ctx.font = `${fontSizeInstruction}px Inter, Roboto Condensed, Arial, sans-serif`;
+                    ctx.textAlign = 'left';
+                    const lines = [
+                        'In a galaxy powered by Bitcoin, planets are the key to computational supremacy. Each world holds vast geothermal',
+                        'and solar energy, fueling ASIC fleets that mine the new blocks. You lead the Satoshi Vanguard, a rogue syndicate ',
+                        'fighting to keep Bitcoin decentralized. Your mission: capture planets, harness their hashpower, and deploy ASIC ',
+                        'fleets to secure the network. Opposing you are the Central Conglomerates, AI factions bent on monopolizing the',
+                        'galaxy’s energy to control the network. From corporate giants to authoritarian states, they seek to centralize mining',
+                        'for profit, surveillance, or power. Conquer their planets to thwart their plans and preserve Bitcoin’s freedom.',
+                        '',
+                        '• Click a planet to select it (orange planets are yours)',
+                        '• Click another planet to send half the ships from your selected planet there',
+                        '• Hold SHIFT and click to select multiple of your planets',
+                        '• Double-click to select all of your planets',
+                        '• Larger planets grow your ASIC fleet at a faster rate',
+                        '• Three ship classes represent 1, 25 & 100 units of hashpower',
+                        '',
+                        '• Stealth Mode: The Conglomerate ASIC fleets employ encrypted communications to operate covertly to avoid',
+                        'detection by your decentralized network.',
+                        '• Collision Mode: Gravitational disruptions occur in the galaxy, where ASIC impacts cause planets to shift, and',
+                        'collisions cause energy sources to merge, amplifying hashpower production. Colliding planets is risky, expect losses.',
+                        '',
+                        'The current Bitcoin block height is displayed at all times. When a new block is mined anywhere in the galaxy, a',
+                        'hash surge will occur, temporarily boosting hash production.',
+                        '',
+                        'P - toggle - pause, Q - quit to menu, H - toggle in-game controls',
+                        '',
+                        'Hashcon was made by BXL909 (bxl909.github.io), based on Galcon (2006), itself inspired by Galactic Conquest (1987).'
+                    ];
+                    let y = this.instructionsPanel.y + 38 * scale; 
+                    lines.forEach(line => {
+                        ctx.fillText(line, this.instructionsPanel.x + 16 * scale, y); 
+                        y += 18 * scale; 
+                    });
+
+                    ctx.font = `bold ${fontSizeLabel}px Inter, Roboto Condensed, Arial, sans-serif`;
+                    ctx.fillStyle = '#ff8800';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('How to play', this.instructionsPanel.x + 16 * scale, this.instructionsPanel.y + 146 * scale);
+
+                    ctx.font = `bold ${fontSizeLabel}px Inter, Roboto Condensed, Arial, sans-serif`;
+                    ctx.fillStyle = '#ff8800';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('Game modes', this.instructionsPanel.x + 16 * scale, this.instructionsPanel.y + 272 * scale);
+
+                    ctx.font = `bold ${fontSizeLabel}px Inter, Roboto Condensed, Arial, sans-serif`;
+                    ctx.fillStyle = '#ff8800';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('Mined Blocks', this.instructionsPanel.x + 16 * scale, this.instructionsPanel.y + 362 * scale);
+
+                    ctx.font = `bold ${fontSizeLabel}px Inter, Roboto Condensed, Arial, sans-serif`;
+                    ctx.fillStyle = '#ff8800';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('Other controls', this.instructionsPanel.x + 16 * scale, this.instructionsPanel.y + 416 * scale);
+
+                    ctx.font = `bold ${fontSizeLabel}px Inter, Roboto Condensed, Arial, sans-serif`;
+                    ctx.fillStyle = '#ff8800';
+                    ctx.textAlign = 'left';
+                    ctx.fillText('Background', this.instructionsPanel.x + 16 * scale, this.instructionsPanel.y + 453 * scale);
+
+                    this.instructionsButton.x = centerX - buttonWidth / 2;
+                    this.instructionsButton.y = this.instructionsPanel.y + panelHeightInstructions - 36 * scale; 
+                    this.instructionsButton.width = buttonWidth;
+                    this.instructionsButton.height = buttonHeight;
+                    this.drawButton(ctx, this.instructionsButton, 'CLOSE', scale);
+                }
+            } else if (this.gamePhase === 'playing') {
+
+                if (this.isPaused) {
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.fillStyle = '#ff8800';
+                    ctx.font = `bold ${40 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 3 * scale; 
+                    ctx.strokeText('PAUSED', centerX, centerY);
+                    ctx.fillText('PAUSED', centerX, centerY);
+
+                    ctx.font = `${18 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 1.5 * scale; 
+                    ctx.strokeText('Press P to continue', centerX, centerY + 50 * scale); 
+                    ctx.fillText('Press P to continue', centerX, centerY + 50 * scale);
+                }
+
+                if (this.showQuitConfirm) {
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    const boxWidth = 260 * scale; 
+                    const boxHeight = 100 * scale;
+                    const boxX = centerX - boxWidth / 2;
+                    const boxY = centerY - boxHeight / 2;
+
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+                    ctx.strokeStyle = '#ff8800';
+                    ctx.lineWidth = 1 * scale;
+                    ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+                    ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+
+                    ctx.fillStyle = '#ff8800';
+                    ctx.font = `bold ${12 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('Are you sure you want to quit?', centerX, centerY - 15 * scale); 
+
+                    this.yesButton.x = centerX - 100 * scale; 
+                    this.yesButton.y = centerY + 10 * scale; 
+                    this.yesButton.width = 60 * scale;
+                    this.yesButton.height = 22 * scale;
+                    this.drawButton(ctx, this.yesButton, 'YES', scale);
+
+                    this.noButton.x = centerX + 40 * scale; 
+                    this.noButton.y = centerY + 10 * scale; 
+                    this.noButton.width = 60 * scale; 
+                    this.noButton.height = 22 * scale;
+                    this.drawButton(ctx, this.noButton, 'NO', scale);
+                }
+                } else if (this.gamePhase === 'victory') {
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.font = `bold ${20 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                    ctx.fillStyle = '#ff8800';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 3 * scale; 
+                    ctx.strokeText('NETWORK SECURED', centerX, centerY - 50 * scale); 
+                    ctx.fillText('NETWORK SECURED', centerX, centerY - 50 * scale);
+                    ctx.font = `bold ${35 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                    ctx.strokeText('CONGRATULATIONS', centerX, centerY - 20 * scale); 
+                    ctx.fillText('CONGRATULATIONS', centerX, centerY - 20 * scale);
+
+                    this.mainMenuButton.x = centerX - buttonWidth / 2;
+                    this.mainMenuButton.y = centerY;
+                    this.mainMenuButton.width = buttonWidth;
+                    this.mainMenuButton.height = buttonHeight;
+                    this.drawButton(ctx, this.mainMenuButton, 'MAIN MENU', scale);
+                } else if (this.gamePhase === 'defeat') {
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.font = `bold ${20 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                    ctx.fillStyle = '#ff8800';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 3 * scale; 
+                    ctx.strokeText('ALL NODES OFFLINE', centerX, centerY - 50 * scale); 
+                    ctx.fillText('ALL NODES OFFLINE', centerX, centerY - 50 * scale);
+                    ctx.font = `bold ${35 * scale}px Inter, Roboto Condensed, Arial, sans-serif`; 
+                    ctx.strokeText('GAME OVER', centerX, centerY - 20 * scale); 
+                    ctx.fillText('GAME OVER', centerX, centerY - 20 * scale);
+
+                    this.mainMenuButton.x = centerX - buttonWidth / 2;
+                    this.mainMenuButton.y = centerY;
+                    this.mainMenuButton.width = buttonWidth;
+                    this.mainMenuButton.height = buttonHeight;
+                    this.drawButton(ctx, this.mainMenuButton, 'MAIN MENU', scale);
+                }
+            }        
+        }
+
+        function handleMouseDown(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            if (gameState.gamePhase === 'menu') {
+                if (gameState.showMenuInstructions) {
+                    if (gameState.isPointInRect(x, y, gameState.instructionsButton)) {
+                        gameState.showMenuInstructions = false;
+                    }
+                } else if (gameState.showAchievements) {
+                    if (gameState.showResetConfirm) {
+                        if (gameState.isPointInRect(x, y, gameState.resetYesButton)) {
+                            resetAchievements();
+                            gameState.showResetConfirm = false;
+                        } else if (gameState.isPointInRect(x, y, gameState.resetNoButton)) {
+                            gameState.showResetConfirm = false;
+                        }
+                    } else if (gameState.isPointInRect(x, y, gameState.achievementsCloseButton)) {
+                        gameState.showAchievements = false;
+                    } else if (gameState.isPointInRect(x, y, gameState.resetAchievementsButton)) {
+                        gameState.showResetConfirm = true;
+                    } else if (gameState.isPointInRect(x, y, gameState.achievementsUpArrow)) {
+                        const scrollSpeed = 20 * (canvas.width / 1000);
+                        gameState.scrollOffset = Math.max(0, gameState.scrollOffset - scrollSpeed * 5);
+                    } else if (gameState.isPointInRect(x, y, gameState.achievementsDownArrow)) {
+                        const scrollSpeed = 20 * (canvas.width / 1000);
+                        gameState.scrollOffset = Math.min(gameState.maxScrollOffset, gameState.scrollOffset + scrollSpeed * 5);
+                    }
+                } else {
+                    if (gameState.isPointInRect(x, y, gameState.startButton)) {
+                        startGame();
+                    } else if (gameState.isPointInRect(x, y, gameState.instructionsButton)) {
+                        gameState.showMenuInstructions = true;
+                    } else if (gameState.isPointInRect(x, y, gameState.achievementsButton)) {
+                        gameState.showAchievements = true;
+        	    } else if (gameState.isPointInRect(x, y, gameState.stealthModeButton)) {
+        	        gameState.stealthMode = !gameState.stealthMode; 
+                } else if (gameState.isPointInRect(x, y, gameState.billiardsModeButton)) {
+                    gameState.billiardsMode = !gameState.billiardsMode;
+                } else if (gameState.isPointInSlider(x, y, gameState.aiSlider)) {
+                    gameState.isDragging = true;
+                    gameState.draggingSlider = 'aiSlider';
+                    updateSliderValue(x, gameState.aiSlider, updateAICount);
+                } else if (gameState.isPointInSlider(x, y, gameState.planetSlider)) {
+                    gameState.isDragging = true;
+                    gameState.draggingSlider = 'planetSlider';
+                    updateSliderValue(x, gameState.planetSlider, updatePlanetCount);
+                } else if (gameState.isPointInSlider(x, y, gameState.difficultySlider)) {
+                    gameState.isDragging = true;
+                    gameState.draggingSlider = 'difficultySlider';
+                    updateSliderValue(x, gameState.difficultySlider, value => {
+                        const index = Math.round(value);
+                        gameState.difficultySlider.value = index;
+                        updateDifficulty(gameState.difficultyOptions[index]);
+                    });
+                    }
+                }
+            } else if (gameState.gamePhase === 'playing') {
+                if (gameState.spoon && gameState.spoon.containsPoint(x, y)) {
+    
+                    gameState.explosions.push(new Explosion(gameState.spoon.x, gameState.spoon.y));
+                    if (!achievements['there-is-no-spoon']) {
+                        unlockAchievement('there-is-no-spoon');
+                    }
+                    gameState.spoon = null; 
+                    return; 
+                }
+                if (gameState.dolphin && gameState.dolphin.containsPoint(x, y)) {
+                    gameState.explosions.push(new Explosion(gameState.dolphin.x, gameState.dolphin.y));
+                    if (!achievements['so-long-thanks']) {
+                        unlockAchievement('so-long-thanks');
+                    }
+                    gameState.dolphin = null; 
+                    return; 
+                }
+                if (gameState.ufo && gameState.ufo.containsPoint(x, y)) {
+                    gameState.explosions.push(new Explosion(gameState.ufo.x, gameState.ufo.y));
+                    if (!achievements['we-come-in-peace']) {
+                        unlockAchievement('we-come-in-peace');
+                    }
+                    gameState.ufo = null; 
+                    return;
+                }        
+                if (gameState.showQuitConfirm) {
+                    if (gameState.isPointInRect(x, y, gameState.yesButton)) {
+                        gameState.showQuitConfirm = false;
+                        backToMenu();
+                    } else if (gameState.isPointInRect(x, y, gameState.noButton)) {
+                        gameState.showQuitConfirm = false;
+                    }
+                    return;
+                }
+
+                const currentTime = Date.now();
+                const isDoubleClick = (currentTime - gameState.lastClickTime) < 400;
+                gameState.lastClickTime = currentTime;
+
+                const clickedPlanet = gameState.planets.find(planet => planet.containsPoint(x, y));
+
+                if (clickedPlanet) {
+                    if (isDoubleClick && clickedPlanet.owner && clickedPlanet.owner.id === 0) {
+                        gameState.selectAllPlayerPlanets();
+                        return;
+                    }
+                    
+                    if (gameState.selectedPlanets.length === 0) {
+                        if (clickedPlanet.owner && clickedPlanet.owner.id === 0) {
+                            clickedPlanet.selected = true;
+                            gameState.selectedPlanets.push(clickedPlanet);
+                        }
+                    } else {
+                        if (clickedPlanet.owner && clickedPlanet.owner.id === 0 && gameState.shiftPressed) {
+                            if (!clickedPlanet.selected) {
+                                clickedPlanet.selected = true;
+                                gameState.selectedPlanets.push(clickedPlanet);
+                            }
+                        } else {
+                            gameState.sendShips(gameState.selectedPlanets, clickedPlanet);
+                            clearSelection();
+                        }
+                    }
+                } else {
+                    if (isDoubleClick) {
+                        gameState.selectAllPlayerPlanets();
+                    } else {
+                        clearSelection();
+                    }
+                }
+            } else if (gameState.gamePhase === 'victory' || gameState.gamePhase === 'defeat') {
+                    if (gameState.isPointInRect(x, y, gameState.mainMenuButton)) {
+                    backToMenu();
+                    }
+                }
+        }
+
+        function handleMouseMove(event) {
+            const rect = canvas.getBoundingClientRect();
+            gameState.mousePos.x = event.clientX - rect.left;
+            gameState.mousePos.y = event.clientY - rect.top;
+
+            const buttons = [];
+            if (gameState.gamePhase === 'menu') {
+                if (gameState.showMenuInstructions) {
+                    buttons.push(gameState.instructionsButton);
+                } else if (gameState.showAchievements) {
+                    buttons.push(gameState.achievementsCloseButton, gameState.resetAchievementsButton, gameState.achievementsUpArrow, gameState.achievementsDownArrow);
+                    if (gameState.showResetConfirm) {
+                        buttons.push(gameState.resetYesButton, gameState.resetNoButton);
+                    }
+                } else {
+                     buttons.push(gameState.startButton, gameState.instructionsButton, gameState.achievementsButton, gameState.stealthModeButton, gameState.billiardsModeButton);
+                }
+            } else if (gameState.gamePhase === 'playing' && gameState.showQuitConfirm) {
+                buttons.push(gameState.yesButton, gameState.noButton);
+            } else if (gameState.gamePhase === 'victory' || gameState.gamePhase === 'defeat') {
+                buttons.push(gameState.mainMenuButton);
+            }
+
+            buttons.forEach(button => {
+                button.targetFade = gameState.isPointInRect(gameState.mousePos.x, gameState.mousePos.y, button) ? 1 : 0;
+            });
+
+            if (gameState.isDragging && gameState.draggingSlider) {
+                const slider = gameState[gameState.draggingSlider];
+                let updateFunction;
+                if (gameState.draggingSlider === 'aiSlider') {
+                    updateFunction = updateAICount;
+                } else if (gameState.draggingSlider === 'planetSlider') {
+                    updateFunction = updatePlanetCount;
+                } else if (gameState.draggingSlider === 'difficultySlider') {
+                    updateFunction = value => {
+                        const index = Math.round(value);
+                        gameState.difficultySlider.value = index;
+                        updateDifficulty(gameState.difficultyOptions[index]);
+                    };
+                }
+                updateSliderValue(gameState.mousePos.x, slider, updateFunction);
+            }
+        }
+
+        function handleMouseUp(event) {
+            gameState.isDragging = false;
+            gameState.draggingSlider = null;
+        }
+
+        function updateSliderValue(x, slider, updateFunction) {
+            const sliderX = (x - slider.x) / slider.width;
+            let value = slider.min + (slider.max - slider.min) * sliderX;
+            if (slider === gameState.difficultySlider) {
+                value = Math.round(value);
+            } else {
+                value = Math.round(value);
+            }
+            const clampedValue = Math.max(slider.min, Math.min(slider.max, value));
+            slider.value = clampedValue;
+            updateFunction(clampedValue);
+        }
+
+        function clearSelection() {
+            gameState.selectedPlanets.forEach(planet => planet.selected = false);
+            gameState.selectedPlanets = [];
+        }
+
+        function handleKeyDown(event) {
+            keys[event.code] = true;
+            if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+                gameState.shiftPressed = true;
+            }
+            
+            if (event.code === 'KeyP' && gameState.gamePhase === 'playing') {
+                gameState.isPaused = !gameState.isPaused;
+            }
+            
+            if (event.code === 'KeyQ' && gameState.gamePhase === 'playing' && !gameState.showQuitConfirm) {
+                gameState.showQuitConfirm = true;
+            }
+            
+            if (event.code === 'KeyH' && gameState.gamePhase === 'playing') {
+                gameState.showControls = !gameState.showControls;
+                localStorage.setItem('hashcon-showControls', gameState.showControls);
+            }
+            
+            if (gameState.showQuitConfirm) {
+                if (event.code === 'KeyY') {
+                    gameState.showQuitConfirm = false;
+                    backToMenu();
+                } else if (event.code === 'KeyN') {
+                    gameState.showQuitConfirm = false;
+                }
+            }
+            
+            if (event.code === 'Escape' && gameState.gamePhase === 'menu') {
+                if (gameState.showMenuInstructions) {
+                    gameState.showMenuInstructions = false;
+                } else if (gameState.showAchievements) {
+                    if (gameState.showResetConfirm) {
+                        gameState.showResetConfirm = false;
+                    } else {
+                        gameState.showAchievements = false;
+                    }
+                }
+            }
+            
+            if (gameState.showAchievements && gameState.showResetConfirm) {
+                if (event.code === 'KeyY') {
+                    resetAchievements();
+                    gameState.showResetConfirm = false;
+                } else if (event.code === 'KeyN') {
+                    gameState.showResetConfirm = false;
+                }
+            }
+        }
+
+        function handleKeyUp(event) {
+            keys[event.code] = false;
+            if (event.code === 'ShiftLeft' || event.code === 'ShiftRight') {
+                gameState.shiftPressed = false;
+            }
+        }
+
+        function gameLoop(currentTime) {
+            const deltaTime = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+
+            if (gameState) {
+                gameState.update(deltaTime);
+                gameState.draw(ctx);
+            }
+
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function startGame() {
+            selectedAICount = gameState.aiCount;
+            selectedPlanetCount = gameState.planetCount;
+            selectedDifficulty = gameState.difficultyOptions[gameState.difficultySlider.value];
+            const stealthMode = gameState.stealthMode; 
+            const billiardsMode = gameState.billiardsMode;
+            gameState = new GameState();
+            gameState.stealthMode = stealthMode; 
+            gameState.billiardsMode = billiardsMode; 
+            gameState.reset();
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        function backToMenu() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            const stealthMode = gameState.stealthMode; 
+            const billiardsMode = gameState.billiardsMode;
+            gameState = new GameState();
+            gameState.aiCount = selectedAICount;
+            gameState.planetCount = selectedPlanetCount;
+            gameState.difficulty = selectedDifficulty;
+            gameState.difficultySlider.value = gameState.difficultyOptions.indexOf(selectedDifficulty);
+            gameState.stealthMode = stealthMode; 
+            gameState.billiardsMode = billiardsMode;
+            gameState.generateBackground();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function updateAchievementProgress(achievementId, increment) {
+            if (achievements[achievementId] && typeof achievements[achievementId] === 'object' && !achievements[achievementId].completed) {
+                achievements[achievementId].progress += increment;
+                if (achievements[achievementId].progress >= achievementList.find(a => a.id === achievementId).target) {
+                    achievements[achievementId].completed = true;
+                    const achievement = achievementList.find(a => a.id === achievementId);
+                    if (achievement && gameState && gameState.gamePhase !== 'menu') { 
+                        gameState.notifications.push(
+                            new Notification(
+                                `Achievement Unlocked: ${achievement.title}!`,
+                                canvas.width / 2,
+                                canvas.height - 50,
+                                28 
+                            )
+                        );
+                    }
+                }
+                saveAchievements();
+            }
+        }
+
+        function init() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+
+            canvas.addEventListener('wheel', handleWheel);
+
+            function handleWheel(event) {
+                if (gameState.showAchievements) {
+                    event.preventDefault();
+                    const delta = event.deltaY; 
+                    const scrollSpeed = 20 * (canvas.width / 1000);
+                    gameState.scrollOffset += delta > 0 ? scrollSpeed : -scrollSpeed;
+                    gameState.scrollOffset = Math.max(0, Math.min(gameState.scrollOffset, gameState.maxScrollOffset));
+                }
+            }
+
+            function resizeCanvas() {
+                const maxWidth = window.innerWidth - 2;
+                const maxHeight = window.innerHeight - 2;
+                const aspectRatio = CONFIG.CANVAS_ASPECT_RATIO; 
+
+                const widthFromHeight = maxHeight * aspectRatio; 
+                const heightFromWidth = maxWidth / aspectRatio; 
+
+                if (widthFromHeight <= maxWidth) {
+                    canvas.width = Math.floor(widthFromHeight);
+                    canvas.height = Math.floor(maxHeight);
+                } else {
+                    canvas.width = Math.floor(maxWidth);
+                    canvas.height = Math.floor(heightFromWidth);
+                }
+
+                canvas.style.width = `${canvas.width}px`;
+                canvas.style.height = `${canvas.height}px`;
+
+                if (gameState) {
+                    gameState.generateBackground();
+                }
+            }
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            canvas.addEventListener('mousedown', handleMouseDown);
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('mouseup', handleMouseUp);
+            window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('keyup', handleKeyUp);
+
+            gameState = new GameState();
+            gameState.generateBackground();
+            loadAchievements();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function getAchievementCount() {
+            const total = Object.keys(achievements).length - 2; 
+            const completed = Object.values(achievements).filter(
+                (value, index) => {
+                    const key = Object.keys(achievements)[index];
+                    return key !== 'gamesWon' && key !== 'gamesLost' && (typeof value === 'object' ? value.completed : value);
+                }
+            ).length;
+            return { completed, total };
+        }
+
+        function resetAchievements() {
+            Object.keys(achievements).forEach(key => {
+                if (typeof achievements[key] === 'object' && key !== 'cosmic-collector') {
+                    achievements[key] = { completed: false, progress: 0 };
+                } else if (key === 'gamesWon' || key === 'gamesLost') {
+                    achievements[key] = 0;
+                } else {
+                    achievements[key] = false;
+                }
+            });
+            saveAchievements();
+        }
+
+        window.addEventListener('load', init);
+    </script>
+
+    <div id="tipsModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true" inert>
+      <div class="modal__backdrop" data-close="true"></div>
+      <div class="modal__dialog" role="document">
+        <button class="modal__close" type="button" aria-label="Close">×</button>
+        <h2 style="margin:0 0 .5rem 0;">Support / Tips</h2>
+        <p style="margin:0 0 .75rem 0;">If you enjoy HASHCON and want to tip:</p>
+        <ul style="margin:0 0 .75rem 1rem;">
+          <li>⚡ Lightning: <a href="https://zbd.gg/BTCdir" target="_blank">https://zbd.gg/BTCdir</a></li>
+          <li>⚡ LNURL: bxl909@walletofsatoshi.com</li>
+          <li>🟠 BTC: 1BXL9o99CZVeD8jvd4pwQfDRfky1LvMqP1</li>
+        </ul>
+        <p style="margin:0 0 .75rem 0;">Try <a target="_blank" href="https://bxl909.github.io">bxl909.github.io</a> for more.</p>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const tipsModal = document.getElementById('tipsModal');
+        const closeBtn = tipsModal.querySelector('.modal__close');
+
+        function openModal() {
+          tipsModal.classList.add('is-open');
+          tipsModal.setAttribute('aria-hidden', 'false');
+          tipsModal.removeAttribute('inert');
+          document.body.classList.add('no-scroll');
+          closeBtn.focus(); 
+        }
+
+        function closeModal() {
+          tipsModal.classList.remove('is-open');
+          tipsModal.setAttribute('aria-hidden', 'true');
+          tipsModal.setAttribute('inert', '');
+          document.body.classList.remove('no-scroll');
+          if (document.activeElement === closeBtn) {
+            document.activeElement.blur();
+          }
+        }
+
+        tipsModal.addEventListener('click', (e) => {
+          if (e.target.dataset.close !== undefined) closeModal(); 
+        });
+        closeBtn?.addEventListener('click', closeModal);
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && tipsModal.classList.contains('is-open')) closeModal();
+        });
+
+        const tipsLink = document.getElementById('tipsLink');
+        tipsLink?.addEventListener('click', (e) => {
+          e.preventDefault();
+          openModal();
+        });
+      })();
+    </script>
+
+</body>
+</html>

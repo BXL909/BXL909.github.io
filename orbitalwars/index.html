@@ -1,0 +1,2385 @@
+
+<!--  ORBITAL WARS by BXL909  -->
+<!-- https://bxl909.github.io -->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Orbital Wars by BXL909</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #03121a;
+            color: #fff;
+            font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,Liberation Sans,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";
+        }
+        .wrap {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        header {
+            padding: 0px 0px;
+
+            background: #04121a;
+            display: flex;
+            align-items: center;
+        }
+        h1 {
+            font-size: 16px;
+            margin: 0;
+        }
+        h2 {
+            font-size: 16px;
+            margin: 0;
+            color: #fff;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            gap: 12px;
+            padding: 10px;
+        }
+        a {
+            color: #ff8800;
+            font-size: 12px;
+            text-decoration: none;
+            margin-bottom: 4px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        #leftPanel {
+            
+            width: 260px;
+            background: linear-gradient(140deg, #072633 0%, #0e3a4a 50%, #021317 100%);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        #playArea {
+            flex: 1;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        #radar {
+            width: 255px;
+            height: 160px;
+            margin-top: 14px;
+            border: 2px solid #164154; 
+            border-radius: 6px; 
+            background: #02141a;
+            box-shadow: 0 0 8px rgba(102, 183, 255, 0.6), inset 0 0 6px rgba(0, 255, 255, 0.2); 
+        }
+        label {
+            display: block;
+            margin: 2px 0;
+            color: #9fb0bf;
+            font-size: 13px;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 0px;
+        }
+        input[type=range] {
+            flex: 1;
+        }
+        input[type=number] {
+            width: 50px;
+            background: #0a2b36;
+            border: 1px solid #164154;
+            color: #fff;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .settings-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+            color: #9fb0bf;
+            font-size: 13px;
+        }
+        .settings-label .label-text {
+            flex: 1;
+        }
+        .settings-label input[type=range] {
+            width: 90px;
+            flex: none;
+            margin-left: 8px;
+        }
+        input[type=number]:focus {
+            outline: none;
+            border-color: #ff8800;
+        }
+        .bigButton {
+            display: inline-block;
+            padding: 4px 6px;
+            border-radius: 6px;
+            border: 1px solid #164154 !important;
+            background: linear-gradient(to right, #164154, #072633);
+            color: #9fb0bf;
+            border: 0;
+            cursor: pointer;
+            transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .bigButton:not(:disabled)::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(0, 255, 255, 0.2), transparent);
+        }
+        .bigButton:hover:not(:disabled) {
+            background: linear-gradient(to right, #1f5a70, #0a2b36);
+            box-shadow: 0 0 6px rgba(0, 255, 255, 0.3);
+        }
+        .bigButton:hover:not(:disabled)::after {
+            animation: sweep 1s ease forwards;
+        }
+        .bigButton:disabled {
+            background: #0a2b36;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        @keyframes sweep {
+            0% {
+                left: -100%;
+                opacity: 1;
+            }
+            100% {
+                left: 100%;
+                opacity: 1;
+            }
+        }
+        .muted {
+            color: #9fb0bf;
+            font-size: 13px;
+        }
+        .small {
+            font-size: 12px;
+            color: #9fb0bf;
+            padding: 4px 8px;
+            background: linear-gradient(to right, #164154, #072633);
+            border-radius: 4px;
+            margin: 8px 0;
+        }
+        footer {
+            padding: 0px 12px;
+            padding-top: 6px; 
+            background: linear-gradient(0deg, #021317 0%, #0e3a4a 50%, #072633 100%);
+            color: #eee;
+            font-size: 12px;
+        }
+        .social-links {
+            float: right;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-logo {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        .social-links svg {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+        }
+        .overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.5);
+            z-index: 40;
+        }
+        .card {
+            background: #04262f;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        #turnIndicator {
+            font-size: 14px;
+            margin-top: 10px;
+            color: #66B7FF;
+            font-weight: bold;
+        }
+        .hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 14px;
+            color: #fff;
+        }
+        .player1 {
+            color: lime;
+        }
+        .player2 {
+            color: red;
+        }
+        .settings-disabled {
+            opacity: 0.5;
+        }
+        .settings-disabled input {
+            pointer-events: none;
+        }
+        .settings-disabled label {
+            color: #aaa;
+        }
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid #9fb0bf33;
+            padding-top: 8px;
+            margin-top: 8px;
+        }
+        .background-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .button-group {
+            display: flex;
+            gap: 6px;
+        }
+        .bgButton {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            background-size: cover;
+            background-position: center;
+            border-radius: 6px;
+            border: 0;
+        }
+        #aiMode {
+            margin-left: 8px; 
+        }
+        #gameSettings {
+            padding-top: 8px;
+            border-top: 1px solid #9fb0bf33;
+        }
+        header nav {
+            display: flex;
+            gap: 15px;
+        }
+        header nav a {
+            font-size: 18px;
+            padding-top: 4px;
+            padding-right: 4px;
+            color: #ff8800;
+        }
+        header nav a:hover {
+            text-decoration: underline;
+        }
+        .card h3 {
+            font-size: 14px;
+            margin: 10px 0 5px;
+            color: #61c2ec;
+        }
+        .card p {
+            font-size: 12px;
+            color: #9fb0bf;
+            margin: 5px 0;
+        }
+        .card a {
+            color: #ff8800;
+            text-decoration: none;
+        }
+        .card a:hover {
+            text-decoration: underline;
+        }
+        @keyframes flash {
+            0% { color: #66B7FF; }
+            50% { color: #FFFFFF; }
+            100% { color: #66B7FF; }
+        }
+        .flash-effect {
+            animation: flash 0.6s ease-in-out;
+        }
+    </style>
+
+    <script>
+        async function updateVisitorCounter() {
+            const visitorCounter = document.getElementById('visitorCounter');
+            try {
+                console.log('Attempting to increment counter for bxl909/OrbitalWarsBTCdir');
+                const response = await fetch('https://api.counterapi.dev/v1/bxl909/OrbitalWarsBTCdir/up');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const result = await response.json();
+                console.log('CounterAPI response:', result);
+                visitorCounter.textContent = result.count || '0'; 
+            } catch (error) {
+                console.error('CounterAPI error:', error.message);
+                visitorCounter.textContent = 'Error';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOMContentLoaded fired, calling updateVisitorCounter');
+            updateVisitorCounter();
+        });
+    </script>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <img style="padding-left:10px; height:60px" src="title.png">
+            <nav style="margin-left: auto; padding-right: 10px;">
+                <a href="#" id="tipsLink">TIPS</a>
+                <a href="#" id="instructionsLink">INSTRUCTIONS</a>
+            </nav>
+        </header>
+        <main>
+            <div id="leftPanel">
+                <div class="top-section">
+                    <div class="small"><span class="player1">PLAYER 1</span></div>
+                    <label>TRAJECTORY
+                        <div class="input-group">
+                            <input id="angleA" type="range" min="0" max="360" step="0.1" value="45">
+                            <input id="angleANum" type="number" min="0" max="360" step="0.1" value="45">
+                        </div>
+                    </label>
+                    <label>POWER
+                        <div class="input-group">
+                            <input id="powerA" type="range" min="5" max="100" step="0.1" value="25">
+                            <input id="powerANum" type="number" min="5" max="100" step="0.1" value="25">
+                        </div>
+                    </label>
+                    <div class="small"><span class="player2">PLAYER 2</span></div>
+                    <label>TRAJECTORY
+                        <div class="input-group">
+                            <input id="angleB" type="range" min="0" max="360" step="0.1" value="315">
+                            <input id="angleBNum" type="number" min="0" max="360" step="0.1" value="315">
+                        </div>
+                    </label>
+                    <label>POWER
+                        <div class="input-group">
+                            <input id="powerB" type="range" min="5" max="100" step="0.1" value="25">
+                            <input id="powerBNum" type="number" min="5" max="100" step="0.1" value="25">
+                        </div>
+                    </label>
+                    <div style="height:8px"></div>
+                    <div class="toggle-group">
+                        <label><input id="gravityMap" type="checkbox" checked> GRAVITY MAP</label>
+                        <label><input id="combatLogToggle" type="checkbox" checked> COMBAT LOG</label>
+                    </div>
+                    <div style="height:8px"></div>
+                    <button id="fireBtn" class="bigButton">LAUNCH</button>
+                    <button id="newBtn" class="bigButton">NEW SYSTEM</button>
+                    <button id="restartBtn" class="bigButton">RESTART</button>
+                    <div id="turnIndicator" class="muted">READY TO LAUNCH!</div>
+                    <canvas id="radar"></canvas>
+                </div>
+                <div class="bottom-section" id="gameSettings">
+                    <div class="small">GAME SETTINGS</div>
+                    <label>AI OPPONENT (PLAYER 2)<input id="aiMode" type="checkbox"></label>
+                    <div class="settings-label">
+                        <span class="label-text">GRAVITY SCALE: <span id="gVal">1.0</span></span>
+                        <input id="gSlider" type="range" min="0.2" max="2.5" step="0.1" value="1.0">
+                    </div>
+                    <div class="settings-label" style="display:none">
+                        <span class="label-text">ARMING DELAY (ms): <span id="liveDelayVal">0</span></span>
+                        <input id="liveDelay" type="range" min="0" max="1000" step="10" value="0">
+                    </div>
+                    <div class="settings-label">
+                        <span class="label-text">ARMED DURATION (s): <span id="lifetimeVal">30</span></span>
+                        <input id="lifetime" type="range" min="3" max="60" step="1" value="30">
+                    </div>
+                    <div class="settings-label">
+                        <span class="label-text">NUMBER OF PLANETS: <span id="planetCountVal">5</span></span>
+                        <input id="planetCount" type="range" min="1" max="10" step="1" value="5">
+                    </div>
+                    <div class="settings-label">
+                        <span class="label-text">MAX. PLANET SIZE: <span id="maxPlanetSizeVal">75</span></span>
+                        <input id="maxPlanetSize" type="range" min="30" max="100" step="5" value="75">
+                    </div>
+                    <div class="settings-label">
+                        <span class="label-text">PLANET BRIGHTNESS: <span id="planetBrightnessVal">1.0</span></span>
+                        <input id="planetBrightness" type="range" min="0.0" max="2.0" step="0.1" value="1.0">
+                    </div>
+                    <div class="settings-label">
+                        <span class="label-text">SHIP ARMOR: <span id="shipArmorVal">100</span></span>
+                        <input id="shipArmor" type="range" min="50" max="500" step="25" value="100">
+                    </div>
+                    <div class="background-controls" style="display: flex; align-items: center; gap: 6px; margin-top: 8px;">
+                        <label>BACKGROUND</label>
+                        <div class="button-group">
+                            <button id="bgBtnX" class="bigButton bgButton" style="background-image: url('background0.png');color:red;">×</button>
+                            <button id="bgBtn1" class="bigButton bgButton" style="background-image: url('background1.png');color:#9fb0bf;">₁</button>
+                            <button id="bgBtn2" class="bigButton bgButton" style="background-image: url('background2.png');color:#9fb0bf;">₂</button>
+                            <button id="bgBtn3" class="bigButton bgButton" style="background-image: url('background3.png');color:#9fb0bf;">₃</button>
+                            <button id="bgBtn4" class="bigButton bgButton" style="background-image: url('background4.png');color:#9fb0bf;">₄</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="playArea">
+                <canvas id="canvas"></canvas>
+                <div class="hud">
+                    <div><span class="player1">Player 1</span> HP: <span id="hpA">100</span></div>
+                    <div><span class="player2">Player 2</span> HP: <span id="hpB">100</span></div>
+                </div>
+                <div class="overlay" id="gameOver" style="display:none;">
+                    <div class="card">
+                        <h2 id="goText">GAME OVER</h2>
+                        <p id="winnerText"></p>
+                        <button id="restartGameBtn" class="bigButton">Play Again</button>
+                    </div>
+                </div>
+                <div class="overlay" id="confirmPopup" style="display:none;">
+                    <div class="card">
+                        <h2>Are you sure?</h2>
+                        <p>This will reset the current game.</p>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button id="confirmYesBtn" class="bigButton">Yes</button>
+                            <button id="confirmNoBtn" class="bigButton">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <div class="overlay" id="tipsModal" style="display:none;">
+            <div class="card">
+                <h2>THANKS FOR PLAYING!</h2>
+                <br>
+                <img style="height:80px" src="BXL909.png">
+                <p>
+                    All of my <a target="_blank" href="https://bxl909.github.io">apps, games and websites</a> are completely free and <a target = "_blank" href="https://github.com/BXL909">open source</a>.<br>
+                    If you'd like to support me in making more such projects, please consider<br>
+                    leaving a small tip or maybe just sharing this game with your friends 🧡.<br><br>
+                    Thanks for playing! BXL909<br><br>
+                    
+                    ⚡ Lightning: <a href="https://zbd.gg/BTCdir" target="_blank">https://zbd.gg/BTCdir</a><br>
+                    ⚡ LNURL: bxl909@walletofsatoshi.com<br>
+                    🟠 BTC: 1BXL9o99CZVeD8jvd4pwQfDRfky1LvMqP1
+                    <br><br>
+                </p>
+                <button id="closeTipsBtn" class="bigButton">Close</button>
+            </div>
+        </div>
+        <div class="overlay" id="instructionsModal" style="display:none;">
+            <div class="card" style="width: 900px; max-height: 90vh; overflow-y: auto; background-color: #04121a;">
+                <img style="padding-left:10px; height:80px" src="title.png">
+                <h2 align="left">INSTRUCTIONS</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left;">
+                    <div>
+                        <h3>OBJECTIVE</h3>
+                        <p>Destroy your opponent's ship by launching missiles through a gravity field created by planets. Each direct hit deals 25 damage. Reduce your opponent's HP to zero to win!</p>
+                        <h3>CONTROLS</h3>
+                        <p><strong>Trajectory:</strong> Set the launch angle (0-360°) for your missile.<br>
+                        <strong>Power:</strong> Adjust missile launch velocity (5-100).<br>
+                        <strong>Launch:</strong> Fire both players' missiles simultaneously. Watch them curve around planets!</p>
+                        <h3>GAMEPLAY</h3>
+                        <p>• Both ships fire each turn - plan your shot carefully!<br>
+                        • Missiles are affected by planetary gravity, creating curved trajectories<br>
+                        • When hit, ships automatically relocate to a new position<br>
+                        • Missiles self-destruct after their armed duration expires<br>
+                        • Use the radar (bottom left) to track the full battlefield</p>
+                        <h3>GAME MODES</h3>
+                        <p><strong>Two Player:</strong> Both players adjust trajectory and power before agreeing to launch<br>
+                        <strong>AI Opponent:</strong> Enable "AI Opponent" to let the computer control Player 2.</p>
+                    </div>
+                    <div>
+                        <h3>SETTINGS</h3>
+                        <p><strong>Gravity Scale:</strong> Affects how strongly planets pull missiles<br>
+                        <strong>Armed Duration:</strong> How long missiles fly before self-destructing<br>
+                        <strong>Number of Planets:</strong> More planets = more complex gravity fields<br>
+                        <strong>Max Planet Size:</strong> Larger planets have stronger gravity<br>
+                        <strong>Ship Armor:</strong> Starting HP for each ship (50-500. 25 damage per hit)<br>
+                        <strong>Gravity Map:</strong> Toggle to visualize gravity field vectors<br>
+                        <strong>Combat Log:</strong> Toggle battle notifications on/off</p>
+                        <h3>HINTS</h3>
+                        <p>• Experiment with low-power shots that loop around planets<br>
+                        • High-power shots travel straighter but are more predictable<br>
+                        • Use the combat log to refine previous trajectory/power combinations<br>
+                        • The best games occur when ships don't have direct line of sight<br>
+                        • Use "New System" to generate a fresh planetary layout<br>
+                        • The orange arrows show ship relocation paths after impacts</p>
+                        <h3>INTERFACE</h3>
+                        <p><strong>Main Display:</strong> Shows visible portion of the battlefield<br>
+                        <strong>Radar:</strong> Displays an overview of the entire battlefield<br>
+                        <strong>Combat Log:</strong> Shows recent battle events (lower left)<br>
+                        <strong>Countdown Timers:</strong> Shows time until missile self-destruction</p>
+                    </div>
+                </div>
+                <div style="text-align: left; margin-top: 20px; padding-top: 15px; border-top: 1px solid #9fb0bf33;">
+                    <h2>BACKGROUND</h2>
+                    <p>This is a re-imagining of a fond but vague memory of a game that I used to play with a school friend for many hours on my <a target="_blank" href="https://en.wikipedia.org/wiki/Amiga">Commodore Amiga</a> way back in <a target="_blank" href="https://en.wikipedia.org/wiki/1987">1987</a>! I remembered that the game was available in the public domain at the time on a shareware basis, but couldn't remember what it was called. Throughout making this game, I was keen not to research which game it actually was until I'd finished it, as I didn't want to make a literal clone - rather I just wanted to make something based on my memory of it from 38 years ago. I've since looked up which game we sunk all those hours into and am really pleased I did, because not only did I find the original game I remember from 38 years ago (<a target="_blank" href="https://i.ytimg.com/vi/nEZYGEgL6vg/sddefault.jpg">Gravity Wars</a>), but also a <a target="_blank" href="https://youtu.be/Vc_ILtL260s?si=CCJGrykMFwrEur5F">short interview</a> with its creator, Ed Bartz, from about 11 years ago. Ed, if you see this, "Hi, and I hope you approve of my homage to your excellent game!"</p>
+                </div>
+                <button id="closeInstructionsBtn" class="bigButton" style="margin-top: 15px;">Close</button>
+            </div>
+        </div>
+        <div class="overlay" id="mobileModal" style="display:none;">
+            <div class="card">
+                <h2>WARNING</h2>
+                <p>This game is designed primarily for desktops.<br>Expect issues on mobile devices.</p>
+                <button id="closeMobileBtn" class="bigButton">Close</button>
+            </div>
+        </div>
+        <footer>
+            
+            v1.0 - Made with 🧡 by BXL909. Visit <a target="_blank" href="https://bxl909.github.io">bxl909.github.io</a> for more games, bitcoin apps, etc
+            <div class="social-links">
+                <span style="margin-left: 10px; color: #eee; font-size: 12px; padding-bottom: 4px !important;">Player #<span id="visitorCounter">Loading...</span></span>
+                <a target="_blank" href="https://bxl909.github.io">
+                    <img src="BXL909.png" alt="BXL909 Logo" class="footer-logo">
+                </a>
+                <a href="https://github.com/BXL909" target="_blank" aria-label="GitHub">
+                    <svg fill="#ff9933" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <title>GitHub</title>
+                        <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path>
+                    </svg>
+                </a>
+                <a href="https://x.com/bxl909" target="_blank" aria-label="X">
+                    <svg fill="#ff9933" viewBox="0 0 1200 1227" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"></path>
+                    </svg>
+                </a>
+                <a href="https://primal.net/p/npub1y2sgv8xwg9g63wlxq25735y9xvl4kjmwh5u92c0q2nkhurgjlstql87kmv" target="_blank" aria-label="Nostr">
+                    <svg fill="#ff9933" viewBox="0 0 875 875" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M684.72 485.57c.22 12.59-11.93 51.47-38.67 81.3-26.74 29.83-56.02 20.85-58.42 20.16s-3.09-4.46-7.89-3.77-9.6 6.17-18.86 7.2-17.49 1.71-26.06-1.37c-4.46.69-5.14.71-7.2 2.24s-17.83 10.79-21.6 11.47c0 7.2-1.37 44.57 0 55.89s3.77 25.71 7.54 36 2.74 10.63 7.54 9.94 13.37.34 15.77 4.11c2.4 3.77 1.37 6.51 5.49 8.23s60.69 17.14 99.43 19.2c26.74.69 42.86 2.74 52.12 19.54 1.37 7.89 7.54 13.03 11.31 14.06s8.23 2.06 12 5.83 1.03 8.23 5.49 11.66c4.46 3.43 14.74 8.57 25.37 13.71 10.63 5.14 15.09 13.37 15.77 16.11s1.71 10.97 1.71 10.97-8.91 0-10.97-2.06-2.74-5.83-2.74-5.83-6.17 1.03-7.54 3.43.69 2.74-7.89.69-11.66-3.77-18.17-8.57c-6.51-4.8-16.46-17.14-25.03-16.8 4.11 8.23 5.83 8.23 10.63 10.97s8.23 5.83 8.23 5.83l-7.2 4.46s-4.46 2.06-14.74-.69-11.66-4.46-12.69-10.63 0-9.26-2.74-14.4-4.11-15.77-22.29-21.26c-18.17-5.49-66.52-21.26-100.12-24.69s-22.63-2.74-28.11-1.37-15.77 4.46-26.4-1.37c-10.63-5.83-16.8-13.71-17.49-20.23s-1.71-10.97 0-19.2 3.43-19.89 1.71-26.74-14.06-55.89-19.89-64.12c-13.03 1.03-50.74-.69-50.74-.69s-2.4-.69-17.49 5.83-36.48 13.76-46.77 19.93-14.4 9.7-16.12 13.13c.12 3-1.23 7.72-2.79 9.06s-12.48 2.42-12.48 2.42-5.85 5.86-8.25 9.97c-6.86 9.6-55.2 125.14-66.52 149.83-13.54 32.57-9.77 27.43-37.71 27.43s-8.06.3-8.06.3-12.34 5.88-16.8 5.88-18.86-2.4-26.4 0-16.46 9.26-23.31 10.29-4.95-1.34-8.38-3.74c-4-.21-14.27-.12-14.27-.12s1.74-6.51 7.91-10.88c8.23-5.83 25.37-16.11 34.63-21.26s17.49-7.89 23.31-9.26 18.51-6.17 30.51-9.94 19.54-8.23 29.83-31.54 50.4-111.43 51.43-116.23c.63-2.96 3.73-6.48 4.8-15.09.66-5.35-2.49-13.04 1.71-22.63 10.97-25.03 21.6-20.23 26.4-20.23s17.14.34 26.4-1.37 15.43-2.74 24.69-7.89 11.31-8.91 11.31-8.91l-19.89-3.43s-18.51.69-25.03-4.46-15.43-15.77-15.43-15.77l-7.54-7.2 1.03 8.57s-5.14-8.91-6.51-10.29-8.57-6.51-11.31-11.31-7.54-25.03-7.54-25.03l-6.17 13.03-1.71-18.86-5.14 7.2-2.74-16.11-4.8 8.23-3.43-14.4-5.83 4.46-2.4-10.29-5.83-3.43s-14.06-9.26-16.46-9.6-4.46 3.43-4.46 3.43l1.37 12-12.2-6.27-7-11.9s2.36 4.01-9.62 7.53c-20.55 0-21.89-2.28-24.93-3.94-1.31-6.56-5.57-10.11-5.57-10.11h-20.57l-.34-6.86-7.89 3.09.69-10.29h-14.06l1.03-11.31h-8.91s3.09-9.26 25.71-22.97 25.03-16.46 46.29-17.14c21.26-.69 32.91 2.74 46.29 8.23s38.74 13.71 43.89 17.49c11.31-9.94 28.46-19.89 34.29-19.89 1.03-2.4 6.19-12.33 17.96-17.60 35.31-15.81 108.13-34 131.53-35.54 31.2-2.06 7.89-1.37 39.09 2.06 31.2 3.43 54.17 7.54 69.6 12.69 12.58 4.19 25.03 9.6 34.29 2.06 4.33-1.81 11.81-1.34 17.83-5.14 30.69-25.09 34.72-32.35 43.63-41.95s20.14-24.91 22.54-45.14 4.46-58.29-10.63-88.12-28.80-45.26-34.63-69.26c-5.83-24-8.23-61.03-6.17-73.03 2.06-12 5.14-22.29 6.86-30.51s9.94-14.74 19.89-16.46c9.94-1.71 17.83 1.37 22.29 4.80 4.46 3.43 11.65 6.28 13.37 10.29.34 1.71-1.37 6.51 8.23 8.23 9.6 1.71 16.05 4.16 16.05 4.16s15.64 4.29 3.11 7.73c-12.69 2.06-20.52-.71-24.29 1.69s-7.21 10.08-9.61 11.10-7.20 .34-12 4.11-9.60 6.86-12.69 14.40-5.49 15.77-3.43 26.74 8.57 31.54 14.40 43.20c5.83 11.66 20.23 40.80 24.34 47.66s15.77 29.49 16.80 53.83 1.03 44.23 0 54.86-10.84 51.65-35.53 85.94c-8.16 14.14-23.21 31.90-24.67 35.03-1.45 3.13-3.02 4.88-1.61 7.65 4.62 9.05 12.87 22.13 14.71 29.22 2.29 6.64 6.99 16.13 7.22 28.72Z" style="stroke: #fff; stroke-miterlimit: 10; stroke-width: 6px;"></path>
+                    </svg>
+                </a>
+                <a href="mailto:bxl909@pm.me" aria-label="Email">
+                    <svg fill="#ff9933" viewBox="0 0 8 6" xmlns="http://www.w3.org/2000/svg">
+                        <path d="m0 0h8v6h-8zm.75 .75v4.5h6.5v-4.5zM0 0l4 3 4-3v1l-4 3-4-3z"/>
+                    </svg>
+                </a>
+            </div>
+        </footer>
+    </div>
+    <script>
+
+
+
+
+        const backgroundImage = new Image();
+        backgroundImage.src = 'background1.png';
+        backgroundImage.onerror = () => {
+            console.error(`Failed to load ${backgroundImage.src}. Check file path or existence.`);
+        };
+        const planetImage = new Image();
+        planetImage.src = 'planet.png';
+        planetImage.onerror = () => {
+            console.error(`Failed to load ${planetImage.src}. Check file path or existence.`);
+        };
+        const planetImage2 = new Image();
+        planetImage2.src = 'planet2.png';
+        planetImage2.onerror = () => {
+            console.error(`Failed to load ${planetImage2.src}. Check file path or existence.`);
+        };
+        const planetImage3 = new Image();
+        planetImage3.src = 'planet3.png';
+        planetImage3.onerror = () => {
+            console.error(`Failed to load ${planetImage3.src}. Check file path or existence.`);
+        };
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const radarCanvas = document.getElementById('radar');
+        const radarCtx = radarCanvas.getContext('2d');
+        let W = canvas.clientWidth, H = canvas.clientHeight;
+        let gameW = 3 * W, gameH = 3 * H;
+        canvas.width = W;
+        canvas.height = H;
+        radarCanvas.width = 240;
+        radarCanvas.height = 160;
+        const angleA = document.getElementById('angleA'), angleB = document.getElementById('angleB');
+        const powerA = document.getElementById('powerA'), powerB = document.getElementById('powerB');
+        const angleANum = document.getElementById('angleANum'), angleBNum = document.getElementById('angleBNum');
+        const powerANum = document.getElementById('powerANum'), powerBNum = document.getElementById('powerBNum');
+        const fireBtn = document.getElementById('fireBtn'), newBtn = document.getElementById('newBtn');
+        const restartBtn = document.getElementById('restartBtn'), restartGameBtn = document.getElementById('restartGameBtn');
+        const gSlider = document.getElementById('gSlider'), gVal = document.getElementById('gVal');
+        const liveDelay = document.getElementById('liveDelay'), liveDelayVal = document.getElementById('liveDelayVal');
+        const lifetime = document.getElementById('lifetime'), lifetimeVal = document.getElementById('lifetimeVal');
+        const planetCount = document.getElementById('planetCount'), planetCountVal = document.getElementById('planetCountVal');
+        const planetBrightness = document.getElementById('planetBrightness'), planetBrightnessVal = document.getElementById('planetBrightnessVal');
+        const shipArmor = document.getElementById('shipArmor'), shipArmorVal = document.getElementById('shipArmorVal');
+        const maxPlanetSize = document.getElementById('maxPlanetSize'), maxPlanetSizeVal = document.getElementById('maxPlanetSizeVal');
+        const aiMode = document.getElementById('aiMode');
+        const gravityMap = document.getElementById('gravityMap');
+        const combatLogToggle = document.getElementById('combatLogToggle');
+        const turnIndicator = document.getElementById('turnIndicator');
+        const hpA = document.getElementById('hpA'), hpB = document.getElementById('hpB');
+        const gameOver = document.getElementById('gameOver'), winnerText = document.getElementById('winnerText');
+        const gameSettings = document.getElementById('gameSettings');
+        const confirmPopup = document.getElementById('confirmPopup');
+        const confirmYesBtn = document.getElementById('confirmYesBtn');
+        const confirmNoBtn = document.getElementById('confirmNoBtn');
+        const bgBtnX = document.getElementById('bgBtnX');
+        const bgBtn1 = document.getElementById('bgBtn1');
+        const bgBtn2 = document.getElementById('bgBtn2');
+        const bgBtn3 = document.getElementById('bgBtn3');
+        const bgBtn4 = document.getElementById('bgBtn4');
+        let confirmCallback = null;
+        const SHIP_RADIUS = 6;
+        const COLLISION_RADIUS = 10;
+
+        let state = {
+            planets: [],
+            ships: [],
+            projectiles: [],
+            trails: [],
+            radarTrails: [],
+            explosions: [],
+            ghosts: [],
+            shipMovements: [],
+            stars: [],
+            shootingStars: [],
+            combatLog: [],
+            gScale: Number(gSlider.value),
+            liveDelayMs: Number(liveDelay.value),
+            lifetimeS: Number(lifetime.value),
+            planetCount: Number(planetCount.value),
+            planetBrightness: Number(planetBrightness.value),
+            shipArmor: Number(shipArmor.value),
+            maxPlanetSize: Number(maxPlanetSize.value),
+            gameOver: false,
+            gameTime: 0,
+            shotsFired: false,
+            roundActive: false,
+            showGravityMap: false,
+            showCombatLog: true
+        };
+
+        function saveSettings() {
+            const settings = {
+                aiMode: aiMode.checked,
+                gScale: state.gScale,
+                liveDelayMs: state.liveDelayMs,
+                lifetimeS: state.lifetimeS,
+                planetCount: state.planetCount,
+                maxPlanetSize: state.maxPlanetSize,
+                planetBrightness: state.planetBrightness,
+                shipArmor: state.shipArmor,
+                background: backgroundImage.src.match(/background(\d|X)\.png/)[1]
+            };
+            localStorage.setItem('gameSettings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('gameSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                state.gScale = settings.gScale || 1.0;
+                state.liveDelayMs = settings.liveDelayMs || 0;
+                state.lifetimeS = settings.lifetimeS || 30;
+                state.planetCount = settings.planetCount || 5;
+                state.maxPlanetSize = settings.maxPlanetSize || 75;
+                state.planetBrightness = settings.planetBrightness || 1.0;
+                state.shipArmor = settings.shipArmor || 100;
+                gSlider.value = gVal.textContent = state.gScale;
+                liveDelay.value = liveDelayVal.textContent = state.liveDelayMs;
+                lifetime.value = lifetimeVal.textContent = state.lifetimeS;
+                planetCount.value = planetCountVal.textContent = state.planetCount;
+                maxPlanetSize.value = maxPlanetSizeVal.textContent = state.maxPlanetSize;
+                planetBrightness.value = planetBrightnessVal.textContent = state.planetBrightness;
+                shipArmor.value = shipArmorVal.textContent = state.shipArmor;
+                aiMode.checked = settings.aiMode || false;
+                const bgNumber = settings.background || '1';
+                backgroundImage.src = `background${bgNumber}.png`;
+                updateBackgroundButtonStyles(bgNumber);
+            }
+        }
+
+        function updateBackgroundButtonStyles(bgNumber) {
+            [bgBtnX, bgBtn1, bgBtn2, bgBtn3, bgBtn4].forEach(btn => {
+                btn.style.color = '#9fb0bf';
+                btn.style.outline = 'none';
+            });
+            const activeBtn = bgNumber === 'X' ? bgBtnX : document.getElementById(`bgBtn${bgNumber}`);
+            if (activeBtn) {
+                activeBtn.style.color = 'red';
+                activeBtn.style.outline = '1px solid #ddd';
+            }
+        }
+
+        function rand(a, b) {
+            return a + Math.random() * (b - a);
+        }
+
+        function resize() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            W = canvas.width;
+            H = canvas.height;
+            gameW = 3 * W;
+            gameH = 3 * H;
+            radarCanvas.width = 240;
+            radarCanvas.height = 160;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        function isPositionValid(x, y, r, entities) {
+            for (const e of entities) {
+                const dx = e.x - x, dy = e.y - y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < (e.r || COLLISION_RADIUS) + r + 20) return false;
+            }
+            return true;
+        }
+
+        function calculateGravityVector(x, y) {
+            const G = 0.0007 * state.gScale;
+            let totalForceX = 0;
+            let totalForceY = 0;
+            
+            for (const p of state.planets) {
+                const dx = p.x - x;
+                const dy = p.y - y;
+                const dist2 = dx * dx + dy * dy;
+                if (dist2 > 100) {
+                    const dist = Math.sqrt(dist2);
+                    const force = G * p.mass / dist2;
+                    totalForceX += force * (dx / dist);
+                    totalForceY += force * (dy / dist);
+                }
+            }
+            
+            return { fx: totalForceX, fy: totalForceY };
+        }
+
+        function drawGravityMap() {
+            if (!state.showGravityMap) return;
+            
+            const gridSpacing = 30;
+            const visibleLeft = gameW / 2 - W / 2;
+            const visibleRight = gameW / 2 + W / 2;
+            const visibleTop = gameH / 2 - H / 2;
+            const visibleBottom = gameH / 2 + H / 2;
+            
+            let maxForce = 0;
+            const gravityVectors = [];
+            
+            for (let y = visibleTop + 25; y < visibleBottom - 25; y += gridSpacing) {
+                const row = [];
+                for (let x = visibleLeft + 25; x < visibleRight - 25; x += gridSpacing) {
+                    const vector = calculateGravityVector(x, y);
+                    const magnitude = Math.sqrt(vector.fx * vector.fx + vector.fy * vector.fy);
+                    maxForce = Math.max(maxForce, magnitude);
+                    row.push({ x, y, fx: vector.fx, fy: vector.fy, magnitude });
+                }
+                gravityVectors.push(row);
+            }
+            
+            ctx.strokeStyle = '#00ffff';
+            ctx.fillStyle = '#00ffff';
+            ctx.lineWidth = 2.5;
+            
+            const maxArrowLength = 50;
+            const minDotSize = 2.5;
+            const forceMultiplier = 15;
+            
+            for (let row = 0; row < gravityVectors.length; row++) {
+                for (let col = 0; col < gravityVectors[row].length; col++) {
+                    const vec = gravityVectors[row][col];
+                    const normalized = maxForce > 0 ? (vec.magnitude * forceMultiplier) / maxForce : 0;
+                    
+                    const screenX = vec.x - (gameW / 2 - W / 2);
+                    const screenY = vec.y - (gameH / 2 - H / 2);
+                    
+                    let insidePlanet = false;
+                    for (const p of state.planets) {
+                        const dx = p.x - vec.x;
+                        const dy = p.y - vec.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < p.r + 5) {
+                            insidePlanet = true;
+                            break;
+                        }
+                    }
+                    
+                    if (insidePlanet) continue;
+                    
+                    if (normalized < 0.001) {
+                        ctx.beginPath();
+                        ctx.arc(screenX, screenY, minDotSize, 0, 2 * Math.PI);
+                        ctx.globalAlpha = 0.4;
+                        ctx.fill();
+                    } else {
+                        const arrowLength = Math.min(normalized * maxArrowLength, maxArrowLength);
+                        const angle = Math.atan2(vec.fy, vec.fx);
+                        
+                        const endX = screenX + Math.cos(angle) * arrowLength;
+                        const endY = screenY + Math.sin(angle) * arrowLength;
+                        
+                        ctx.globalAlpha = Math.min(0.5 + normalized * 0.5, 0.95);
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(screenX, screenY);
+                        ctx.lineTo(endX, endY);
+                        ctx.stroke();
+                        if (arrowLength > 2) {
+                            const headSize = Math.min(7, Math.max(3, arrowLength * 0.3));
+                            const headAngle1 = angle + Math.PI * 0.7;
+                            const headAngle2 = angle - Math.PI * 0.7;
+                            
+                            ctx.beginPath();
+                            ctx.moveTo(endX, endY);
+                            ctx.lineTo(endX + Math.cos(headAngle1) * headSize, 
+                                      endY + Math.sin(headAngle1) * headSize);
+                            ctx.moveTo(endX, endY);
+                            ctx.lineTo(endX + Math.cos(headAngle2) * headSize, 
+                                      endY + Math.sin(headAngle2) * headSize);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        function spawnShootingStar() {
+            const visibleLeft = gameW / 2 - W / 2 - 50;
+            const visibleRight = gameW / 2 + W / 2 + 50;
+            const visibleTop = gameH / 2 - H / 2 - 50;
+            const visibleBottom = gameH / 2 + H / 2 + 60;
+
+            const edge = Math.floor(rand(0, 4));
+            let x, y, vx, vy;
+
+            const speed = rand(5, 10);
+
+            if (edge === 0) {
+                x = rand(visibleLeft, visibleRight);
+                y = visibleTop - 50;
+                vx = rand(-2, 2);
+                vy = speed;
+            } else if (edge === 1) {
+                x = rand(visibleLeft, visibleRight);
+                y = visibleBottom + 50;
+                vx = rand(-2, 2);
+                vy = -speed;
+            } else if (edge === 2) {
+                x = visibleLeft - 50;
+                y = rand(visibleTop, visibleBottom);
+                vx = speed;
+                vy = rand(-2, 2);
+            } else {
+                x = visibleRight + 50;
+                y = rand(visibleTop, visibleBottom);
+                vx = -speed;
+                vy = rand(-2, 2);
+            }
+
+            state.shootingStars.push({
+                x,
+                y,
+                vx,
+                vy,
+                size: 0.5,
+                lifespan: rand(1, 3) * 1000,
+                maxLifespan: rand(1, 3) * 1000,
+                trail: [],
+                maxTrailLength: 20,
+                opacity: 0.5
+            });
+        }
+
+        function generateSystem() {
+            state.planets = [];
+            state.combatLog = [];
+            state.shootingStars = [];
+                state.trails = []; 
+            state.radarTrails = [];
+            const visibleLeft = gameW / 2 - W / 2;
+            const visibleRight = gameW / 2 + W / 2;
+            const visibleTop = gameH / 2 - H / 2;
+            const visibleBottom = gameH / 2 + H / 2;
+                
+            for (let i = 0; i < state.planetCount; i++) {
+                const r = rand(30, state.maxPlanetSize);
+                let x, y;
+                do {
+                    x = rand(visibleLeft + r + 20, visibleRight - r - 20);
+                    y = rand(visibleTop + r + 20, visibleBottom - r - 20);
+                } while (!isPositionValid(x, y, r, state.planets));
+                const mass = r * r * 0.6 + 50;
+                const hue = rand(150, 255);
+                const sat = rand(30, 60);
+                const light = rand(18, 40);
+                const rotation = Math.random() * 360; 
+                const rotationSpeed = rand(-0.05, 0.05);
+                const flipX = Math.random() < 0.5; 
+                const flipY = Math.random() < 0.5; 
+                const imageIndex = Math.floor(Math.random() * 3); 
+                const image = [planetImage, planetImage2, planetImage3][imageIndex]; 
+                state.planets.push({ x, y, r, mass, hue, sat, light, rotation, rotationSpeed, flipX, flipY, image });
+            }
+            
+            state.ships = [];
+            for (let i = 0; i < 2; i++) {
+                let x, y;
+                do {
+                    x = rand(visibleLeft + 20, visibleRight - 20);
+                    y = rand(visibleTop + 20, visibleBottom - 20);
+                } while (!isPositionValid(x, y, COLLISION_RADIUS, state.planets.concat(state.ships)));
+                state.ships.push({ x, y, hp: state.shipArmor, color: i === 0 ? 'lime' : 'red', isMoving: false, targetX: x, targetY: y });
+            }
+            
+            state.stars = [];
+            for (let i = 0; i < 500; i++) {
+                const layer = Math.floor(i / (500 / 3));
+                const size = layer === 0 ? rand(0.3, 0.6) : layer === 1 ? rand(0.6, 0.8) : rand(0.8, 1.0);
+                const baseVx = layer === 0 ? rand(-0.15, -0.1) : layer === 1 ? rand(-0.2, -0.15) : rand(-0.25, -0.2);
+                const x = rand(visibleLeft, visibleRight);
+                state.stars.push({ x, y: rand(visibleTop, visibleBottom), size, vx: baseVx, initialX: x, layer, opacity: layer === 0 ? 0.8 : layer === 1 ? 0.6 : 0.4 });
+            }
+            
+            state.projectiles = [];
+            state.trails = [];
+            state.explosions = [];
+            state.ghosts = [];
+            state.shipMovements = [];
+            state.gameOver = false;
+            state.gameTime = 0;
+            state.shotsFired = false;
+            state.roundActive = false;
+            gameOver.style.display = 'none';
+            angleA.value = angleANum.value = 45;
+            angleB.value = angleBNum.value = 315;
+            powerA.value = powerANum.value = powerB.value = powerBNum.value = 25;
+            gravityMap.checked = false;
+            state.showGravityMap = false;
+            combatLogToggle.checked = true;
+            state.showCombatLog = true;
+            updateUI();
+        }
+
+        function regeneratePlanets() {
+            const visibleLeft = gameW / 2 - W / 2;
+            const visibleRight = gameW / 2 + W / 2;
+            const visibleTop = gameH / 2 - H / 2;
+            const visibleBottom = gameH / 2 + H / 2;
+            state.planets = [];
+            for (let i = 0; i < state.planetCount; i++) {
+                const r = rand(30, state.maxPlanetSize);
+                let x, y;
+                do {
+                    x = rand(visibleLeft + r + 20, visibleRight - r - 20);
+                    y = rand(visibleTop + r + 20, visibleBottom - r - 20);
+                } while (!isPositionValid(x, y, r, state.planets.concat(state.ships)));
+                const mass = r * r * 0.6 + 50;
+                const hue = rand(150, 255);
+                const sat = rand(30, 60);
+                const light = rand(18, 40);
+                const rotation = Math.random() * 360; 
+                const rotationSpeed = rand(-0.05, 0.05); 
+                const flipX = Math.random() < 0.5; 
+                const flipY = Math.random() < 0.5; 
+                const imageIndex = Math.floor(Math.random() * 3); 
+                const image = [planetImage, planetImage2, planetImage3][imageIndex]; 
+                state.planets.push({ x, y, r, mass, hue, sat, light, rotation, rotationSpeed, flipX, flipY, image });
+            }
+        }
+
+        function restartGame() {
+            state.ships.forEach(ship => ship.hp = state.shipArmor);
+            state.projectiles = [];
+             state.trails = []; 
+            state.radarTrails = [];
+            state.trails = [];
+            state.explosions = [];
+            state.ghosts = [];
+            state.shipMovements = [];
+            state.combatLog = [];
+            state.stars = [];
+            state.shootingStars = [];
+            const visibleLeft = gameW / 2 - W / 2 - 50;
+            const visibleRight = gameW / 2 + W / 2 + 50;
+            const visibleTop = gameH / 2 - H / 2 - 50;
+            const visibleBottom = gameH / 2 + H / 2 + 60;
+            for (let i = 0; i < 500; i++) {
+                const layer = Math.floor(i / (500 / 3));
+                const size = layer === 0 ? rand(0.3, 0.6) : layer === 1 ? rand(0.6, 0.8) : rand(0.8, 1.0);
+                const baseVx = layer === 0 ? rand(-0.3, -0.2) : layer === 1 ? rand(-0.4, -0.3) : rand(-0.5, -0.4);
+                const x = rand(visibleLeft, visibleRight);
+                state.stars.push({ x, y: rand(visibleTop, visibleBottom), size, vx: baseVx, initialX: x, layer, opacity: layer === 0 ? 0.8 : layer === 1 ? 0.6 : 0.4 });
+            }
+            state.gameOver = false;
+            state.gameTime = 0;
+            state.shotsFired = false;
+            state.roundActive = false;
+            gameOver.style.display = 'none';
+            combatLogToggle.checked = true;
+            state.showCombatLog = true;
+            updateUI();
+        }
+
+        function explode(x, y, r) {
+            state.explosions.push({
+                x,
+                y,
+                r,
+                ttl: 800, 
+                particles: Array(20).fill().map(() => ({
+                    x,
+                    y,
+                    vx: rand(-1.5, 1.5), 
+                    vy: rand(-1.5, 1.5),
+                    ttl: rand(500, 800), 
+                    size: rand(1, 2),
+                    isWhite: false
+                })).concat(Array(100).fill().map(() => ({
+                    x,
+                    y,
+                    vx: rand(-3, 3), 
+                    vy: rand(-3, 3),
+                    ttl: rand(500, 800),
+                    size: rand(0.5, 1),
+                    isWhite: true
+                })))
+            });
+        }
+
+        function relocateShip(ship) {
+            state.ghosts.push({ x: ship.x, y: ship.y, color: ship.color });
+            const movementStart = { x: ship.x, y: ship.y };
+            const visibleLeft = gameW / 2 - W / 2;
+            const visibleRight = gameW / 2 + W / 2;
+            const visibleTop = gameH / 2 - H / 2;
+            const visibleBottom = gameH / 2 + H / 2;
+            let newX, newY;
+            let attempts = 0;
+            const relocateDistance = 150;
+            
+            do {
+                const angle = rand(0, 2 * Math.PI);
+                newX = ship.x + Math.cos(angle) * relocateDistance;
+                newY = ship.y + Math.sin(angle) * relocateDistance;
+                newX = Math.max(visibleLeft + 20, Math.min(visibleRight - 20, newX));
+                newY = Math.max(visibleTop + 20, Math.min(visibleBottom - 20, newY));
+                attempts++;
+            } while (!isPositionValid(newX, newY, COLLISION_RADIUS, state.planets.concat(state.ships.filter(s => s !== ship))) && attempts < 100);
+            
+            if (attempts >= 100) {
+                do {
+                    newX = rand(visibleLeft + 20, visibleRight - 20);
+                    newY = rand(visibleTop + 20, visibleBottom - 20);
+                } while (!isPositionValid(newX, newY, COLLISION_RADIUS, state.planets.concat(state.ships.filter(s => s !== ship))));
+            }
+            
+            ship.targetX = newX;
+            ship.targetY = newY;
+            
+            state.shipMovements.push({
+                startX: movementStart.x,
+                startY: movementStart.y,
+                endX: ship.targetX,
+                endY: ship.targetY,
+                color: ship.color,
+                currentX: movementStart.x,
+                currentY: movementStart.y,
+                isComplete: false
+            });
+            
+            ship.isMoving = true;
+        }
+
+        function addLogMessage(message) {
+            state.combatLog.push({
+                text: message,
+                timestamp: performance.now()
+            });
+            if (state.combatLog.length > 20) {
+                state.combatLog.shift();
+            }
+        }
+
+        function showConfirmPopup(action) {
+            confirmCallback = action;
+            confirmPopup.style.display = 'flex';
+        }
+
+        function simulateTrajectory(startX, startY, angleInDegrees, power, planets, lifetimeS, dt) {
+            const G = 0.0007 * state.gScale;
+            let x = startX;
+            let y = startY;
+            let vx = Math.cos((angleInDegrees - 90) * Math.PI / 180) * power * 0.8;
+            let vy = Math.sin((angleInDegrees - 90) * Math.PI / 180) * power * 0.8;
+            const path = [{ x, y }];
+            let time = 0;
+            let hitPlanet = false;
+            let minDistToTarget = Infinity;
+            let closestPoint = { x, y };
+            const target = state.ships[0]; 
+
+            while (time < lifetimeS) {
+                let ax = 0, ay = 0;
+                for (const p of planets) {
+                    const dx = p.x - x;
+                    const dy = p.y - y;
+                    const dist2 = dx * dx + dy * dy;
+                    if (dist2 > 100) {
+                        const dist = Math.sqrt(dist2);
+                        ax += G * p.mass * dx / (dist2 * dist);
+                        ay += G * p.mass * dy / (dist2 * dist);
+                    }
+                }
+                vx += ax * dt * 60;
+                vy += ay * dt * 60;
+                x += vx * dt;
+                y += vy * dt;
+                time += dt;
+                path.push({ x, y });
+
+                for (const p of planets) {
+                    const dx = p.x - x;
+                    const dy = p.y - y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist <= p.r) {
+                        hitPlanet = true;
+                        break;
+                    }
+                }
+                if (hitPlanet) break;
+
+                const distToTarget = Math.sqrt((target.x - x) ** 2 + (target.y - y) ** 2);
+                if (distToTarget < minDistToTarget) {
+                    minDistToTarget = distToTarget;
+                    closestPoint = { x, y };
+                }
+
+                if (x < -50 || x > gameW + 50 || y < -50 || y > gameH + 50) break;
+            }
+            return { path, hitPlanet, minDistToTarget, closestPoint };
+        }
+
+        let aiState = {
+            shots: 0,
+            hits: 0,
+            lastMinDistance: Infinity,
+            bestMinDistance: Infinity, 
+            strategy: 'predictive',
+            failedAttempts: 0,
+            maxFailedAttempts: 5,
+            maxPredictiveShots: 10,
+            predictiveShots: 0, 
+            lastAngle: 315,
+            lastPower: 25
+        };
+
+        function resetAIState() {
+            aiState = {
+                shots: 0,
+                hits: 0,
+                lastMinDistance: Infinity,
+                bestMinDistance: Infinity,
+                strategy: 'predictive',
+                failedAttempts: 0,
+                maxFailedAttempts: 5,
+                maxPredictiveShots: 10,
+                predictiveShots: 0,
+                lastAngle: 315,
+                lastPower: 25
+            };
+        }
+
+        const originalGenerateSystem = generateSystem;
+        generateSystem = function() {
+            originalGenerateSystem();
+            resetAIState();
+        };
+
+        const originalRestartGame = restartGame;
+        restartGame = function() {
+            originalRestartGame();
+            resetAIState();
+        };
+
+        function evaluateShotOutcome(proj) {
+            if (proj.owner === 1) { 
+                aiState.shots++;
+                if (aiState.strategy === 'predictive') {
+                    aiState.predictiveShots++;
+                }
+                const target = state.ships[0];
+                let minDist = Infinity;
+                for (const point of proj.path) {
+                    const dist = Math.sqrt((target.x - point.x) ** 2 + (target.y - point.y) ** 2);
+                    minDist = Math.min(minDist, dist);
+                }
+                aiState.lastMinDistance = minDist;
+                if (aiState.strategy === 'predictive') {
+                    aiState.bestMinDistance = Math.min(aiState.bestMinDistance, minDist);
+                }
+
+                if (minDist <= COLLISION_RADIUS) {
+                    aiState.hits++;
+                    aiState.failedAttempts = 0; 
+                    aiState.predictiveShots = 0;
+                    aiState.bestMinDistance = Infinity; 
+                    aiState.strategy = 'predictive'; 
+                    //addLogMessage(`AI hit! Returning to predictive strategy`);
+                } else {
+                    if (minDist <= 20 && aiState.strategy === 'predictive') {
+                        aiState.failedAttempts += 0.5; 
+                        //addLogMessage(`AI close miss (${minDist.toFixed(1)} units), partial failure`);
+                        if (minDist >= aiState.bestMinDistance * 0.95) {
+                            aiState.failedAttempts += 0.5;
+                        }
+                    } else {
+                        aiState.failedAttempts++; 
+                    }
+                    if (aiState.strategy === 'predictive' && aiState.predictiveShots >= aiState.maxPredictiveShots) {
+                        aiState.strategy = 'near_miss';
+                        aiState.failedAttempts = 0;
+                        aiState.predictiveShots = 0;
+                        aiState.bestMinDistance = Infinity;
+                        //addLogMessage(`AI reached max predictive shots, switching to near_miss`);
+                    } else if (aiState.failedAttempts >= aiState.maxFailedAttempts) {
+                        if (aiState.strategy === 'predictive') {
+                            aiState.strategy = 'near_miss';
+                        } else if (aiState.strategy === 'near_miss') {
+                            aiState.strategy = 'semi_random';
+                        } else {
+                            aiState.strategy = 'predictive';
+                            aiState.predictiveShots = 0;
+                            aiState.bestMinDistance = Infinity;
+                        }
+                        aiState.failedAttempts = 0;
+                        addLogMessage(`AI switching strategy`);
+                    }
+                }
+            }
+        }
+
+        const originalCheckCollisions = checkCollisions;
+        checkCollisions = function(proj) {
+            const result = originalCheckCollisions(proj);
+            if (result) {
+                evaluateShotOutcome(proj);
+            }
+            return result;
+        };
+
+        function checkProjectileExpiration(proj, index) {
+            const now = performance.now();
+            if (now > proj.expireAt) {
+                addLogMessage(`Player ${proj.owner + 1}'s projectile self-detonated after finding no target`);
+                explode(proj.x, proj.y, 10);
+                state.trails.push({ path: proj.radarPath, color: proj.owner === 0 ? 'lime' : 'red' });
+                state.radarTrails.push({ path: proj.radarPath, color: proj.owner === 0 ? 'lime' : 'red' });
+                evaluateShotOutcome(proj); 
+                state.projectiles.splice(index, 1);
+            }
+        }
+
+        function fire() {
+            if (state.gameOver || state.roundActive || state.ships.some(s => s.isMoving)) return;
+
+            state.radarTrails = []; 
+            state.shotsFired = true;
+            state.roundActive = true;
+
+            const G = 0.0007 * state.gScale;
+            const dt = 1 / 60; 
+
+            for (let player = 0; player < 2; player++) {
+                const ship = state.ships[player];
+                let angleInDegrees, power;
+
+        if (player === 0) {
+            angleInDegrees = Number(angleA.value);
+            power = Number(powerA.value) * 0.8;
+        } else {
+            if (aiMode.checked) {
+                const ship = state.ships[1]; 
+                const target = state.ships[0];
+                let bestAngle = aiState.lastAngle;
+                let bestPower = aiState.lastPower;
+                let minDistance = Infinity;
+
+                if (aiState.strategy === 'predictive') {
+                    const angleRange = 120;
+                    const angleStep = 4;
+                    const powerMin = 15; 
+                    const powerMax = 85; 
+                    const powerStep = 4;
+                    const dt = 1 / 60;
+
+                    const directAngle = (Math.atan2(target.y - ship.y, target.x - ship.x) * 180 / Math.PI + 360) % 360;
+
+                    for (let angleOffset = -angleRange; angleOffset <= angleRange; angleOffset += angleStep) {
+                        for (let p = powerMin; p <= powerMax; p += powerStep) {
+                            const angle = (directAngle + angleOffset + 360) % 360;
+                            const sim = simulateTrajectory(ship.x, ship.y, angle, p, state.planets, state.lifetimeS, dt);
+                            if (!sim.hitPlanet && sim.minDistToTarget < minDistance) {
+                                minDistance = sim.minDistToTarget;
+                                bestAngle = angle;
+                                bestPower = p;
+                            }
+                        }
+                    }
+                } else if (aiState.strategy === 'near_miss') {
+                    const directAngle = (Math.atan2(target.y - ship.y, target.x - ship.x) * 180 / Math.PI + 360) % 360;
+                    bestAngle = directAngle + rand(-35, 35);
+                    bestPower = rand(35, 65);
+                } else {
+                    const directAngle = (Math.atan2(target.y - ship.y, target.x - ship.x) * 180 / Math.PI + 360) % 360;
+                    bestAngle = directAngle + rand(-60, 60);
+                    bestPower = rand(30, 70);
+                }
+
+                bestAngle = (bestAngle + rand(-4, 4) + 360) % 360;
+                bestPower = Math.min(100, Math.max(5, bestPower + rand(-4, 4)));
+
+                aiState.lastAngle = bestAngle;
+                aiState.lastPower = bestPower;
+                angleB.value = angleBNum.value = bestAngle.toFixed(1);
+                powerB.value = powerBNum.value = bestPower.toFixed(1);
+                angleInDegrees = bestAngle;
+                power = bestPower * 0.8;
+
+            } else {
+                angleInDegrees = Number(angleB.value);
+                power = Number(powerB.value) * 0.8;
+            }
+        }
+
+                addLogMessage(`Player ${player + 1} fires at angle ${angleInDegrees.toFixed(1)}°, power ${power.toFixed(1)}`);
+
+                const adjustedAngleInRadians = (angleInDegrees - 90) * Math.PI / 180;
+                
+                state.projectiles.push({
+                    x: ship.x,
+                    y: ship.y,
+                    prevX: ship.x,
+                    prevY: ship.y,
+                    vx: Math.cos(adjustedAngleInRadians) * power,
+                    vy: Math.sin(adjustedAngleInRadians) * power,
+                    owner: player,
+                    live: false,
+                    liveAt: performance.now() + state.liveDelayMs,
+                    expireAt: performance.now() + state.lifetimeS * 1000,
+                    path: [{ x: ship.x, y: ship.y }],
+                    radarPath: [{ x: ship.x, y: ship.y }]
+                });
+            }
+
+            updateUI();
+        }
+
+        function lineIntersectsCircle(x1, y1, x2, y2, cx, cy, r) {
+            if (x1 === x2 && y1 === y2) {
+                return { hit: false }; 
+            }
+
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const fx = x1 - cx;
+            const fy = y1 - cy;
+            
+            const a = dx * dx + dy * dy;
+            const b = 2 * (fx * dx + fy * dy);
+            const c = fx * fx + fy * fy - r * r;
+            
+            const discriminant = b * b - 4 * a * c;
+            
+            if (discriminant < 0) {
+                return { hit: false }; 
+            }
+            
+            const t1 = (-b - Math.sqrt(discriminant)) / (2 * a);
+            const t2 = (-b + Math.sqrt(discriminant)) / (2 * a);
+            
+            let hit = false;
+            let intersectionX, intersectionY;
+            let t;
+
+            if (t1 >= 0 && t1 <= 1) {
+                hit = true;
+                t = t1;
+            }
+            if (t2 >= 0 && t2 <= 1 && (!hit || t2 < t1)) {
+                hit = true;
+                t = t2; 
+            }
+
+            if (hit) {
+                intersectionX = x1 + t * dx;
+                intersectionY = y1 + t * dy;
+                return { hit: true, x: intersectionX, y: intersectionY };
+            }
+            
+            return { hit: false };
+        }
+
+        function checkCollisions(proj) {
+            for (const p of state.planets) {
+                const dx = p.x - proj.x, dy = p.y - proj.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist <= p.r) {
+                    addLogMessage(`Player ${proj.owner + 1}'s projectile impacted with a planet`);
+                    explode(proj.x, proj.y, 10);
+                    state.trails.push({ path: proj.radarPath, color: proj.owner === 0 ? 'lime' : 'red' }); 
+                    state.radarTrails.push({ path: proj.radarPath, color: proj.owner === 0 ? 'lime' : 'red' }); 
+                    return true;
+                }
+            }
+
+            if (!proj.live) {
+                return false;
+            }
+
+            for (let i = 0; i < state.ships.length; i++) {
+                const ship = state.ships[i];
+
+                const now = performance.now();
+                const timeSinceFired = now - (proj.liveAt - state.liveDelayMs);
+                const isImmune = proj.owner === i && timeSinceFired < 300;
+
+                if (isImmune) {
+                    continue;
+                }
+
+                const dx = ship.x - proj.x, dy = ship.y - proj.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                let hit = dist <= COLLISION_RADIUS;
+
+                let intersection = null;
+                if (!hit && proj.prevX !== undefined && proj.prevY !== undefined) {
+                    intersection = lineIntersectsCircle(proj.prevX, proj.prevY, proj.x, proj.y, ship.x, ship.y, COLLISION_RADIUS);
+                    hit = intersection.hit;
+                }
+
+                if (hit) {
+                    if (intersection && intersection.hit) {
+                        proj.path[proj.path.length - 1] = { x: intersection.x, y: intersection.y };
+                        proj.radarPath[proj.radarPath.length - 1] = { x: intersection.x, y: intersection.y };
+                        proj.x = intersection.x;
+                        proj.y = intersection.y;
+                    }
+
+                    ship.hp -= 25;
+                    addLogMessage(`Player ${proj.owner + 1}'s projectile hit Player ${i + 1} for 25 damage`);
+                    explode(proj.x, proj.y, 15);
+                    state.trails.push({ path: proj.radarPath, color: proj.owner === 0 ? 'lime' : 'red' }); 
+                    state.radarTrails.push({ path: proj.radarPath, color: proj.owner === 0 ? 'lime' : 'red' });
+                    if (ship.hp <= 0) {
+                        state.gameOver = true;
+                        gameOver.style.display = 'flex';
+                        addLogMessage(`Player ${i + 1} destroyed! Player ${proj.owner + 1} wins!`);
+                        winnerText.innerHTML = `<span class="${proj.owner === 0 ? 'player1' : 'player2'}">Player ${proj.owner + 1}</span> Wins!`;
+                    } else {
+                        relocateShip(ship);
+                        addLogMessage(`Player ${i + 1} relocates to new position`);
+                    }
+                    return true;
+                }
+            }
+
+            if (proj.x < -50 || proj.x > gameW + 50 || proj.y < -50 || proj.y > gameH + 50) {
+                addLogMessage(`Player ${proj.owner + 1}'s projectile went out of range. Comms lost.`);
+                state.trails.push({ path: proj.radarPath, color: proj.owner === 0 ? 'lime' : 'red' }); 
+                state.radarTrails.push({ path: proj.radarPath, color: proj.owner === 0 ? 'lime' : 'red' });
+                return true;
+            }
+
+            return false;
+        }
+
+        function updateUI() {
+            const isMoving = state.ships.some(s => s.isMoving);
+            fireBtn.disabled = state.gameOver || state.roundActive || isMoving;
+            angleA.disabled = angleANum.disabled = state.gameOver || state.roundActive || isMoving;
+            powerA.disabled = powerANum.disabled = state.gameOver || state.roundActive || isMoving;
+            angleB.disabled = angleBNum.disabled = state.gameOver || state.roundActive || aiMode.checked || isMoving;
+            powerB.disabled = powerBNum.disabled = state.gameOver || state.roundActive || aiMode.checked || isMoving;
+            bgBtnX.disabled = bgBtn1.disabled = bgBtn2.disabled = bgBtn3.disabled = bgBtn4.disabled = state.shotsFired && !state.gameOver;
+
+            const previousText = turnIndicator.innerHTML;
+            let newText;
+            if (state.gameOver) {
+                newText = 'GAME OVER';
+            } else if (isMoving) {
+                newText = 'SHIP RELOCATING...';
+            } else if (state.roundActive) {
+                newText = 'MISSILES IN FLIGHT...';
+            } else {
+                newText = 'READY TO LAUNCH!';
+            }
+
+            if (newText !== previousText) {
+                turnIndicator.innerHTML = newText;
+                turnIndicator.classList.add('flash-effect');
+                setTimeout(() => {
+                    turnIndicator.classList.remove('flash-effect');
+                }, 600);
+            }
+
+            hpA.textContent = state.ships[0].hp;
+            hpB.textContent = state.ships[1].hp;
+
+            if (state.shotsFired && !state.gameOver) {
+                gameSettings.classList.add('settings-disabled');
+            } else {
+                gameSettings.classList.remove('settings-disabled');
+            }
+        }
+
+        function step(dt) {
+            
+            state.gameTime += dt;
+
+            state.planets.forEach(planet => {
+                planet.rotation = (planet.rotation + planet.rotationSpeed * dt) % 360;
+            });
+
+            state.stars.forEach(star => {
+                star.x += star.vx * dt;
+                const visibleLeft = gameW / 2 - W / 2 - 50;
+                const visibleRight = gameW / 2 + W / 2 + 50;
+                if (star.x < visibleLeft) {
+                    star.x = visibleRight;
+                }
+            });
+
+            state.shootingStars.forEach(star => {
+                star.x += star.vx * dt;
+                star.y += star.vy * dt;
+                star.lifespan -= dt * 16.66;
+                star.opacity = star.lifespan / star.maxLifespan;
+
+                star.trail.push({ x: star.x, y: star.y });
+                if (star.trail.length > star.maxTrailLength) {
+                    star.trail.shift();
+                }
+            });
+
+            state.shootingStars = state.shootingStars.filter(star => star.lifespan > 0);
+
+            if (Math.random() < 0.00111 * dt) {
+                spawnShootingStar();
+            }
+
+            const G = 0.0007 * state.gScale;
+            const now = performance.now();
+
+            for (let i = state.projectiles.length - 1; i >= 0; i--) {
+                const proj = state.projectiles[i];
+
+                if (!proj.live && now >= proj.liveAt) {
+                    proj.live = true;
+                }
+
+                let ax = 0, ay = 0;
+                for (const p of state.planets) {
+                    const dx = p.x - proj.x, dy = p.y - proj.y;
+                    const dist2 = dx * dx + dy * dy;
+                    if (dist2 > 100) {
+                        ax += G * p.mass * dx / dist2;
+                        ay += G * p.mass * dy / dist2;
+                    }
+                }
+                proj.vx += ax * dt * 60;
+                proj.vy += ay * dt * 60;
+                proj.prevX = proj.x;
+                proj.prevY = proj.y;
+                proj.x += proj.vx * dt;
+                proj.y += proj.vy * dt;
+                proj.path.push({ x: proj.x, y: proj.y });
+                proj.radarPath.push({ x: proj.x, y: proj.y });
+
+                if (checkCollisions(proj)) {
+                    state.projectiles.splice(i, 1);
+                    continue;
+                }
+
+            checkProjectileExpiration(proj, i);
+            }
+
+            const moveSpeed = 2;
+            state.ships.forEach((ship, shipIndex) => {
+                if (ship.isMoving) {
+                    const dx = ship.targetX - ship.x;
+                    const dy = ship.targetY - ship.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance > moveSpeed) {
+                        ship.x += (dx / distance) * moveSpeed;
+                        ship.y += (dy / distance) * moveSpeed;
+                        
+                        for (const movement of state.shipMovements) {
+                            if (!movement.isComplete && 
+                                Math.abs(movement.startX - ship.targetX + dx) < 1 && 
+                                Math.abs(movement.startY - ship.targetY + dy) < 1) {
+                                movement.currentX = ship.x;
+                                movement.currentY = ship.y;
+                            }
+                        }
+                    } else {
+                        ship.x = ship.targetX;
+                        ship.y = ship.targetY;
+                        ship.isMoving = false;
+                        
+                        for (const movement of state.shipMovements) {
+                            if (!movement.isComplete && 
+                                Math.abs(movement.endX - ship.x) < 1 && 
+                                Math.abs(movement.endY - ship.y) < 1) {
+                                movement.currentX = ship.x;
+                                movement.currentY = ship.y;
+                                movement.isComplete = true;
+                            }
+                        }
+                        
+                        updateUI();
+                    }
+                }
+            });
+
+            if (state.roundActive && state.projectiles.length === 0) {
+                state.roundActive = false;
+                updateUI();
+            }
+
+            state.explosions.forEach(exp => {
+                exp.ttl -= dt * 16.66;
+                exp.particles.forEach(p => {
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.ttl -= dt * 16.66;
+                    p.size *= 0.99; 
+                });
+            });
+            state.explosions = state.explosions.filter(exp => exp.ttl > 0);
+        }
+
+        function drawCombatLog() {
+            if (!state.showCombatLog) return;
+
+            ctx.font = '11px Arial, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            
+            const logWidth = 300;
+            const logHeight = 240;
+            const logX = 10;
+            const logY = H - logHeight - 10;
+            const lineHeight = 12;
+            
+            const visibleLogs = state.combatLog.slice(-20);
+            
+            ctx.globalAlpha = 1;
+            
+            visibleLogs.forEach((log, index) => {
+                const opacity = 0.9 - ((visibleLogs.length - 1 - index) * 0.045);
+                ctx.globalAlpha = Math.max(0, opacity);
+                
+                let xPos = logX + 5;
+                const yPos = logY + logHeight - (visibleLogs.length - index) * lineHeight;
+                const text = log.text;
+                
+                let parts = [];
+                let remainingText = text;
+                let player1Index = remainingText.indexOf("Player 1");
+                let player2Index = remainingText.indexOf("Player 2");
+                
+                while (player1Index !== -1 || player2Index !== -1) {
+                    if (player1Index === -1) player1Index = Infinity;
+                    if (player2Index === -1) player2Index = Infinity;
+                    
+                    if (player1Index < player2Index) {
+                        parts.push({ text: remainingText.substring(0, player1Index), color: '#ffffff' });
+                        parts.push({ text: "Player 1", color: 'lime' });
+                        remainingText = remainingText.substring(player1Index + 8);
+                        player1Index = remainingText.indexOf("Player 1");
+                        player2Index = remainingText.indexOf("Player 2");
+                    } else {
+                        parts.push({ text: remainingText.substring(0, player2Index), color: '#ffffff' });
+                        parts.push({ text: "Player 2", color: 'red' });
+                        remainingText = remainingText.substring(player2Index + 8);
+                        player1Index = remainingText.indexOf("Player 1");
+                        player2Index = remainingText.indexOf("Player 2");
+                    }
+                }
+                parts.push({ text: remainingText, color: '#ffffff' });
+                
+                parts.forEach(part => {
+                    if (part.text) {
+                        ctx.fillStyle = part.color;
+                        ctx.fillText(part.text, xPos, yPos);
+                        xPos += ctx.measureText(part.text).width;
+                    }
+                });
+            });
+            
+            ctx.globalAlpha = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = '#02141a';
+            ctx.fillRect(0, 0, W, H);
+
+            if (backgroundImage.complete && backgroundImage.naturalWidth !== 0) {
+                const imgWidth = backgroundImage.naturalWidth;
+                const imgHeight = backgroundImage.naturalHeight;
+                const imgAspect = imgWidth / imgHeight;
+                const canvasAspect = W / H;
+                let drawWidth, drawHeight, offsetX, offsetY;
+
+                if (imgAspect > canvasAspect) {
+                    drawHeight = H;
+                    drawWidth = H * imgAspect;
+                    offsetX = (W - drawWidth) / 2;
+                    offsetY = 0;
+                } else {
+                    drawWidth = W;
+                    drawHeight = W / imgAspect;
+                    offsetX = 0;
+                    offsetY = (H - drawHeight) / 2;
+                }
+
+                ctx.drawImage(backgroundImage, offsetX, offsetY, drawWidth, drawHeight);
+            }
+
+            ctx.save();
+            ctx.translate(-gameW / 2 + W / 2, -gameH / 2 + H / 2);
+
+            const visibleLeft = gameW / 2 - W / 2 - 50;
+            const visibleRight = gameW / 2 + W / 2 + 50;
+            const visibleTop = gameH / 2 - H / 2 - 50;
+            const visibleBottom = gameH / 2 + H / 2 + 60;
+
+            for (const star of state.stars) {
+                if (star.x >= visibleLeft && star.x <= visibleRight && star.y >= visibleTop && star.y <= visibleBottom) {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.size, 0, 2 * Math.PI);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            for (const star of state.shootingStars) {
+                if (star.x >= visibleLeft && star.x <= visibleRight && star.y >= visibleTop && star.y <= visibleBottom) {
+                    if (star.trail.length > 1) {
+                        ctx.beginPath();
+                        ctx.moveTo(star.trail[0].x, star.trail[0].y);
+                        for (let i = 1; i < star.trail.length; i++) {
+                            ctx.lineTo(star.trail[i].x, star.trail[i].y);
+                        }
+                        const gradient = ctx.createLinearGradient(
+                            star.trail[0].x, star.trail[0].y,
+                            star.x, star.y
+                        );
+                        gradient.addColorStop(0, `rgba(255, 255, 255, 0)`);
+                        gradient.addColorStop(1, `rgba(255, 255, 255, ${star.opacity * 0.5})`);
+                        ctx.strokeStyle = gradient;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.size, 0, 2 * Math.PI);
+                    ctx.fillStyle = `rgba(255, 255, 200, ${star.opacity})`;
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.size * 2, 0, 2 * Math.PI);
+                    ctx.fillStyle = `rgba(255, 255, 200, ${star.opacity * 0.1})`;
+                    ctx.fill();
+                }
+            }
+
+            ctx.globalAlpha = 0.3;
+            for (const ghost of state.ghosts) {
+                ctx.beginPath();
+                ctx.arc(ghost.x, ghost.y, SHIP_RADIUS, 0, 2 * Math.PI);
+                ctx.fillStyle = ghost.color;
+                ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.4;
+            for (const movement of state.shipMovements) {
+                const hasMovement = movement.currentX !== movement.startX || movement.currentY !== movement.startY;
+                
+                if (hasMovement && ((movement.startX >= visibleLeft && movement.startX <= visibleRight && movement.startY >= visibleTop && movement.startY <= visibleBottom) ||
+                    (movement.currentX >= visibleLeft && movement.currentX <= visibleRight && movement.currentY >= visibleTop && movement.currentY <= visibleBottom))) {
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(movement.startX, movement.startY);
+                    ctx.lineTo(movement.currentX, movement.currentY);
+                    ctx.strokeStyle = '#ff8800';
+                    ctx.stroke();
+                    
+                    const lineLength = Math.sqrt(
+                        (movement.currentX - movement.startX) ** 2 + 
+                        (movement.currentY - movement.startY) ** 2
+                    );
+                    
+                    if (lineLength > 20) {
+                        const midX = movement.startX + (movement.currentX - movement.startX) * 0.5;
+                        const midY = movement.startY + (movement.currentY - movement.startY) * 0.5;
+                        
+                        const angle = Math.atan2(movement.currentY - movement.startY, movement.currentX - movement.startX);
+                        const headSize = 6;
+                        const headAngle1 = angle + Math.PI * 0.8;
+                        const headAngle2 = angle - Math.PI * 0.8;
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(midX, midY);
+                        ctx.lineTo(midX + Math.cos(headAngle1) * headSize, 
+                                  midY + Math.sin(headAngle1) * headSize);
+                        ctx.moveTo(midX, midY);
+                        ctx.lineTo(midX + Math.cos(headAngle2) * headSize, 
+                                  midY + Math.sin(headAngle2) * headSize);
+                        ctx.stroke();
+                    }
+                }
+            }
+            ctx.globalAlpha = 1;
+            ctx.lineWidth = 1;
+
+            for (const trail of state.trails) {
+                if (trail.path.some(p => p.x >= visibleLeft && p.x <= visibleRight && p.y >= visibleTop && p.y <= visibleBottom)) {
+                    ctx.beginPath();
+                    ctx.moveTo(trail.path[0].x, trail.path[0].y);
+                    for (let i = 1; i < trail.path.length; i++) {
+                        ctx.lineTo(trail.path[i].x, trail.path[i].y);
+                    }
+                    ctx.strokeStyle = trail.color;
+                    ctx.globalAlpha = 0.3;
+                    ctx.stroke();
+                }
+            }
+            ctx.globalAlpha = 1;
+
+            for (const p of state.planets) {
+                if (p.x + p.r >= visibleLeft && p.x - p.r <= visibleRight && p.y + p.r >= visibleTop && p.y - p.r <= visibleBottom) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+                    const gradient = ctx.createRadialGradient(
+                        p.x - p.r * 0.4, p.y - p.r * 0.4, p.r * 0.2,
+                        p.x, p.y, p.r * 1.2
+                    );
+                    gradient.addColorStop(0, `hsl(${p.hue}, ${p.sat}%, ${Math.min(p.light * state.planetBrightness + 30, 90)}%)`);
+                    gradient.addColorStop(1, `hsl(${p.hue}, ${p.sat}%, ${Math.max(p.light * state.planetBrightness - 30, 5)}%)`);
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+
+                    if (p.image.complete && p.image.naturalWidth !== 0) {
+                        ctx.save(); 
+                        ctx.globalAlpha = 0.4; 
+                        const diameter = 2 * p.r; 
+                        const centerX = p.x;
+                        const centerY = p.y;
+
+                        ctx.translate(centerX, centerY);
+
+                        ctx.rotate((p.rotation * Math.PI) / 180);
+
+                        const scaleX = p.flipX ? -1 : 1;
+                        const scaleY = p.flipY ? -1 : 1;
+                        ctx.scale(scaleX, scaleY);
+
+                        ctx.drawImage(
+                            p.image, 
+                            -diameter / 2, 
+                            -diameter / 2, 
+                            diameter, 
+                            diameter  
+                        );
+
+                        ctx.restore(); 
+                    }
+                }
+            }
+
+            for (const s of state.ships) {
+                if (s.x >= visibleLeft && s.x <= visibleRight && s.y >= visibleTop && s.y <= visibleBottom) {
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, SHIP_RADIUS, 0, 2 * Math.PI);
+                    ctx.fillStyle = s.color;
+                    ctx.fill();
+
+                    const angleInDegrees = Number(s === state.ships[0] ? angleA.value : angleB.value);
+                    const adjustedAngleInRadians = (angleInDegrees - 90) * Math.PI / 180;
+                    ctx.beginPath();
+                    ctx.moveTo(s.x, s.y);
+                    ctx.lineTo(s.x + Math.cos(adjustedAngleInRadians) * 10, s.y + Math.sin(adjustedAngleInRadians) * 10);
+                    ctx.strokeStyle = s.color;
+                    ctx.stroke();
+                }
+            }
+
+            for (const proj of state.projectiles) {
+                if (proj.path.some(p => p.x >= visibleLeft && p.x <= visibleRight && p.y >= visibleTop && p.y <= visibleBottom)) {
+                    ctx.beginPath();
+                    ctx.moveTo(proj.path[0].x, proj.path[0].y);
+                    for (let i = 1; i < proj.path.length; i++) {
+                        ctx.lineTo(proj.path[i].x, proj.path[i].y);
+                    }
+                    ctx.strokeStyle = proj.owner === 0 ? 'lime' : 'red';
+                    ctx.globalAlpha = 0.3;
+                    ctx.stroke();
+                }
+                if (proj.x >= visibleLeft && proj.x <= visibleRight && proj.y >= visibleTop && proj.y <= visibleBottom) {
+                    ctx.globalAlpha = 1;
+                    ctx.beginPath();
+                    ctx.arc(proj.x, proj.y, 3, 0, 2 * Math.PI);
+                    ctx.fillStyle = proj.owner === 0 ? 'lime' : 'red';
+                    ctx.fill();
+                }
+            }
+
+            for (const exp of state.explosions) {
+                if (exp.x >= visibleLeft && exp.x <= visibleRight && exp.y >= visibleTop && exp.y <= visibleBottom) {
+                    for (const p of exp.particles) {
+                        if (p.ttl > 0) {
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.size, 0, 2 * Math.PI);
+                            ctx.fillStyle = p.isWhite
+                                ? `rgba(255, 255, 255, ${p.ttl / 600})` 
+                                : `rgba(255, ${exp.r * 4}, 0, ${p.ttl / 600})`; 
+                            ctx.fill();
+                        }
+                    }
+                }
+            }
+
+            ctx.restore();
+
+            if (state.roundActive && state.projectiles.length > 0) {
+                ctx.font = '14px Arial, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'top';
+                const now = performance.now();
+                let yOffset = 10;
+                const xPos = W - 10;
+                const lineHeight = 18;
+
+                const countdowns = [
+                    { owner: 0, color: 'lime', time: null },
+                    { owner: 1, color: 'red', time: null }
+                ];
+
+                for (const proj of state.projectiles) {
+                    const timeLeft = (proj.expireAt - now) / 1000;
+                    const ownerIndex = proj.owner;
+                    if (countdowns[ownerIndex].time === null || timeLeft < countdowns[ownerIndex].time) {
+                        countdowns[ownerIndex].time = timeLeft;
+                    }
+                }
+
+                countdowns.forEach(({ owner, color, time }) => {
+                    if (time !== null && time >= 0) {
+                        ctx.fillStyle = color;
+                        ctx.fillText(`P${owner + 1}: ${time.toFixed(1)}s`, xPos, yOffset);
+                        yOffset += lineHeight;
+                    }
+                });
+            }
+
+            drawGravityMap();
+            drawCombatLog();
+        }
+
+        function drawRadar() {
+            const radarW = radarCanvas.width;
+            const radarH = radarCanvas.height;
+            radarCtx.fillStyle = '#000708';
+            radarCtx.fillRect(0, 0, radarW, radarH);
+
+            const scaleX = radarW / gameW;
+            const scaleY = radarH / gameH;
+            const visibleLeft = (gameW / 2 - W / 2) * scaleX;
+            const visibleTop = (gameH / 2 - H / 2) * scaleY;
+            const visibleW = W * scaleX;
+            const visibleH = H * scaleY;
+
+            radarCtx.fillStyle = 'rgba(102, 183, 255, 0.05)';
+            const scanlineY = ((performance.now() / 2000) % radarH);
+            radarCtx.fillRect(0, scanlineY, radarW, 2);
+
+            radarCtx.strokeStyle = 'rgba(102, 183, 255, 0.2)';
+            radarCtx.lineWidth = 0.5;
+            const centerX = radarW / 2;
+            const centerY = radarH / 2;
+            const maxRadius = Math.min(radarW, radarH) / 2 - 10;
+            for (let r = maxRadius / 4; r <= maxRadius; r += maxRadius / 4) {
+                radarCtx.beginPath();
+                radarCtx.arc(centerX, centerY, r, 0, 2 * Math.PI);
+                radarCtx.stroke();
+            }
+            radarCtx.beginPath();
+            radarCtx.moveTo(centerX, 0);
+            radarCtx.lineTo(centerX, radarH);
+            radarCtx.moveTo(0, centerY);
+            radarCtx.lineTo(radarW, centerY);
+            radarCtx.stroke();
+
+            radarCtx.beginPath();
+            radarCtx.moveTo(centerX, centerY);
+            const sweepAngle = ((performance.now() / 1000) % 4) * Math.PI / 2;
+            radarCtx.lineTo(centerX + Math.cos(sweepAngle) * maxRadius, centerY + Math.sin(sweepAngle) * maxRadius);
+            const gradient = radarCtx.createLinearGradient(
+                centerX, centerY,
+                centerX + Math.cos(sweepAngle) * maxRadius, centerY + Math.sin(sweepAngle) * maxRadius
+            );
+            gradient.addColorStop(0, 'rgba(102, 183, 255, 0)');
+            gradient.addColorStop(1, 'rgba(102, 183, 255, 0.3)');
+            radarCtx.strokeStyle = gradient;
+            radarCtx.lineWidth = 2;
+            radarCtx.stroke();
+
+            radarCtx.strokeStyle = 'rgba(102, 183, 255, 0.4)';
+            radarCtx.lineWidth = 1;
+            radarCtx.strokeRect(visibleLeft, visibleTop, visibleW, visibleH);
+
+            for (const p of state.planets) {
+                radarCtx.beginPath();
+                radarCtx.arc(p.x * scaleX, p.y * scaleY, p.r * scaleX, 0, 2 * Math.PI);
+                radarCtx.fillStyle = `hsl(${p.hue}, ${p.sat}%, 70%)`;
+                radarCtx.fill();
+            }
+
+            for (const s of state.ships) {
+                radarCtx.beginPath();
+                radarCtx.arc(s.x * scaleX, s.y * scaleY, 18 * scaleX, 0, 2 * Math.PI);
+                radarCtx.fillStyle = s.color;
+                radarCtx.fill();
+            }
+
+            for (const trail of state.radarTrails) {
+                if (trail.path.length > 1) {
+                    radarCtx.beginPath();
+                    radarCtx.moveTo(trail.path[0].x * scaleX, trail.path[0].y * scaleY);
+                    for (let i = 1; i < trail.path.length; i++) {
+                        radarCtx.lineTo(trail.path[i].x * scaleX, trail.path[i].y * scaleY);
+                    }
+                    radarCtx.strokeStyle = trail.color;
+                    radarCtx.globalAlpha = 0.3;
+                    radarCtx.lineWidth = 1.5;
+                    radarCtx.stroke();
+                }
+            }
+            radarCtx.globalAlpha = 1;
+            radarCtx.lineWidth = 1;
+
+            for (const proj of state.projectiles) {
+                radarCtx.beginPath();
+                radarCtx.moveTo(proj.radarPath[0].x * scaleX, proj.radarPath[0].y * scaleY);
+                for (let i = 1; i < proj.radarPath.length; i++) {
+                    radarCtx.lineTo(proj.radarPath[i].x * scaleX, proj.radarPath[i].y * scaleY);
+                }
+                radarCtx.strokeStyle = proj.owner === 0 ? 'lime' : 'red';
+                radarCtx.globalAlpha = 0.3;
+                radarCtx.lineWidth = 1.5;
+                radarCtx.stroke();
+                radarCtx.globalAlpha = 1;
+                radarCtx.lineWidth = 1;
+                radarCtx.beginPath();
+                radarCtx.arc(proj.x * scaleX, proj.y * scaleY, 2.5 * scaleX, 0, 2 * Math.PI);
+                radarCtx.fillStyle = proj.owner === 0 ? 'lime' : 'red';
+                radarCtx.fill();
+                radarCtx.beginPath();
+                radarCtx.arc(proj.x * scaleX, proj.y * scaleY, 4 * scaleX, 0, 2 * Math.PI);
+                radarCtx.fillStyle = `rgba(${proj.owner === 0 ? '0, 255, 0' : '255, 0, 0'}, 0.3)`;
+                radarCtx.fill();
+            }
+
+            if (state.roundActive && state.projectiles.length > 0) {
+                radarCtx.font = '10px Arial, sans-serif';
+                radarCtx.textAlign = 'right';
+                radarCtx.textBaseline = 'top';
+                const now = performance.now();
+                let yOffset = 5;
+                const xPos = radarW - 5;
+                const lineHeight = 12;
+
+                const countdowns = [
+                    { owner: 0, color: 'lime', time: null },
+                    { owner: 1, color: 'red', time: null }
+                ];
+
+                for (const proj of state.projectiles) {
+                    const timeLeft = (proj.expireAt - now) / 1000;
+                    const ownerIndex = proj.owner;
+                    if (countdowns[ownerIndex].time === null || timeLeft < countdowns[ownerIndex].time) {
+                        countdowns[ownerIndex].time = timeLeft;
+                    }
+                }
+
+                countdowns.forEach(({ owner, color, time }) => {
+                    if (time !== null && time >= 0) {
+                        radarCtx.fillStyle = color;
+                        radarCtx.fillText(`P${owner + 1}: ${time.toFixed(1)}s`, xPos, yOffset);
+                        yOffset += lineHeight;
+                    }
+                });
+            }
+        }
+
+        function syncAngleA() {
+            let value = Math.max(0, Math.min(360, parseFloat(this.value) || 0));
+            value = Math.round(value * 10) / 10;
+            angleA.value = angleANum.value = value;
+        }
+
+        function syncAngleB() {
+            let value = Math.max(0, Math.min(360, parseFloat(this.value) || 0));
+            value = Math.round(value * 10) / 10;
+            angleB.value = angleBNum.value = value;
+        }
+
+        function syncPowerA() {
+            let value = Math.max(5, Math.min(180, parseFloat(this.value) || 5));
+            value = Math.round(value * 10) / 10;
+            powerA.value = powerANum.value = value;
+        }
+
+        function syncPowerB() {
+            let value = Math.max(5, Math.min(180, parseFloat(this.value) || 5));
+            value = Math.round(value * 10) / 10;
+            powerB.value = powerBNum.value = value;
+        }
+
+        fireBtn.addEventListener('click', fire);
+        newBtn.addEventListener('click', () => showConfirmPopup(generateSystem));
+        restartBtn.addEventListener('click', () => showConfirmPopup(restartGame));
+        restartGameBtn.addEventListener('click', restartGame);
+
+        confirmYesBtn.addEventListener('click', () => {
+            if (confirmCallback) {
+                confirmCallback();
+                confirmCallback = null;
+            }
+            confirmPopup.style.display = 'none';
+        });
+
+        confirmNoBtn.addEventListener('click', () => {
+            confirmPopup.style.display = 'none';
+            confirmCallback = null;
+        });
+
+        angleA.addEventListener('input', syncAngleA);
+        angleANum.addEventListener('input', syncAngleA);
+        angleB.addEventListener('input', syncAngleB);
+        angleBNum.addEventListener('input', syncAngleB);
+        powerA.addEventListener('input', syncPowerA);
+        powerANum.addEventListener('input', syncPowerA);
+        powerB.addEventListener('input', syncPowerB);
+        powerBNum.addEventListener('input', syncPowerB);
+
+        gSlider.addEventListener('input', () => {
+            state.gScale = Number(gSlider.value);
+            gVal.textContent = gSlider.value;
+            saveSettings();
+        });
+
+        liveDelay.addEventListener('input', () => {
+            state.liveDelayMs = Number(liveDelay.value);
+            liveDelayVal.textContent = liveDelay.value;
+            saveSettings();
+        });
+
+        lifetime.addEventListener('input', () => {
+            state.lifetimeS = Number(lifetime.value);
+            lifetimeVal.textContent = lifetime.value;
+            saveSettings();
+        });
+
+        planetCount.addEventListener('input', () => {
+            if (!state.shotsFired || state.gameOver) {
+                const newValue = Number(planetCount.value);
+                state.planetCount = newValue;
+                planetCountVal.textContent = newValue;
+                regeneratePlanets();
+                saveSettings();
+            } else {
+                planetCount.value = state.planetCount;
+                planetCountVal.textContent = state.planetCount;
+            }
+        });
+
+        planetBrightness.addEventListener('input', () => {
+            state.planetBrightness = Number(planetBrightness.value);
+            planetBrightnessVal.textContent = planetBrightness.value;
+            saveSettings();
+        });
+
+
+        shipArmor.addEventListener('input', () => {
+            if (!state.shotsFired || state.gameOver) {
+                let value = Math.max(50, Math.min(500, parseFloat(shipArmor.value) || 50));
+                value = Math.round(value / 25) * 25;
+                shipArmor.value = value;
+                shipArmorVal.textContent = value;
+                state.shipArmor = value;
+                state.ships.forEach(ship => {
+                    ship.hp = value;
+                });
+                updateUI();
+                saveSettings();
+            } else {
+                shipArmor.value = state.shipArmor;
+                shipArmorVal.textContent = state.shipArmor;
+            }
+        });
+
+        maxPlanetSize.addEventListener('input', () => {
+            if (!state.shotsFired || state.gameOver) {
+                let value = Math.max(30, Math.min(100, parseFloat(maxPlanetSize.value) || 30));
+                value = Math.round(value / 5) * 5;
+                maxPlanetSize.value = value;
+                maxPlanetSizeVal.textContent = value;
+                state.maxPlanetSize = value;
+                regeneratePlanets();
+                saveSettings();
+            } else {
+                maxPlanetSize.value = state.maxPlanetSize;
+                maxPlanetSizeVal.textContent = state.maxPlanetSize;
+            }
+        });
+
+        aiMode.addEventListener('change', () => {
+            if (!state.shotsFired || state.gameOver) {
+                updateUI();
+                saveSettings();
+            }
+        });
+
+        gravityMap.addEventListener('change', () => {
+            state.showGravityMap = gravityMap.checked;
+        });
+
+        combatLogToggle.addEventListener('change', () => {
+            state.showCombatLog = combatLogToggle.checked;
+        });
+
+        function setBackground(bgNumber) {
+            const bgPath = `background${bgNumber}.png`;
+            backgroundImage.src = bgPath;
+            backgroundImage.onerror = () => {
+                console.error(`Failed to load ${bgPath}. Check file path or existence.`);
+            };
+            updateBackgroundButtonStyles(bgNumber);
+            saveSettings();
+        }
+
+        bgBtnX.addEventListener('click', () => setBackground('X'));
+        bgBtn1.addEventListener('click', () => setBackground('1'));
+        bgBtn2.addEventListener('click', () => setBackground('2'));
+        bgBtn3.addEventListener('click', () => setBackground('3'));
+        bgBtn4.addEventListener('click', () => setBackground('4'));
+
+        let last = performance.now();
+        let isTabVisible = true;
+
+        document.addEventListener('visibilitychange', () => {
+            isTabVisible = !document.hidden;
+            if (isTabVisible) {
+                resize();
+                draw();
+                drawRadar();
+                last = performance.now();
+                requestAnimationFrame(loop);
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            resize();
+            draw();
+            drawRadar();
+            last = performance.now();
+        });
+
+        function loop() {
+            if (!isTabVisible) return;
+            const now = performance.now();
+            const dt = Math.min((now - last) / 16.66, 2);
+            last = now;
+            step(dt);
+            draw();
+            drawRadar();
+            requestAnimationFrame(loop);
+        }
+
+        loadSettings();
+        generateSystem();
+        loop();
+
+        const tipsLink = document.getElementById('tipsLink');
+        const instructionsLink = document.getElementById('instructionsLink');
+        const tipsModal = document.getElementById('tipsModal');
+        const instructionsModal = document.getElementById('instructionsModal');
+        const closeTipsBtn = document.getElementById('closeTipsBtn');
+        const closeInstructionsBtn = document.getElementById('closeInstructionsBtn');
+
+        tipsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            tipsModal.style.display = 'flex';
+        });
+
+        instructionsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            instructionsModal.style.display = 'flex';
+        });
+
+        closeTipsBtn.addEventListener('click', () => {
+            tipsModal.style.display = 'none';
+        });
+
+        closeInstructionsBtn.addEventListener('click', () => {
+            instructionsModal.style.display = 'none';
+        });
+
+        function isMobileDevice() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            // Check for mobile or tablet devices in user agent, explicitly including iPad
+            const isMobileOrTablet = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|Tablet/i.test(userAgent);
+            // Check for touch support as a fallback for tablets
+            const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            return isMobileOrTablet || hasTouch;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (isMobileDevice()) {
+                const mobileModal = document.getElementById('mobileModal');
+                mobileModal.style.display = 'flex';
+            }
+        });
+
+        const closeMobileBtn = document.getElementById('closeMobileBtn');
+        closeMobileBtn.addEventListener('click', () => {
+            const mobileModal = document.getElementById('mobileModal');
+            mobileModal.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

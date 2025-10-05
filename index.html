@@ -396,6 +396,25 @@
             }
         }
     </style>
+        <script>
+        async function updateVisitorCounter() {
+            const visitorCounter = document.getElementById('visitorCounter');
+            try {
+                const response = await fetch('https://api.counterapi.dev/v1/bxl909/bxl909/up');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const result = await response.json();
+                visitorCounter.textContent = result.count || '0'; 
+            } catch (error) {
+                console.error('CounterAPI error:', error.message);
+                visitorCounter.textContent = 'Error';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            updateVisitorCounter();
+        });
+    </script>
 </head>
 <body>
     <div id="particles-js"></div>
@@ -658,6 +677,9 @@
                 </svg>
                 TIPS
             </a>
+            <br>
+            <span style="color: #222; font-size: 12px;">#<span id="visitorCounter">Loading...</span></span>
+
         </div>
     </div>
 

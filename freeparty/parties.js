@@ -18,6 +18,7 @@ var parties = [
 [50.78059, -1.77014,    "People From Pepperbox's Free Party, RAF Sopley Air Base", "13 Oct 1990",           [{name: "PFP", logo: "pfp.png"}],                   "with DiY DJ's", [{text: "Freepartypeople blog post", url: "https://freepartypeople.wordpress.com/2022/06/14/winter-1990-diy-free-party-at-raf-sopley-air-base-hampshire/"}]],
 [51.07181, -1.79630,    "People From Pepperbox's Free Party, Rising Sun squat, Salisbury", "20 Oct 1990",   [{name: "PFP", logo: "pfp.png"}],                   "with DiY DJ's", [{text: "Freepartypeople blog post", url: "https://freepartypeople.wordpress.com/2022/07/23/20th-october-1990-people-from-pepperbox-free-party-at-rising-sun-squat-salisbury-wiltshire/"}]],
 [50.75425, -2.17635,    "Unite Free Party, Bloxworth", "20 Oct 1990",                                       [{name: "Unite", logo: "unite.png"}],               "Exact location not known", [{text: "Freepartypeople blog post", url: "https://freepartypeople.wordpress.com/2022/05/25/autumn-1990-diy-free-party-bloxworth-dorset/"}]],
+[50.65704, -3.59029,    "Manic parties 91-93", "1991, 1992, 1993",                                          [{name: "Manic", logo: "manic.png"}],                   "Thanks to JB for the info", [{text: "", url: ""}]],
 [53.17049, -1.57991,    "DiY Free Party, Two Dales", "1991",                                                [{name: "DiY", logo: "diy.png"}],                   "Exact date and location not known", [{text: "Freepartypeople blog post", url: "https://freepartypeople.wordpress.com/2022/05/05/date-unknown-1991-diy-free-party-at-two-dales-derbyshire/"}]],
 [52.89027, -0.90935,    "DiY Free Party, Langar Airfield", "1991",                                          [{name: "DiY", logo: "diy.png"}],                   "Exact date not known", [{text: "Freepartypeople blog post", url: "https://freepartypeople.wordpress.com/2022/05/05/date-unknown-1991-diy-free-party-at-langar-airfield-derbyshire/"}]],
 [53.14201, -1.54698,    "DiY Free Party, Matlock", "1991",                                                  [{name: "DiY", logo: "diy.png"}],                   "Exact date not known", [{text: "Freepartypeople blog post", url: "https://freepartypeople.wordpress.com/2022/05/05/date-unknown-1991-diy-free-party-at-matlock-derbyshire/"}]],
@@ -125,4 +126,5 @@ var parties = [
 [53.38055, -1.47292,    "Smokescreen NYE Free Party, Sheffield", "31 Dec 1994",                             [{name: "Smokescreen", logo: "smokescreen.png"}],               "", [{text: "Freepartypeople blog post", url: "https://freepartypeople.wordpress.com/2007/06/07/smokescreen-old-skool-wakefieldrepton-sheffield-nye-199495/"}]],
 
 ];
+
 

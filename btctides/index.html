@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tides — Live Bitcoin Liquid Field</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#060907;
+    --bull:#39ffb0;
+    --bull-dim:#0e8f63;
+    --bear:#ff3868;
+    --bear-dim:#99183f;
+    --frontier:#ffcf5c;
+    --glass:rgba(7,14,10,0.88);
+    --edge:rgba(150,190,170,0.14);
+    --edge-hi:rgba(180,220,200,0.30);
+    --hi:#eafff2;
+    --lo:#6b8577;
+    --danger:#ff5a3c;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;height:100%;width:100%;overflow:hidden;
+    background:var(--void);
+    font-family:'Rajdhani',sans-serif;
+    color:var(--hi);
+    -webkit-font-smoothing:antialiased;
+  }
+  #field{position:fixed;inset:0;display:block;}
+
+  .vignette{
+    position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+  }
+  .scanlines{
+    position:fixed;inset:0;pointer-events:none;z-index:6;opacity:0.045;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.6) 0px, transparent 1px, transparent 3px);
+  }
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:5;
+    background-image:radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0, transparent 60%);
+    mix-blend-mode:overlay;
+  }
+
+  .hud{position:fixed;inset:0;z-index:10;pointer-events:none;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:14px;
+    animation:hudIn 1.1s ease both;
+  }
+  @keyframes hudIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+
+  .topbar{
+    pointer-events:auto;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:16px;
+    background:var(--glass);
+    border:1px solid var(--edge);
+    border-radius:10px;
+    padding:10px 18px;
+    -webkit-
+  }
+  .brand{display:flex;align-items:center;gap:10px;min-width:0;}
+  .brand-mark{
+    width:30px;height:30px;flex:none;opacity:0.75;
+    filter:drop-shadow(0 0 5px rgba(57,255,176,0.4)) drop-shadow(0 0 5px rgba(255,56,104,0.3));
+  }
+  .brand-mark .lm-bear{fill:var(--bear);}
+  .brand-mark .lm-bull{fill:var(--bull);}
+  .brand-mark .lm-wave{fill:none;stroke:var(--frontier);stroke-width:1.6;stroke-linecap:round;}
+  .brand-mark .lm-ring{fill:none;stroke:rgba(255,255,255,0.18);stroke-width:1;}
+  .brand-text{display:flex;flex-direction:column;line-height:1.05;}
+  .brand-text .t1{
+    font-family:'Orbitron',sans-serif;font-weight:800;font-size:14px;letter-spacing:0.14em;
+    color:var(--hi);
+  }
+  .brand-text .t2{
+    font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--lo);
+  }
+
+  .price-block{display:flex;align-items:baseline;gap:10px;flex:none;}
+  .price-block .sym{font-family:'Space Mono',monospace;font-size:11px;color:var(--lo);letter-spacing:0.08em;}
+  .price-block .val{font-family:'Orbitron',sans-serif;font-weight:700;font-size:clamp(18px,3vw,28px);color:var(--hi);}
+  .price-block .chg{font-family:'Space Mono',monospace;font-size:12px;padding:2px 7px;border-radius:5px;}
+  .chg.up{color:var(--bull);background:rgba(57,255,176,0.1);}
+  .chg.down{color:var(--bear);background:rgba(255,56,104,0.1);}
+  .feedtag{
+    font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em;
+    color:var(--lo);border:1px solid var(--edge);border-radius:20px;padding:3px 9px;
+    display:flex;align-items:center;gap:6px;flex:none;
+  }
+  .feedtag .dot{width:6px;height:6px;border-radius:50%;background:var(--lo);}
+  .feedtag.live .dot{background:var(--bull);box-shadow:0 0 6px var(--bull);animation:blink 1.6s infinite;}
+  .feedtag.live{color:var(--bull);}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.25;}}
+
+  .controls{display:flex;gap:8px;flex:none;}
+  .iconbtn{
+    pointer-events:auto;
+    width:34px;height:34px;border-radius:8px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--edge);
+    color:var(--hi);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-family:'Space Mono',monospace;font-size:14px;
+    transition:background .15s, border-color .15s;
+  }
+  .iconbtn:hover{background:rgba(255,255,255,0.08);border-color:var(--edge-hi);}
+  .iconbtn:focus-visible{outline:2px solid var(--frontier);outline-offset:2px;}
+
+  .gauge-wrap{margin-top:10px;display:flex;flex-direction:column;gap:4px;}
+  .gauge-labels{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--lo);}
+  .gauge-labels .b{color:var(--bull);}
+  .gauge-labels .s{color:var(--bear);}
+  .gauge{
+    position:relative;height:6px;border-radius:4px;overflow:hidden;
+    background:linear-gradient(to right, var(--bull-dim), rgba(255,255,255,0.06) 48%, rgba(255,255,255,0.06) 52%, var(--bear-dim));
+    border:1px solid var(--edge);
+  }
+  .gauge-fill{position:absolute;top:0;bottom:0;left:50%;box-shadow:0 0 10px rgba(57,255,176,0.4);}
+  .gauge-marker{
+    position:absolute;top:-4px;width:2px;height:14px;background:var(--frontier);
+    box-shadow:0 0 8px var(--frontier);left:50%;transform:translateX(-50%);
+  }
+
+  .ripple-control{
+    pointer-events:auto;
+    margin-top:8px;
+    display:flex;align-items:center;gap:10px;
+    background:var(--glass);border:1px solid var(--edge);border-radius:8px;
+    padding:6px 12px;
+  }
+  .ripple-control label{
+    font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em;color:var(--lo);white-space:nowrap;
+  }
+  .ripple-control input[type="range"]{
+    flex:1;height:4px;border-radius:2px;appearance:none;-webkit-appearance:none;
+    background:linear-gradient(to right, var(--frontier), var(--edge-hi));
+    cursor:pointer;
+  }
+  .ripple-control input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:13px;height:13px;border-radius:50%;
+    background:var(--frontier);box-shadow:0 0 8px var(--frontier);cursor:pointer;border:none;
+  }
+  .ripple-control input[type="range"]::-moz-range-thumb{
+    width:13px;height:13px;border-radius:50%;background:var(--frontier);
+    box-shadow:0 0 8px var(--frontier);cursor:pointer;border:none;
+  }
+  .ripple-control .rv{
+    font-family:'Space Mono',monospace;font-size:10px;color:var(--hi);min-width:34px;text-align:right;
+  }
+
+  /* ---------- market internals strip ---------- */
+  .internals{
+    pointer-events:auto;
+    margin-top:8px;
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+    gap:0;
+    background:var(--glass);border:1px solid var(--edge);border-radius:8px;
+    padding:7px 4px;
+  }
+  .internals-item{
+    display:flex;flex-direction:column;align-items:center;gap:2px;
+    padding:2px 14px;position:relative;
+  }
+  .internals-item + .internals-item::before{
+    content:"";position:absolute;left:0;top:15%;bottom:15%;width:1px;background:var(--edge);
+  }
+  .internals-label{
+    font-family:'Space Mono',monospace;font-size:8.5px;letter-spacing:0.08em;color:var(--lo);
+  }
+  .internals-val{
+    font-family:'Space Mono',monospace;font-size:12px;color:var(--hi);font-weight:700;
+  }
+  .internals-val.up{color:var(--bull);}
+  .internals-val.down{color:var(--bear);}
+  .internals-val.warn{color:var(--frontier);}
+  .internals-val.danger{color:var(--danger);}
+  .ls-bar{
+    width:58px;height:5px;border-radius:3px;overflow:hidden;display:flex;background:rgba(255,255,255,0.06);margin-top:1px;
+  }
+  .ls-bar .ls-long{background:var(--bull);height:100%;}
+  .ls-bar .ls-short{background:var(--bear);height:100%;}
+  .range-bar{
+    width:64px;height:5px;border-radius:3px;background:linear-gradient(to right, var(--bear-dim), rgba(255,255,255,0.08), var(--bull-dim));
+    position:relative;margin-top:1px;
+  }
+  .range-bar .range-marker{
+    position:absolute;top:-3px;width:2px;height:11px;background:var(--frontier);
+    box-shadow:0 0 5px var(--frontier);transform:translateX(-50%);
+  }
+  @media (max-width:880px){
+    .internals-item{padding:2px 9px;}
+    .internals-label{font-size:7.5px;}
+    .internals-val{font-size:10.5px;}
+    .ls-bar,.range-bar{width:44px;}
+  }
+
+  .midrow{flex:1;display:flex;justify-content:space-between;align-items:stretch;padding:14px 0;gap:10px;min-height:0;}
+  .panel{
+    pointer-events:auto;
+    width:250px;max-width:36vw;
+    background:var(--glass);
+    border:1px solid var(--edge);
+    border-radius:10px;
+    padding:12px 12px 10px;
+    -webkit-
+    display:flex;flex-direction:column;gap:9px;
+    max-height:100%;
+    overflow-y:auto;
+    scrollbar-width:thin;
+  }
+  .panel-head{display:flex;align-items:center;justify-content:space-between;}
+  .panel-title{font-family:'Orbitron',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.12em;}
+  .panel.bull .panel-title{color:var(--bull);}
+  .panel.bear .panel-title{color:var(--bear);}
+  .stat-row{display:flex;flex-direction:column;gap:3px;}
+  .stat-row .r1{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:10px;color:var(--lo);}
+  .stat-row .r1 b{color:var(--hi);font-weight:400;}
+  .barwrap{height:5px;border-radius:3px;background:rgba(255,255,255,0.06);overflow:hidden;}
+  .bar{height:100%;border-radius:3px;transition:width .4s ease;}
+  .panel.bull .bar{background:linear-gradient(to right,var(--bull-dim),var(--bull));}
+  .panel.bear .bar{background:linear-gradient(to right,var(--bear-dim),var(--bear));}
+  .panel-divider{height:1px;background:var(--edge);margin:2px 0;}
+
+  .bottomrow{display:flex;flex-direction:column;gap:8px;}
+  .core-readout{
+    pointer-events:none;align-self:center;display:flex;gap:18px;align-items:center;
+    font-family:'Space Mono',monospace;font-size:10px;color:var(--lo);
+    background:var(--glass);border:1px solid var(--edge);border-radius:20px;
+    padding:6px 16px;
+  }
+  .core-readout span b{color:var(--frontier);font-weight:700;}
+
+  .log-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em;color:var(--lo);padding:0 2px;}
+  .log{
+    pointer-events:auto;background:var(--glass);border:1px solid var(--edge);border-radius:10px;
+    padding:8px 12px;height:96px;overflow:hidden;
+    display:flex;flex-direction:column-reverse;align-items:stretch;gap:4px;font-family:'Space Mono',monospace;font-size:11px;
+  }
+  .log-entry{
+    display:block;width:100%;flex:0 0 auto;box-sizing:border-box;
+    color:var(--hi);opacity:0;animation:logIn .4s ease forwards;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .log-entry .tag{font-weight:700;margin-right:6px;color:var(--hi);}
+  .log-entry .time{color:#4a5850;margin-right:8px;}
+  @keyframes logIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+  /* ---------- raw data ticker ---------- */
+  .ticker-wrap{
+    pointer-events:none;
+    margin-top:8px;
+    background:var(--glass);
+    border:1px solid var(--edge);
+    border-radius:8px;
+    padding:5px 0;
+    overflow:hidden;
+    position:relative;
+  }
+  .ticker-wrap::before{
+    content:"RAW FEED";
+    position:absolute;left:0;top:0;bottom:0;
+    display:flex;align-items:center;
+    font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em;color:var(--lo);
+    background:linear-gradient(to right, var(--void) 55%, transparent);
+    padding:0 10px 0 10px;z-index:2;
+  }
+  .ticker-track{
+    display:inline-flex;white-space:nowrap;
+    font-family:'Space Mono',monospace;font-size:11px;color:var(--hi);
+    padding-left:90px;
+    animation: tickerScroll 20s linear infinite;
+  }
+  @keyframes tickerScroll{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+  }
+  .ticker-track.static{ animation:none; padding-right:20px; }
+  .ticker-track span{margin-right:28px;opacity:0.85;flex:0 0 auto;white-space:nowrap;}
+
+  /* ---------- center overlay charts ---------- */
+  .center-overlay{
+    flex:1;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;
+    gap:10px;padding-top:2px;min-width:0;
+  }
+  .overlay-card{
+    pointer-events:auto;
+    width:100%;max-width:360px;
+    background:var(--glass);
+    border:1px solid var(--edge);
+    border-radius:10px;
+    padding:8px 12px 10px;
+    -webkit-
+  }
+  .overlay-card .oc-head{
+    display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;
+  }
+  .overlay-card .oc-title{
+    font-family:'Orbitron',sans-serif;font-weight:700;font-size:9.5px;letter-spacing:0.12em;color:var(--lo);
+  }
+  .overlay-card .oc-val{font-family:'Space Mono',monospace;font-size:10px;color:var(--hi);}
+  .overlay-card canvas{display:block;width:100%;}
+
+  @media (max-width:900px){ .center-overlay{display:none;} }
+
+  /* ---------- order book ladder (in side panels) ---------- */
+  .ladder{display:flex;flex-direction:column;gap:2px;}
+  .ladder-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;color:var(--lo);margin-bottom:1px;}
+  .ladder-row{position:relative;height:14px;display:flex;align-items:center;font-family:'Space Mono',monospace;font-size:9.5px;}
+  .ladder-row .lbar{position:absolute;top:0;bottom:0;left:0;border-radius:2px;opacity:0.28;}
+  .panel.bull .ladder-row .lbar{background:var(--bull);right:0;left:auto;}
+  .panel.bear .ladder-row .lbar{background:var(--bear);}
+  .ladder-row .ltext{position:relative;z-index:1;display:flex;justify-content:space-between;width:100%;padding:0 4px;color:var(--hi);}
+  .ladder-row .ltext .lp{color:var(--lo);}
+
+  /* ---------- recent fills ---------- */
+  .fills{display:flex;flex-direction:column;gap:2px;}
+  .fills-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;color:var(--lo);margin-bottom:1px;}
+  .fill-row{font-family:'Space Mono',monospace;font-size:9.5px;color:var(--hi);display:flex;justify-content:space-between;opacity:0.9;}
+  .fill-row .fp{color:var(--lo);}
+
+  /* ---------- population sparkline ---------- */
+  .spark-title{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.08em;color:var(--lo);margin-bottom:2px;}
+  .spark-canvas{width:100%;height:32px;display:block;}
+
+
+  .legend{display:flex;gap:14px;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;color:var(--lo);letter-spacing:0.06em;}
+  .legend span{display:flex;align-items:center;gap:5px;}
+  .swatch{width:8px;height:8px;border-radius:2px;}
+
+  /* ---------- site footer ---------- */
+  .site-footer{
+    pointer-events:auto;
+    display:flex;align-items:center;justify-content:center;
+    gap:10px;flex-wrap:wrap;
+    margin-top:6px;padding-top:6px;
+    border-top:1px solid var(--edge);
+  }
+  .site-footer .sf-text{
+    font-family:'Space Mono',monospace;font-size:9.5px;color:var(--lo);letter-spacing:0.02em;
+    text-align:center;
+  }
+  .site-footer .sf-text a{color:var(--lo);text-decoration:underline;text-decoration-color:var(--edge-hi);text-underline-offset:2px;}
+  .site-footer .sf-text a:hover{color:var(--hi);}
+  .site-footer .sf-icons{display:flex;align-items:center;gap:9px;}
+  .site-footer .sf-icons a{
+    display:flex;align-items:center;justify-content:center;
+    width:20px;height:20px;color:var(--lo);
+    transition:color .15s;
+  }
+  .site-footer .sf-icons a:hover{color:var(--hi);}
+  .site-footer .sf-icons svg{width:14px;height:14px;fill:currentColor;}
+  @media (max-width:620px){
+    .site-footer .sf-text .sf-full{display:none;}
+  }
+
+  .mobile-fleet-toggle{display:none;}
+
+  @media (max-width:880px){
+    .panel{max-width:44vw;width:170px;padding:9px;}
+    .panel-title{font-size:9.5px;}
+    .stat-row .r1{font-size:9px;}
+    .price-block .val{font-size:20px;}
+    .brand-text .t2{display:none;}
+    .log{height:74px;}
+  }
+  @media (max-width:620px){
+    .midrow{align-items:flex-start;}
+    .panel{position:fixed;bottom:132px;width:52vw;max-width:230px;max-height:38vh;transition:transform .25s ease, opacity .25s ease;}
+    .panel.bull{left:8px;transform:translateX(-110%);}
+    .panel.bear{right:8px;transform:translateX(110%);}
+    .panel.open{transform:translateX(0);}
+    .mobile-fleet-toggle{display:flex;pointer-events:auto;gap:8px;justify-content:center;}
+    .mobile-fleet-toggle button{
+      font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:0.1em;padding:6px 12px;border-radius:20px;
+      cursor:pointer;background:var(--glass);border:1px solid var(--edge);color:var(--lo);
+    }
+    .mobile-fleet-toggle button.bull.active{color:var(--bull);border-color:var(--bull-dim);}
+    .mobile-fleet-toggle button.bear.active{color:var(--bear);border-color:var(--bear-dim);}
+    .legend{display:none;}
+    .core-readout{font-size:9px;padding:5px 10px;gap:10px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .hud{animation:none;}
+    .feedtag.live .dot{animation:none;}
+  }
+
+  /* ---------- help modal ---------- */
+  .help-backdrop{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(3,5,4,0.72);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;
+    opacity:0;pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  .help-backdrop.open{opacity:1;pointer-events:auto;}
+  .help-modal{
+    width:100%;max-width:640px;max-height:82vh;
+    background:linear-gradient(180deg, rgba(12,20,15,0.97), rgba(7,12,9,0.97));
+    border:1px solid var(--edge-hi);
+    border-radius:14px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(57,255,176,0.05);
+    display:flex;flex-direction:column;
+    transform:translateY(12px) scale(0.98);
+    transition:transform .2s ease;
+  }
+  .help-backdrop.open .help-modal{transform:translateY(0) scale(1);}
+  .help-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 22px;border-bottom:1px solid var(--edge);flex:none;
+  }
+  .help-head h2{
+    margin:0;font-family:'Orbitron',sans-serif;font-weight:800;font-size:15px;letter-spacing:0.1em;color:var(--hi);
+  }
+  .help-head .sub{
+    font-family:'Space Mono',monospace;font-size:10px;color:var(--lo);margin-top:3px;letter-spacing:0.06em;
+  }
+  .help-close{
+    pointer-events:auto;flex:none;
+    width:32px;height:32px;border-radius:8px;
+    background:rgba(255,255,255,0.04);border:1px solid var(--edge);color:var(--hi);
+    font-size:16px;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .help-close:hover{background:rgba(255,255,255,0.09);border-color:var(--edge-hi);}
+  .help-body{
+    overflow-y:auto;padding:18px 22px 24px;
+    font-family:'Rajdhani',sans-serif;color:var(--hi);
+  }
+  .help-section{margin-bottom:20px;}
+  .help-section:last-child{margin-bottom:0;}
+  .help-section h3{
+    font-family:'Orbitron',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:0.12em;
+    color:var(--frontier);margin:0 0 8px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .help-section h3::before{content:"";width:14px;height:1px;background:var(--frontier);opacity:0.6;}
+  .help-item{margin-bottom:9px;font-size:14px;line-height:1.5;}
+  .help-item:last-child{margin-bottom:0;}
+  .help-item b{color:var(--hi);font-weight:700;}
+  .help-item span{color:var(--lo);}
+  .help-item .swatch-inline{
+    display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="field" aria-hidden="true"></canvas>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+<div class="grain"></div>
+
+<div class="hud">
+
+  <div>
+    <div class="topbar">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <defs>
+            <clipPath id="brandClip"><circle cx="16" cy="16" r="14.5"/></clipPath>
+          </defs>
+          <g clip-path="url(#brandClip)">
+            <rect class="lm-bear" x="0" y="0" width="32" height="32"/>
+            <path class="lm-bull" d="M16 1 C20 4,12 8,16 11 C20 14,12 18,16 21 C20 24,12 28,16 31 L1 31 L1 1 Z"/>
+          </g>
+          <path class="lm-wave" d="M16 1 C20 4,12 8,16 11 C20 14,12 18,16 21 C20 24,12 28,16 31"/>
+          <circle class="lm-ring" cx="16" cy="16" r="14.5"/>
+        </svg>
+        <div class="brand-text">
+          <div class="t1">BTC TIDES</div>
+          <div class="t2">LIVE BTC LIQUID FIELD · DEPTH 21M</div>
+        </div>
+      </div>
+
+      <div class="price-block" role="status" aria-live="polite">
+        <span class="sym">BTC/USD</span>
+        <span class="val" id="priceVal">—</span>
+        <span class="chg" id="priceChg">—</span>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="feedtag" id="feedTag"><span class="dot"></span><span id="feedTagText">CONNECTING</span></div>
+        <div class="controls">
+          <button class="iconbtn" id="pauseBtn" title="Pause / resume (space)" aria-label="Pause or resume simulation">❚❚</button>
+          <button class="iconbtn" id="helpBtn" title="What am I looking at?" aria-label="Open help overlay">?</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ticker-wrap"><div class="ticker-track" id="tickerTrack"><span>Connecting to live feed…</span></div></div>
+
+    <div class="gauge-wrap">
+      <div class="gauge-labels"><span class="b">BULL VITALITY</span><span class="s">BEAR VITALITY</span></div>
+      <div class="gauge"><div class="gauge-fill" id="gaugeFill"></div><div class="gauge-marker" id="gaugeMarker"></div></div>
+    </div>
+
+    <div class="ripple-control">
+      <label for="rippleSlider">RIPPLE INTENSITY</label>
+      <input type="range" id="rippleSlider" min="0" max="1000" value="750" step="10" aria-label="Ripple intensity">
+      <span class="rv" id="rippleVal">750</span>
+    </div>
+
+    <div class="internals" title="Futures market data — funding, open interest, positioning, range and volatility">
+      <div class="internals-item">
+        <span class="internals-label">FUNDING</span>
+        <span class="internals-val" id="fundingVal">—</span>
+      </div>
+      <div class="internals-item">
+        <span class="internals-label">OPEN INTEREST</span>
+        <span class="internals-val" id="oiVal">—</span>
+      </div>
+      <div class="internals-item">
+        <span class="internals-label">LONG / SHORT</span>
+        <span class="internals-val" id="lsVal">—</span>
+        <div class="ls-bar"><div class="ls-long" id="lsLongBar" style="width:50%"></div><div class="ls-short" id="lsShortBar" style="width:50%"></div></div>
+      </div>
+      <div class="internals-item">
+        <span class="internals-label">24H RANGE</span>
+        <span class="internals-val" id="rangeVal">—</span>
+        <div class="range-bar"><div class="range-marker" id="rangeMarker" style="left:50%"></div></div>
+      </div>
+      <div class="internals-item">
+        <span class="internals-label">VOLATILITY</span>
+        <span class="internals-val" id="volVal">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="midrow">
+    <div class="panel bull" id="bullPanel">
+      <div class="panel-head"><span class="panel-title">▲ BULL TIDE</span></div>
+      <div class="stat-row"><div class="r1"><span>ABSORBED VOLUME</span><b id="bullPop">0</b></div><div class="barwrap"><div class="bar" id="bullPopBar" style="width:0%"></div></div></div>
+      <div class="stat-row"><div class="r1"><span>TERRITORY</span><b id="bullTerr">0%</b></div><div class="barwrap"><div class="bar" id="bullTerrBar" style="width:0%"></div></div></div>
+      <div>
+        <div class="spark-title">TERRITORY TREND</div>
+        <canvas class="spark-canvas" id="bullSpark"></canvas>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="ladder">
+        <div class="ladder-title">LIVE BID LADDER (REAL)</div>
+        <div id="bullLadder"></div>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="fills">
+        <div class="fills-title">RECENT BUY FILLS</div>
+        <div id="bullFills"></div>
+      </div>
+    </div>
+    <div class="center-overlay">
+      <div class="overlay-card">
+        <div class="oc-head"><span class="oc-title">LIVE PRICE</span><span class="oc-val" id="priceSparkVal">—</span></div>
+        <canvas id="priceChart" width="360" height="64"></canvas>
+      </div>
+      <div class="overlay-card">
+        <div class="oc-head"><span class="oc-title">MARKET DEPTH</span><span class="oc-val" id="depthSparkVal">—</span></div>
+        <canvas id="depthChart" width="360" height="70"></canvas>
+      </div>
+      <div class="overlay-card">
+        <div class="oc-head"><span class="oc-title">TRADE FLOW (60s)</span><span class="oc-val" id="flowSparkVal">—</span></div>
+        <canvas id="flowChart" width="360" height="56"></canvas>
+      </div>
+    </div>
+    <div class="panel bear" id="bearPanel">
+      <div class="panel-head"><span class="panel-title">▼ BEAR TIDE</span></div>
+      <div class="stat-row"><div class="r1"><span>ABSORBED VOLUME</span><b id="bearPop">0</b></div><div class="barwrap"><div class="bar" id="bearPopBar" style="width:0%"></div></div></div>
+      <div class="stat-row"><div class="r1"><span>TERRITORY</span><b id="bearTerr">0%</b></div><div class="barwrap"><div class="bar" id="bearTerrBar" style="width:0%"></div></div></div>
+      <div>
+        <div class="spark-title">TERRITORY TREND</div>
+        <canvas class="spark-canvas" id="bearSpark"></canvas>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="ladder">
+        <div class="ladder-title">LIVE ASK LADDER (REAL)</div>
+        <div id="bearLadder"></div>
+      </div>
+      <div class="panel-divider"></div>
+      <div class="fills">
+        <div class="fills-title">RECENT SELL FILLS</div>
+        <div id="bearFills"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottomrow">
+    <div class="mobile-fleet-toggle">
+      <button class="bull" id="toggleBull">BULL TIDE</button>
+      <button class="bear" id="toggleBear">BEAR TIDE</button>
+    </div>
+    <div class="core-readout">
+      <span>FIELD STATE <b id="coreState">STABILIZING</b></span>
+      <span>NET FLOW <b id="netFlow">0.00 BTC</b></span>
+      <span>LIQUIDATED (SESSION) <b id="liqTotal">$0</b></span>
+      <span>UPTIME <b id="uptime">00:00:00</b></span>
+    </div>
+    <div class="log-label">SIGNIFICANT EVENTS · curated highlights (see RAW FEED above for everything)</div>
+    <div class="log" id="log" aria-live="polite"></div>
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--bull)"></span>BULL GROWTH</span>
+      <span><span class="swatch" style="background:var(--bear)"></span>BEAR GROWTH</span>
+      <span><span class="swatch" style="background:var(--danger)"></span>LIQUIDATION DIE-OFF</span>
+      <span><span class="swatch" style="background:var(--frontier)"></span>FRONTIER</span>
+    </div>
+
+    <div class="site-footer">
+      <div class="sf-text">v1.0 · Made with 🧡 by BXL909<span class="sf-full"> · Visit <a href="https://bxl909.github.io" target="_blank" rel="noopener">bxl909.github.io</a> for more games, bitcoin apps, etc</span></div>
+      <div class="sf-icons">
+        <a href="https://bxl909.github.io" target="_blank" rel="noopener" title="BXL909" aria-label="BXL909 site">
+          <svg viewBox="0 0 24 24"><path d="M12 2 2 8.5 12 15l10-6.5L12 2Zm0 10L2 8.5V16l10 6.5L22 16V8.5L12 12Z"/></svg>
+        </a>
+        <a href="https://github.com/BXL909" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub">
+          <svg viewBox="0 0 24 24"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.29 9.4 7.86 10.93.57.1.78-.25.78-.55 0-.27-.01-1.16-.02-2.1-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.64 1.59.24 2.76.12 3.05.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.4-5.26 5.69.41.36.78 1.06.78 2.15 0 1.55-.01 2.8-.01 3.18 0 .3.2.66.79.55A10.5 10.5 0 0 0 23.5 12c0-6.35-5.15-11.5-11.5-11.5Z"/></svg>
+        </a>
+        <a href="https://x.com/bxl909" target="_blank" rel="noopener" title="X" aria-label="X (Twitter)">
+          <svg viewBox="0 0 24 24"><path d="M18.3 2H21l-6.7 7.64L22.2 22H16l-4.9-6.4L5.5 22H2.8l7.2-8.22L1.8 2h6.4l4.4 5.86L18.3 2Zm-1.1 18h1.5L7.9 3.9H6.3L17.2 20Z"/></svg>
+        </a>
+        <a href="https://primal.net/p/npub1y2sgv8xwg9g63wlxq25735y9xvl4kjmwh5u92c0q2nkhurgjlstql87kmv" target="_blank" rel="noopener" title="Nostr" aria-label="Nostr">
+          <svg viewBox="0 0 24 24"><path d="M12 3a1.2 1.2 0 1 1 0 2.4A1.2 1.2 0 0 1 12 3ZM7.8 6.2a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2Zm8.4 0a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2ZM5 10.6a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm14 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM12 21c-3-1.4-5-4.2-5-8.3 0-.4 0-.8.05-1.2h9.9c.05.4.05.8.05 1.2 0 4.1-2 6.9-5 8.3Z"/></svg>
+        </a>
+        <a href="mailto:bxl909@pm.me" title="Email" aria-label="Email">
+          <svg viewBox="0 0 24 24"><path d="M2 4h20v16H2V4Zm2 2.24V6h.01L12 12l7.99-6H4Zm16 1.76-8 6-8-6V18h16V8Z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="help-backdrop" id="helpBackdrop">
+  <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="help-head">
+      <div>
+        <h2 id="helpTitle">WHAT AM I LOOKING AT?</h2>
+        <div class="sub">Tides · live BTC order-flow visualization</div>
+      </div>
+      <button class="help-close" id="helpClose" aria-label="Close help">✕</button>
+    </div>
+    <div class="help-body">
+
+      <div class="help-section">
+        <h3>THE LIVING FIELD</h3>
+        <div class="help-item"><b>The two liquid masses</b> <span>— teal on the left is the "Bull Tide", crimson on the right is the "Bear Tide". Their size and reach are driven by real Binance order-book pressure and trade flow, not randomness.</span></div>
+        <div class="help-item"><b>Ripples</b> <span>— every real trade sends a visible ripple across the boundary of whichever side executed it, sized by trade quantity.</span></div>
+        <div class="help-item"><b>Shockwave rings</b> <span>— a real liquidation causes a ring burst and a dent in the losing side's boundary.</span></div>
+        <div class="help-item"><b>Amber mixing zone</b> <span>— wherever the two liquids overlap, marking exactly where the contest between buyers and sellers is currently fiercest (the "frontier").</span></div>
+      </div>
+
+      <div class="help-section">
+        <h3>TOP BAR</h3>
+        <div class="help-item"><b>BTC/USD price</b> <span>— live price ticking in real time off the Binance trade stream.</span></div>
+        <div class="help-item"><b>Feed status badge</b> <span>— shows "LIVE · BINANCE" when fully connected, "LIVE · NO LIQ FEED" if only the price/order-book streams are up, or "SIMULATED" if the live connection is down (in which case the field falls back to a clearly-labeled simulated market).</span></div>
+        <div class="help-item"><b>❚❚ Pause button</b> <span>— freezes the visual simulation (spacebar also works).</span></div>
+        <div class="help-item"><b>? Help button</b> <span>— this overlay.</span></div>
+      </div>
+
+      <div class="help-section">
+        <h3>RAW FEED TICKER</h3>
+        <div class="help-item"><span>A continuously scrolling, unfiltered log of every real trade, liquidation, and periodic order-book summary as it arrives — the raw firehose of everything the page is reacting to.</span></div>
+      </div>
+
+      <div class="help-section">
+        <h3>VITALITY GAUGE & RIPPLE SLIDER</h3>
+        <div class="help-item"><b>Bull / Bear vitality gauge</b> <span>— shows current market pressure, blended from real order-book imbalance and recent real trade flow. This is what drives which tide is currently advancing.</span></div>
+        <div class="help-item"><b>Ripple intensity slider</b> <span>— controls how strongly real trades/liquidations physically distort the liquid boundary. Doesn't affect the underlying data, only the visual reaction.</span></div>
+      </div>
+
+      <div class="help-section">
+        <h3>MARKET INTERNALS</h3>
+        <div class="help-item"><b>Funding</b> <span>— the real current perpetual futures funding rate. Positive means longs are paying shorts (long-biased market); negative means the reverse.</span></div>
+        <div class="help-item"><b>Open interest</b> <span>— real total outstanding futures contracts, with its trend colored against the value when this page loaded.</span></div>
+        <div class="help-item"><b>Long / short</b> <span>— the real global ratio of long vs short accounts on Binance Futures.</span></div>
+        <div class="help-item"><b>24h range</b> <span>— today's real high/low, with a marker showing where the current price sits between them.</span></div>
+        <div class="help-item"><b>Volatility</b> <span>— realized volatility computed from real trade prices over the trailing 5 minutes (not a formal annualized figure, just a short-window read on how choppy things currently are).</span></div>
+        <div class="help-item"><span style="color:var(--lo);font-size:12px;">(Futures data is polled periodically rather than streamed live, since it isn't available over the same WebSocket as price/order-book/trades.)</span></div>
+      </div>
+
+      <div class="help-section">
+        <h3>BULL / BEAR TIDE PANELS</h3>
+        <div class="help-item"><b>Absorbed volume</b> <span>— cumulative real BTC traded on that side since the page loaded.</span></div>
+        <div class="help-item"><b>Territory</b> <span>— that side's current share of the contested field, updated live.</span></div>
+        <div class="help-item"><b>Territory trend</b> <span>— a small sparkline of that territory percentage over the last couple of minutes.</span></div>
+        <div class="help-item"><b>Live bid/ask ladder</b> <span>— the real top price levels and quantities currently resting in Binance's order book for that side.</span></div>
+        <div class="help-item"><b>Recent fills</b> <span>— the last few real trades executed on that side.</span></div>
+      </div>
+
+      <div class="help-section">
+        <h3>CENTER CHARTS</h3>
+        <div class="help-item"><b>Live price</b> <span>— a rolling chart of real trade prices.</span></div>
+        <div class="help-item"><b>Market depth</b> <span>— the real cumulative bid (left) vs ask (right) volume currently sitting in the order book.</span></div>
+        <div class="help-item"><b>Trade flow (60s)</b> <span>— a rolling histogram of real buy vs sell volume over the last minute.</span></div>
+        <div class="help-item"><span style="color:var(--lo);font-size:12px;">(Hidden on narrower screens to keep things uncluttered — the same underlying data still drives the field either way.)</span></div>
+      </div>
+
+      <div class="help-section">
+        <h3>BOTTOM BAR</h3>
+        <div class="help-item"><b>Field state</b> <span>— CONTESTED, BULL DOMINANT, or BEAR DOMINANT, based on current pressure.</span></div>
+        <div class="help-item"><b>Net flow</b> <span>— real cumulative BTC bought minus sold since load.</span></div>
+        <div class="help-item"><b>Liquidated (session)</b> <span>— real cumulative USD value liquidated (both longs and shorts combined) since the page loaded.</span></div>
+        <div class="help-item"><b>Uptime</b> <span>— how long this page has been running.</span></div>
+        <div class="help-item"><b>Significant events log</b> <span>— a curated, readable subset of notable trades, liquidations, and system messages (the raw ticker up top shows everything unfiltered; this shows only the highlights).</span></div>
+        <div class="help-item"><b>Legend</b> <span>— quick color key: <span class="swatch-inline" style="background:var(--bull)"></span>buy volley, <span class="swatch-inline" style="background:var(--bear)"></span>sell volley, <span class="swatch-inline" style="background:var(--danger)"></span>liquidation, <span class="swatch-inline" style="background:var(--frontier)"></span>frontier.</span></div>
+        <h3 style="color:red;">A NOTE ON PERFORMANCE</h3>
+	<div class="help-item"><b></b> <span>This runs at 60fps on Arc browser (Chrome-based) but I found performance badly degraded on both Edge and Firefox browsers. Hopefully I'll resolve this eventually!</span></div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     CANVAS SETUP
+  ============================================================ */
+  const canvas = document.getElementById('field');
+  const ctx = canvas.getContext('2d');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let W=0,H=0,DPR=1;
+  const rand=(a,b)=>a+Math.random()*(b-a);
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const lerp=(a,b,t)=>a+(b-a)*t;
+
+  function getCSS(varName){ return getComputedStyle(document.documentElement).getPropertyValue(varName).trim(); }
+
+  // Colors are set once via CSS and never change at runtime, but the render
+  // loop was calling getComputedStyle() 4-6+ times *every animation frame*
+  // to re-read them — a real, measurable cost that different browser engines
+  // optimize very differently. Resolve them once and reuse the cached strings
+  // everywhere in the hot per-frame path.
+  const COLORS = {};
+  function cacheColors(){
+    ['--bull','--bear','--bull-dim','--bear-dim','--frontier','--danger'].forEach(v=>{
+      COLORS[v] = getCSS(v);
+    });
+  }
+  cacheColors();
+  function hexToRgb(hex){
+    hex=hex.replace('#','');
+    if(hex.length===3) hex=hex.split('').map(c=>c+c).join('');
+    const num=parseInt(hex,16);
+    return {r:(num>>16)&255,g:(num>>8)&255,b:num&255};
+  }
+
+  /* ============================================================
+     BACKGROUND SUBSTRATE (drawn once per resize)
+  ============================================================ */
+  let substrate = document.createElement('canvas');
+  let subCtx = substrate.getContext('2d');
+  function buildSubstrate(){
+    substrate.width=W; substrate.height=H;
+    subCtx.clearRect(0,0,W,H);
+    subCtx.fillStyle = '#060907';
+    subCtx.fillRect(0,0,W,H);
+    const blobs = [
+      {x:W*0.5,y:H*0.5,r:Math.max(W,H)*0.6,c:'rgba(20,40,32,0.35)'},
+      {x:W*0.15,y:H*0.2,r:Math.max(W,H)*0.35,c:'rgba(14,50,40,0.25)'},
+      {x:W*0.85,y:H*0.8,r:Math.max(W,H)*0.35,c:'rgba(50,14,26,0.2)'}
+    ];
+    blobs.forEach(b=>{
+      const g = subCtx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r);
+      g.addColorStop(0,b.c); g.addColorStop(1,'rgba(0,0,0,0)');
+      subCtx.fillStyle=g; subCtx.fillRect(0,0,W,H);
+    });
+    // faint dot lattice suggesting an ocean-floor substrate
+    subCtx.fillStyle = 'rgba(150,190,170,0.05)';
+    const pitch = 26;
+    for(let y=pitch/2;y<H;y+=pitch){
+      for(let x=pitch/2;x<W;x+=pitch){
+        subCtx.beginPath(); subCtx.arc(x,y,1,0,Math.PI*2); subCtx.fill();
+      }
+    }
+  }
+
+  /* ============================================================
+     AMBIENT SPORE MOTES (slow drifting particles, not stars)
+  ============================================================ */
+  let motes = [];
+  function buildMotes(){
+    motes = [];
+    const count = Math.floor((W*H)/9000) * (lowPerfMode ? 0.4 : 1);
+    for(let i=0;i<count;i++){
+      motes.push({
+        x:rand(0,W), y:rand(0,H), r:rand(0.5,1.8),
+        vx:rand(-6,6), vy:rand(-9,-2),
+        baseA:rand(0.1,0.4), phase:rand(0,Math.PI*2), tw:rand(0.3,1)
+      });
+    }
+  }
+  function drawMotes(time,dt){
+    ctx.fillStyle = 'rgba(200,230,215,1)';
+    for(const m of motes){
+      if(!reducedMotion){
+        m.x += m.vx*dt*0.001; m.y += m.vy*dt*0.001;
+        if(m.y<-10){ m.y=H+10; m.x=rand(0,W); }
+        if(m.x<-10) m.x=W+10; if(m.x>W+10) m.x=-10;
+      }
+      const a = m.baseA*(0.6+0.4*Math.sin(time*0.0012*m.tw+m.phase));
+      ctx.globalAlpha = a;
+      ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* ============================================================
+     LIQUID FIELD — two vector fluid masses (bull/bear) that
+     tidally advance/retreat with real order-flow pressure.
+     Real trades send a traveling ripple across the boundary;
+     real liquidations dent the boundary + emit a shockwave ring.
+     Everything is continuous bezier/gradient rendering — no grid.
+  ============================================================ */
+  const FIELD = { rows:0, ys:null, bullX:null, bearX:null, marginX:0, contestW:0 };
+  const PLAY_TOP = 0.20, PLAY_BOT = 0.86;
+  let bullExtentFrac = 0.5, bearExtentFrac = 0.5;
+  let ripples = [];       // {side:'bull'|'bear', row, amp, born, life}
+  let shockwaves = [];    // {x,y,born,life,color}
+  let bullParticles = [], bearParticles = [];
+  let rippleStrength = 7.5; // user-controlled multiplier on ripple amplitude (slider, default 750)
+
+  function initField(){
+    FIELD.rows = lowPerfMode ? clamp(Math.round(H/22), 18, 30) : clamp(Math.round(H/16), 24, 46);
+    FIELD.ys = new Float32Array(FIELD.rows);
+    FIELD.bullX = new Float32Array(FIELD.rows);
+    FIELD.bearX = new Float32Array(FIELD.rows);
+    const top = H*PLAY_TOP, bot = H*PLAY_BOT;
+    for(let i=0;i<FIELD.rows;i++){
+      FIELD.ys[i] = top + (i/(FIELD.rows-1))*(bot-top);
+    }
+    FIELD.marginX = W*0.03;
+    FIELD.contestW = W*0.94;
+    for(let i=0;i<FIELD.rows;i++){
+      FIELD.bullX[i] = FIELD.marginX + bullExtentFrac*FIELD.contestW;
+      FIELD.bearX[i] = (W-FIELD.marginX) - bearExtentFrac*FIELD.contestW;
+    }
+    bullParticles = buildLiquidParticles();
+    bearParticles = buildLiquidParticles();
+  }
+
+  function buildLiquidParticles(){
+    const arr = [];
+    const n = reducedMotion ? 10 : (lowPerfMode ? 12 : 22);
+    for(let i=0;i<n;i++){
+      arr.push({ row:rand(0,FIELD.rows-1), depth:rand(0.15,0.95), speed:rand(0.05,0.16), phase:rand(0,Math.PI*2), r:rand(1,2.6) });
+    }
+    return arr;
+  }
+
+  function noiseWiggle(i,time,seed){
+    return Math.sin(i*0.42+seed+time*0.00028)*10 + Math.sin(i*0.19-seed*1.4+time*0.00041)*7;
+  }
+
+  function addRipple(side,row,amp){
+    amp *= rippleStrength;
+    ripples.push({side,row,amp,born:performance.now(),life:1600+Math.min(Math.abs(amp),90)*8});
+    if(ripples.length>120) ripples.shift();
+  }
+
+  // real trade -> growth ripple pushing this side's boundary outward
+  function seedGrowth(side, qty){
+    const row = rand(2, FIELD.rows-3);
+    const amp = clamp(16+Math.sqrt(qty)*20, 16, 170);
+    addRipple(side, row, amp);
+    const arr = side==='bull' ? FIELD.bullX : FIELD.bearX;
+    const x = arr[Math.round(row)] / W;
+    const y = FIELD.ys[Math.round(row)] / H;
+    return {x, y};
+  }
+
+  // real liquidation -> boundary dent (recede) + shockwave ring on the victim side
+  function dieOff(victimSide, qty){
+    const row = rand(2, FIELD.rows-3);
+    const amp = -clamp(18+Math.sqrt(qty)*16, 18, 150);
+    addRipple(victimSide, row, amp);
+    const arr = victimSide==='bull' ? FIELD.bullX : FIELD.bearX;
+    const px = arr[Math.round(row)];
+    const py = FIELD.ys[Math.round(row)];
+    shockwaves.push({x:px, y:py, born:performance.now(), life:900, color:COLORS['--danger']});
+    if(shockwaves.length>20) shockwaves.shift();
+    return {x:px/W, y:py/H};
+  }
+
+  function updateLiquidField(time, dt){
+    // slow "tide" easing toward the real pressure-derived extent
+    const targetBull = clamp(0.5+pressure*0.46, 0.06, 0.94);
+    const kTide = 1 - Math.exp(-dt/900);
+    bullExtentFrac += (targetBull-bullExtentFrac)*kTide;
+    bearExtentFrac = 1-bullExtentFrac;
+
+    ripples = ripples.filter(r=>time-r.born<r.life);
+
+    const rows = FIELD.rows;
+    const kBoundary = 1 - Math.exp(-dt/150);
+    for(let i=0;i<rows;i++){
+      let bullTarget = FIELD.marginX + bullExtentFrac*FIELD.contestW + noiseWiggle(i,time,1.3);
+      let bearTarget = (W-FIELD.marginX) - bearExtentFrac*FIELD.contestW - noiseWiggle(i,time,4.1);
+      for(const r of ripples){
+        const age = time-r.born, t = age/r.life;
+        const spread = 3+t*16;
+        const d = i-r.row;
+        const env = Math.exp(-(d*d)/(2*spread*spread)) * (1-t);
+        if(r.side==='bull') bullTarget += r.amp*env;
+        else bearTarget -= r.amp*env;
+      }
+      bullTarget = clamp(bullTarget, W*0.01, W*0.99);
+      bearTarget = clamp(bearTarget, W*0.01, W*0.99);
+      FIELD.bullX[i] += (bullTarget-FIELD.bullX[i])*kBoundary;
+      FIELD.bearX[i] += (bearTarget-FIELD.bearX[i])*kBoundary;
+    }
+  }
+
+  // smooth path through row-based boundary points using midpoint quadratic curves
+  function traceBoundary(path, xs, ys, fromLeft){
+    const n = xs.length;
+    if(fromLeft){
+      path.moveTo(0, ys[0]);
+      path.lineTo(xs[0], ys[0]);
+    } else {
+      path.moveTo(W, ys[0]);
+      path.lineTo(xs[0], ys[0]);
+    }
+    for(let i=0;i<n-1;i++){
+      const mx = (xs[i]+xs[i+1])/2, my = (ys[i]+ys[i+1])/2;
+      path.quadraticCurveTo(xs[i], ys[i], mx, my);
+    }
+    path.lineTo(xs[n-1], ys[n-1]);
+    if(fromLeft){ path.lineTo(0, ys[n-1]); }
+    else { path.lineTo(W, ys[n-1]); }
+    path.closePath();
+  }
+
+  function traceBoundaryLine(path, xs, ys){
+    path.moveTo(xs[0],ys[0]);
+    for(let i=0;i<xs.length-1;i++){
+      const mx=(xs[i]+xs[i+1])/2, my=(ys[i]+ys[i+1])/2;
+      path.quadraticCurveTo(xs[i],ys[i],mx,my);
+    }
+    path.lineTo(xs[xs.length-1],ys[ys.length-1]);
+  }
+
+  // Fill gradients only depend on canvas width + fixed colors, not on the
+  // constantly-changing boundary shape — cache them and rebuild only on
+  // resize instead of allocating new gradient objects every single frame.
+  let bullFillGrad = null, bearFillGrad = null;
+  function rebuildFieldGradients(){
+    if(!W) return;
+    const dimBull = hexToRgb(COLORS['--bull-dim']), brightBull = hexToRgb(COLORS['--bull']);
+    bullFillGrad = ctx.createLinearGradient(0,0,W*0.55,0);
+    bullFillGrad.addColorStop(0, `rgba(${dimBull.r},${dimBull.g},${dimBull.b},0.30)`);
+    bullFillGrad.addColorStop(1, `rgba(${brightBull.r},${brightBull.g},${brightBull.b},0.06)`);
+
+    const dimBear = hexToRgb(COLORS['--bear-dim']), brightBear = hexToRgb(COLORS['--bear']);
+    bearFillGrad = ctx.createLinearGradient(W,0,W*0.45,0);
+    bearFillGrad.addColorStop(0, `rgba(${dimBear.r},${dimBear.g},${dimBear.b},0.30)`);
+    bearFillGrad.addColorStop(1, `rgba(${brightBear.r},${brightBear.g},${brightBear.b},0.06)`);
+  }
+
+  function drawLiquidMass(xs, ys, fromLeft, baseColor, fillGrad){
+    // build the curve once as Path2D objects and reuse for every fill/stroke
+    // pass below, instead of re-tracing the same curve multiple times per frame
+    const fillPath = new Path2D();
+    traceBoundary(fillPath, xs, ys, fromLeft);
+    ctx.save();
+    ctx.fillStyle = fillGrad;
+    ctx.fill(fillPath);
+    ctx.restore();
+
+    // glow boundary line — a wide translucent stroke underneath a crisp
+    // stroke on top reads as a soft glow without canvas shadowBlur, which
+    // is a well-known cross-browser/GPU performance hot spot
+    const linePath = new Path2D();
+    traceBoundaryLine(linePath, xs, ys);
+    ctx.save();
+    ctx.strokeStyle = baseColor;
+    if(!lowPerfMode){
+      ctx.lineWidth = 7;
+      ctx.globalAlpha = 0.14;
+      ctx.stroke(linePath);
+      ctx.lineWidth = 4;
+      ctx.globalAlpha = 0.16;
+      ctx.stroke(linePath);
+    }
+    ctx.lineWidth = 2.2;
+    ctx.globalAlpha = 0.9;
+    ctx.stroke(linePath);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  function drawMixingZone(){
+    const rows = FIELD.rows;
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,207,92,0.16)';
+    for(let i=0;i<rows-1;i++){
+      const bx0=FIELD.bullX[i], bx1=FIELD.bullX[i+1];
+      const rx0=FIELD.bearX[i], rx1=FIELD.bearX[i+1];
+      const lo0=Math.min(bx0,rx0), hi0=Math.max(bx0,rx0);
+      const lo1=Math.min(bx1,rx1), hi1=Math.max(bx1,rx1);
+      if(hi0<=lo0 && hi1<=lo1) continue; // no overlap on either edge of this segment
+      const overlap0 = bx0-rx0, overlap1 = bx1-rx1;
+      if(overlap0<=0 && overlap1<=0) continue;
+      const y0=FIELD.ys[i], y1=FIELD.ys[i+1];
+      ctx.beginPath();
+      ctx.moveTo(Math.max(0,rx0), y0);
+      ctx.lineTo(Math.max(0,bx0), y0);
+      ctx.lineTo(Math.max(0,bx1), y1);
+      ctx.lineTo(Math.max(0,rx1), y1);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawLiquidParticles(particles, xs, ys, fromLeft, edgeX, color, time){
+    // note: no clip() needed here — each particle's x is computed via
+    // lerp(edgeX, boundaryX, depth) with depth<1, which mathematically
+    // guarantees it always falls strictly inside the liquid mass at its
+    // row, so clipping against the curved boundary path was redundant
+    // (and clip() against a multi-point curve is one of the more
+    // expensive canvas operations, especially across browsers/GPUs)
+    ctx.save();
+    ctx.fillStyle = color;
+    for(const p of particles){
+      if(!reducedMotion) p.row += (Math.sin(time*0.0004+p.phase)*0.02);
+      const rowIdx = clamp(p.row, 0, FIELD.rows-1);
+      const i0 = Math.floor(rowIdx), i1 = Math.min(FIELD.rows-1, i0+1), f = rowIdx-i0;
+      const boundaryX = lerp(xs[i0], xs[i1], f);
+      const y = lerp(ys[i0], ys[i1], f);
+      const x = fromLeft ? lerp(edgeX, boundaryX, p.depth) : lerp(edgeX, boundaryX, p.depth);
+      const alpha = 0.18 + 0.14*Math.sin(time*0.0016+p.phase);
+      ctx.globalAlpha = Math.max(0,alpha);
+      ctx.beginPath();
+      ctx.arc(x,y,p.r,0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+
+  function drawShockwaves(time){
+    shockwaves = shockwaves.filter(s=>time-s.born<s.life);
+    ctx.save();
+    for(const s of shockwaves){
+      const t = (time-s.born)/s.life;
+      const r = 6+t*70;
+      ctx.strokeStyle = s.color;
+      if(!lowPerfMode){
+        ctx.globalAlpha = (1-t)*0.3;
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,r,0,Math.PI*2);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = (1-t)*0.8;
+      ctx.lineWidth = 2-t*1.4;
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,r,0,Math.PI*2);
+      ctx.stroke();
+    }
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+
+  function renderLiquidField(time){
+    drawLiquidMass(FIELD.bullX, FIELD.ys, true, COLORS['--bull'], bullFillGrad);
+    drawLiquidMass(FIELD.bearX, FIELD.ys, false, COLORS['--bear'], bearFillGrad);
+    drawMixingZone();
+    drawLiquidParticles(bullParticles, FIELD.bullX, FIELD.ys, true, 0, COLORS['--bull'], time);
+    drawLiquidParticles(bearParticles, FIELD.bearX, FIELD.ys, false, W, COLORS['--bear'], time);
+    drawShockwaves(time);
+  }
+
+  function fieldStats(){
+    return {
+      bullTerritory: bullExtentFrac*100,
+      bearTerritory: bearExtentFrac*100
+    };
+  }
+
+  /* ============================================================
+     LIVE DATA — Binance public WebSocket streams (no key needed)
+  ============================================================ */
+  const live = { trade:false, book:false, liq:false };
+
+  let liveBook = { bids:[], asks:[] };
+  let tradeQueue = [];
+  let liqQueue = [];
+  let priceUSD = null, priceChangePct = null;
+  let recentTrades = [];
+
+  // ---- new data feeding the busier UI (ticker, charts, ladders, fills) ----
+  let priceHistory = [];         // {t, price} for the live price sparkline
+  let flowBuckets = [];          // {t, bull, bear} rolling 2s volume buckets for trade flow chart
+  let bullFills = [], bearFills = []; // last few real fills per side
+  let bullVolumeTotal = 0, bearVolumeTotal = 0; // cumulative real BTC absorbed since load
+  let liqTotalUSD = 0; // cumulative real USD liquidated since load
+  let bullPopHistory = [], bearPopHistory = []; // population over time for sparklines
+
+  function pushRaw(text){
+    pushTickerItem(text);
+  }
+
+  function usingLiveBook(){ return live.book && liveBook.bids.length>0 && liveBook.asks.length>0; }
+  function usingLiveTrades(){ return live.trade; }
+
+  let marketRetry=0, liqRetry=0;
+  function backoff(n){ return Math.min(30000, 1500*Math.pow(1.6,n)); }
+
+  // reference to the live market socket + last-message clock, so a watchdog
+  // can detect a connection that's gone silently stale (no close/error event
+  // ever fires for this — the remote side just stops responding) and force
+  // a reconnect rather than leaving the app stuck with a dead socket forever
+  let marketWS = null;
+  let lastMarketMsgTime = performance.now();
+
+  function connectMarketWS(){
+    let ws;
+    try{ ws = new WebSocket('wss://stream.binance.com:9443/stream?streams=btcusdt@trade/btcusdt@depth20@100ms'); }
+    catch(e){ scheduleReconnect(); return; }
+    marketWS = ws;
+    ws.onopen = ()=>{ marketRetry=0; lastMarketMsgTime = performance.now(); };
+    ws.onmessage = (ev)=>{
+      lastMarketMsgTime = performance.now();
+      let msg; try{ msg=JSON.parse(ev.data); }catch(e){ return; }
+      if(!msg||!msg.stream) return;
+      if(msg.stream==='btcusdt@trade') handleTrade(msg.data);
+      else if(msg.stream.indexOf('depth20')>=0) handleDepth(msg.data);
+    };
+    ws.onerror = ()=>{ try{ws.close();}catch(e){} };
+    ws.onclose = ()=>{ live.trade=false; live.book=false; updateFeedTag(); scheduleReconnect(); };
+    function scheduleReconnect(){ marketRetry++; setTimeout(connectMarketWS, backoff(marketRetry)); }
+  }
+
+  // depth updates arrive roughly every 100ms while the connection is healthy,
+  // so 15s of total silence is a reliable sign the socket died without telling us
+  let staleReconnectInFlight = false;
+  setInterval(()=>{
+    if(marketWS && !staleReconnectInFlight && performance.now()-lastMarketMsgTime>15000){
+      staleReconnectInFlight = true;
+      console.warn('Market feed silent for 15s+, forcing reconnect');
+      pushLog('sys','Market feed unresponsive — forcing reconnect');
+      try{ marketWS.close(); }catch(e){}
+      setTimeout(()=>{ staleReconnectInFlight = false; }, 4000);
+    }
+  }, 5000);
+
+  function connectLiqWS(){
+    let ws;
+    try{ ws = new WebSocket('wss://fstream.binance.com/ws/!forceOrder@arr'); }
+    catch(e){ scheduleReconnect(); return; }
+    ws.onopen = ()=>{ liqRetry=0; live.liq=true; updateFeedTag(); };
+    ws.onmessage = (ev)=>{
+      let msg; try{ msg=JSON.parse(ev.data); }catch(e){ return; }
+      const o = msg && msg.o;
+      if(o && o.s==='BTCUSDT') handleLiquidation(o);
+    };
+    ws.onerror = ()=>{ try{ws.close();}catch(e){} };
+    ws.onclose = ()=>{ live.liq=false; updateFeedTag(); scheduleReconnect(); };
+    function scheduleReconnect(){ liqRetry++; setTimeout(connectLiqWS, backoff(liqRetry)); }
+  }
+
+  function handleTrade(d){
+    const price=parseFloat(d.p), qty=parseFloat(d.q);
+    if(!isFinite(price)||!isFinite(qty)) return;
+    priceUSD = price; live.trade = true;
+    updatePriceUI(); updateFeedTag();
+    const side = d.m ? 'bear' : 'bull'; // maker was buyer -> taker sold -> bear; else bull
+    const now = performance.now();
+    tradeQueue.push({side, qty, time:now});
+
+    priceHistory.push({t:now, price});
+    if(priceHistory.length>300) priceHistory.shift();
+
+    pushRaw('TRADE  '+qty.toFixed(4)+' BTC  @ $'+price.toLocaleString('en-US',{maximumFractionDigits:0})+'  '+(side==='bull'?'BUY':'SELL'));
+
+    const fillArr = side==='bull' ? bullFills : bearFills;
+    fillArr.unshift({qty, price, t:now});
+    if(fillArr.length>5) fillArr.pop();
+    if(side==='bull') bullVolumeTotal += qty; else bearVolumeTotal += qty;
+
+    // 2s flow buckets for the trade-flow histogram
+    let bucket = flowBuckets[flowBuckets.length-1];
+    if(!bucket || now-bucket.t>2000){
+      bucket = {t:now, bull:0, bear:0};
+      flowBuckets.push(bucket);
+      if(flowBuckets.length>40) flowBuckets.shift();
+    }
+    if(side==='bull') bucket.bull += qty; else bucket.bear += qty;
+  }
+  function handleDepth(d){
+    if(!d.bids||!d.asks) return;
+    liveBook.bids = d.bids.map(l=>({price:parseFloat(l[0]),qty:parseFloat(l[1])})).filter(x=>x.qty>0);
+    liveBook.asks = d.asks.map(l=>({price:parseFloat(l[0]),qty:parseFloat(l[1])})).filter(x=>x.qty>0);
+    live.book = true; updateFeedTag();
+  }
+  function handleLiquidation(o){
+    const side = o.S==='SELL' ? 'bear' : 'bull'; // forced SELL = long liquidated
+    const qty = parseFloat(o.q);
+    const price = parseFloat(o.ap||o.p) || priceUSD || 0;
+    if(!isFinite(qty)) return;
+    const usd = qty*price;
+    liqQueue.push({side, qty, usd, time:performance.now()});
+    liqTotalUSD += usd;
+    pushRaw('LIQ    '+qty.toFixed(4)+' BTC  @ $'+price.toLocaleString('en-US',{maximumFractionDigits:0})+'  '+(side==='bull'?'SHORT WIPED':'LONG WIPED'));
+  }
+
+  connectMarketWS();
+  connectLiqWS();
+
+  let lastBookSummary = 0;
+  function maybeSummarizeBook(){
+    const now = performance.now();
+    if(now-lastBookSummary<1800) return;
+    if(liveBook.bids.length===0 || liveBook.asks.length===0) return;
+    lastBookSummary = now;
+    const bestBid = liveBook.bids[0].price, bestAsk = liveBook.asks[0].price;
+    const spread = bestAsk-bestBid;
+    const bidVol = liveBook.bids.reduce((a,b)=>a+b.qty,0);
+    const askVol = liveBook.asks.reduce((a,b)=>a+b.qty,0);
+    const imb = ((bidVol-askVol)/(bidVol+askVol)*100).toFixed(0);
+    pushRaw('BOOK   bid $'+bestBid.toLocaleString('en-US',{maximumFractionDigits:0})+'  ask $'+bestAsk.toLocaleString('en-US',{maximumFractionDigits:0})+'  spread $'+spread.toFixed(1)+'  imbalance '+(imb>=0?'+':'')+imb+'%');
+  }
+
+  let dayHigh = null, dayLow = null;
+  async function fetchDailyChange(){
+    try{
+      const res = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {cache:'no-store'});
+      if(!res.ok) throw new Error('bad response');
+      const data = await res.json();
+      const pct = parseFloat(data.priceChangePercent);
+      if(isFinite(pct)){ priceChangePct = pct; updatePriceUI(); }
+      const hi = parseFloat(data.highPrice), lo = parseFloat(data.lowPrice);
+      if(isFinite(hi) && isFinite(lo)){ dayHigh = hi; dayLow = lo; updateRangeUI(); }
+    }catch(e){ /* keep last known */ }
+  }
+  fetchDailyChange();
+  setInterval(fetchDailyChange, 45000);
+
+  // ---- futures market internals (funding rate, open interest, long/short ratio) ----
+  // Public Binance Futures REST endpoints, no key required. Polled periodically
+  // since these aren't available over the spot WebSocket streams already in use.
+  let fundingRate = null, openInterest = null, openInterestBase = null;
+  let longPct = null, shortPct = null;
+
+  async function fetchFundingAndOI(){
+    try{
+      const [premRes, oiRes] = await Promise.all([
+        fetch('https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT', {cache:'no-store'}),
+        fetch('https://fapi.binance.com/fapi/v1/openInterest?symbol=BTCUSDT', {cache:'no-store'})
+      ]);
+      if(premRes.ok){
+        const prem = await premRes.json();
+        const fr = parseFloat(prem.lastFundingRate);
+        if(isFinite(fr)) fundingRate = fr;
+      }
+      if(oiRes.ok){
+        const oi = await oiRes.json();
+        const val = parseFloat(oi.openInterest);
+        if(isFinite(val)){
+          if(openInterestBase===null) openInterestBase = val;
+          openInterest = val;
+        }
+      }
+      updateInternalsUI();
+    }catch(e){ /* keep last known — futures data is supplementary, fail quietly */ }
+  }
+  fetchFundingAndOI();
+  setInterval(fetchFundingAndOI, 30000);
+
+  async function fetchLongShortRatio(){
+    try{
+      const res = await fetch('https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=BTCUSDT&period=5m&limit=1', {cache:'no-store'});
+      if(!res.ok) throw new Error('bad response');
+      const arr = await res.json();
+      const row = arr && arr[0];
+      if(row){
+        const lp = parseFloat(row.longAccount), sp = parseFloat(row.shortAccount);
+        if(isFinite(lp) && isFinite(sp)){ longPct = lp*100; shortPct = sp*100; }
+      }
+      updateInternalsUI();
+    }catch(e){ /* keep last known */ }
+  }
+  fetchLongShortRatio();
+  setInterval(fetchLongShortRatio, 60000);
+
+  let pressure = 0;
+  function simulatePriceDrift(){
+    if(usingLiveTrades()) return;
+    if(priceUSD===null) priceUSD = 65000+rand(-1500,1500);
+    priceUSD *= (1+rand(-0.0006,0.0006)+pressure*0.0003);
+    priceChangePct = clamp((priceChangePct||0)+rand(-0.05,0.05), -12, 12);
+    updatePriceUI();
+  }
+
+  const priceValEl = document.getElementById('priceVal');
+  const priceChgEl = document.getElementById('priceChg');
+  function updatePriceUI(){
+    if(priceUSD===null) return;
+    priceValEl.textContent = '$'+priceUSD.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const chg = priceChangePct||0;
+    priceChgEl.textContent = (chg>=0?'+':'')+chg.toFixed(2)+'%';
+    priceChgEl.className = 'chg '+(chg>=0?'up':'down');
+    updateRangeUI(); // current price moving also shifts where it sits in today's range
+  }
+
+  /* ============================================================
+     MARKET INTERNALS UI (funding, open interest, long/short, range, volatility)
+  ============================================================ */
+  const fundingValEl = document.getElementById('fundingVal');
+  const oiValEl = document.getElementById('oiVal');
+  const lsValEl = document.getElementById('lsVal');
+  const lsLongBarEl = document.getElementById('lsLongBar');
+  const lsShortBarEl = document.getElementById('lsShortBar');
+  const rangeValEl = document.getElementById('rangeVal');
+  const rangeMarkerEl = document.getElementById('rangeMarker');
+  const volValEl = document.getElementById('volVal');
+
+  function updateInternalsUI(){
+    if(fundingRate!==null){
+      const pct = fundingRate*100;
+      fundingValEl.textContent = (pct>=0?'+':'')+pct.toFixed(4)+'%';
+      fundingValEl.className = 'internals-val '+(pct>=0?'up':'down');
+    }
+    if(openInterest!==null){
+      oiValEl.textContent = openInterest.toLocaleString('en-US',{maximumFractionDigits:0})+' BTC';
+      if(openInterestBase!==null && openInterestBase>0){
+        const deltaPct = ((openInterest-openInterestBase)/openInterestBase)*100;
+        oiValEl.className = 'internals-val '+(deltaPct>0.05?'up':deltaPct<-0.05?'down':'');
+        oiValEl.title = (deltaPct>=0?'+':'')+deltaPct.toFixed(2)+'% since page load';
+      }
+    }
+    if(longPct!==null && shortPct!==null){
+      lsValEl.textContent = longPct.toFixed(0)+'% / '+shortPct.toFixed(0)+'%';
+      lsLongBarEl.style.width = longPct+'%';
+      lsShortBarEl.style.width = shortPct+'%';
+    }
+  }
+
+  function updateRangeUI(){
+    if(dayHigh===null || dayLow===null || priceUSD===null) return;
+    rangeValEl.textContent = '$'+dayLow.toLocaleString('en-US',{maximumFractionDigits:0})+'–$'+dayHigh.toLocaleString('en-US',{maximumFractionDigits:0});
+    const span = dayHigh-dayLow;
+    const pos = span>0 ? clamp((priceUSD-dayLow)/span, 0, 1) : 0.5;
+    rangeMarkerEl.style.left = (pos*100)+'%';
+  }
+
+  function updateVolatilityUI(){
+    if(priceHistory.length<8){ volValEl.textContent='—'; return; }
+    const cutoff = performance.now()-5*60*1000; // realized volatility over the trailing 5 minutes of real trades
+    const pts = priceHistory.filter(p=>p.t>=cutoff);
+    if(pts.length<8){ volValEl.textContent='—'; return; }
+    const returns = [];
+    for(let i=1;i<pts.length;i++){
+      returns.push(Math.log(pts[i].price/pts[i-1].price));
+    }
+    const mean = returns.reduce((a,b)=>a+b,0)/returns.length;
+    const variance = returns.reduce((a,b)=>a+(b-mean)*(b-mean),0)/returns.length;
+    const stdev = Math.sqrt(variance);
+    const pct = stdev*100;
+    volValEl.textContent = pct.toFixed(3)+'% (5m)';
+    volValEl.className = 'internals-val '+(pct>0.15?'danger':pct>0.06?'warn':'');
+  }
+
+  const feedTagEl = document.getElementById('feedTag');
+  const feedTagTextEl = document.getElementById('feedTagText');
+  function updateFeedTag(){
+    const full = live.trade && live.book && live.liq;
+    const partial = live.trade && live.book;
+    feedTagEl.classList.toggle('live', partial);
+    if(full) feedTagTextEl.textContent = 'LIVE · BINANCE';
+    else if(partial) feedTagTextEl.textContent = 'LIVE · NO LIQ FEED';
+    else feedTagTextEl.textContent = 'SIMULATED';
+  }
+  updateFeedTag();
+
+  function updatePressureTarget(){
+    if(usingLiveBook() && usingLiveTrades()){
+      const bidVol = liveBook.bids.reduce((a,b)=>a+b.qty,0);
+      const askVol = liveBook.asks.reduce((a,b)=>a+b.qty,0);
+      const bookImb = (bidVol-askVol)/Math.max(0.0001,(bidVol+askVol));
+      const now = performance.now();
+      recentTrades = recentTrades.filter(t=>now-t.time<8000);
+      const bV = recentTrades.filter(t=>t.side==='bull').reduce((a,b)=>a+b.qty,0);
+      const sV = recentTrades.filter(t=>t.side==='bear').reduce((a,b)=>a+b.qty,0);
+      const tradeImb = (bV-sV)/Math.max(0.0001,(bV+sV));
+      const target = clamp(bookImb*0.5+tradeImb*0.5, -1, 1);
+      pressure = lerp(pressure, target, 0.012);
+    } else {
+      pressure = clamp(pressure + rand(-0.01,0.01), -1, 1);
+    }
+  }
+
+  /* ============================================================
+     BATTLE / GROWTH LOG
+  ============================================================ */
+  const logEl = document.getElementById('log');
+  function pushLog(kind, text){
+    try{
+      const el = document.createElement('div');
+      el.className = 'log-entry '+(kind==='bull'?'bull':kind==='bear'?'bear':kind==='liq'?'liq':'');
+      const time = new Date().toTimeString().slice(0,8);
+      const tag = kind==='bull'?'[BULL]':kind==='bear'?'[BEAR]':kind==='liq'?'[LIQ]':'[SYS]';
+      el.innerHTML = '<span class="time">'+time+'</span><span class="tag">'+tag+'</span>'+text;
+      logEl.insertBefore(el, logEl.firstChild);
+      while(logEl.children.length>40) logEl.removeChild(logEl.lastChild);
+    } catch(err){
+      console.error('pushLog error (recovered):', err);
+    }
+  }
+
+  function fmtBTC(n){ return n.toFixed(3); }
+  function fmtUSD(n){
+    if(n>1e6) return '$'+(n/1e6).toFixed(2)+'M';
+    if(n>1e3) return '$'+(n/1e3).toFixed(1)+'K';
+    return '$'+n.toFixed(0);
+  }
+
+  /* ============================================================
+     FLOATING TEXT CALLOUTS
+  ============================================================ */
+  let floatingTexts = [];
+  function spawnText(xFrac,yFrac,text,color){
+    floatingTexts.push({x:xFrac*W,y:yFrac*H,text,color,born:performance.now(),life:1500});
+    while(floatingTexts.length>16) floatingTexts.shift();
+  }
+  function drawFloatingTexts(time){
+    floatingTexts = floatingTexts.filter(f=>time-f.born<f.life);
+    ctx.save();
+    ctx.font = "600 12px 'Space Mono', monospace";
+    ctx.textAlign = 'center';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(3,5,4,0.85)';
+    for(const f of floatingTexts){
+      const t = (time-f.born)/f.life;
+      const alpha = t<0.15 ? t/0.15 : 1-((t-0.15)/0.85);
+      ctx.globalAlpha = clamp(alpha,0,1);
+      const y = f.y - t*28;
+      if(!lowPerfMode) ctx.strokeText(f.text, f.x, y);
+      ctx.fillStyle = f.color;
+      ctx.fillText(f.text, f.x, y);
+    }
+    ctx.restore(); ctx.globalAlpha = 1;
+  }
+
+  /* ============================================================
+     LIVE EVENT DRAINING -> field growth / die-off
+  ============================================================ */
+  const MIN_VISIBLE_BTC = 0.01;
+  let lastTradeDrain = 0;
+  let netFlowBTC = 0;
+  function drainTrades(time){
+    if(time-lastTradeDrain<450) return;
+    lastTradeDrain = time;
+    if(tradeQueue.length===0) return;
+    const batch = tradeQueue.splice(0, tradeQueue.length);
+    let bullQty=0, bearQty=0;
+    for(const t of batch){
+      recentTrades.push(t);
+      if(t.side==='bull') bullQty+=t.qty; else bearQty+=t.qty;
+      netFlowBTC += (t.side==='bull'?1:-1)*t.qty;
+    }
+    if(bullQty>=MIN_VISIBLE_BTC){
+      const pos = seedGrowth('bull', bullQty);
+      spawnText(pos.x,pos.y,'+'+fmtBTC(bullQty)+' BTC', COLORS['--bull']);
+      if(bullQty>0.15) pushLog('bull','Bull tide surges — '+fmtBTC(bullQty)+' BTC buy pressure absorbed');
+    }
+    if(bearQty>=MIN_VISIBLE_BTC){
+      const pos = seedGrowth('bear', bearQty);
+      spawnText(pos.x,pos.y,'-'+fmtBTC(bearQty)+' BTC', COLORS['--bear']);
+      if(bearQty>0.15) pushLog('bear','Bear tide surges — '+fmtBTC(bearQty)+' BTC sell pressure absorbed');
+    }
+  }
+
+  function drainLiquidations(){
+    if(liqQueue.length===0) return;
+    const batch = liqQueue.splice(0, liqQueue.length);
+    for(const l of batch){
+      const victim = l.side==='bull' ? 'bear' : 'bull'; // a forced BUY (short liq) hurts the bear tide; forced SELL (long liq) hurts the bull tide
+      const pos = dieOff(victim, l.qty);
+      if(pos){
+        spawnText(pos.x,pos.y,'LIQUIDATED · '+fmtUSD(l.usd), COLORS['--danger']);
+        pushLog('liq', (l.side==='bull'?'Short':'Long')+' position erodes the tide — '+fmtUSD(l.usd)+' ('+fmtBTC(l.qty)+' BTC)');
+      }
+    }
+  }
+
+  /* ============================================================
+     SIMULATED FALLBACK (only while live streams unavailable)
+  ============================================================ */
+  let eventTimer=0, nextEventIn=900;
+  function scheduleNext(){ nextEventIn = rand(900,2600); }
+  scheduleNext();
+
+  function simulateEvent(){
+    const pBull = clamp(0.5+pressure*0.32, 0.12, 0.88);
+    const roll = Math.random();
+    if(roll<0.88){
+      const side = Math.random()<pBull ? 'bull':'bear';
+      const qty = 0.3+Math.pow(Math.random(),2.4)*22;
+      const pos = seedGrowth(side, qty);
+      spawnText(pos.x,pos.y,(side==='bull'?'+':'-')+fmtBTC(qty)+' BTC', COLORS[side==='bull'?'--bull':'--bear']);
+      if(qty>4) pushLog(side, (side==='bull'?'Bull':'Bear')+' tide surges — '+fmtBTC(qty)+' BTC absorbed (simulated)');
+    } else {
+      const victim = Math.random()<0.5 ? 'bull':'bear';
+      const usd = rand(40000,4200000);
+      const qty = usd/ (priceUSD||65000);
+      const pos = dieOff(victim, qty);
+      if(pos){
+        spawnText(pos.x,pos.y,'LIQUIDATED · '+fmtUSD(usd), COLORS['--danger']);
+        pushLog('liq', (victim==='bull'?'Long':'Short')+' position erodes the tide — '+fmtUSD(usd)+' liquidated (simulated)');
+      }
+    }
+  }
+  function simulateFieldChurn(){
+    if(usingLiveBook()) return;
+    pushLog('sys','Tidal churn detected (simulated)');
+  }
+
+  /* ============================================================
+     FRONTIER MARKER
+  ============================================================ */
+  let coreGlow = 0.4;
+  let lastCoreState = '';
+  const coreStateEl = document.getElementById('coreState');
+
+  // Pre-render the frontier glow bar once as an 80px-wide sprite at full
+  // strength; each frame we just position + alpha-modulate it via drawImage
+  // rather than constructing a fresh gradient every frame.
+  let frontierSprite = null;
+  function buildFrontierSprite(){
+    frontierSprite = document.createElement('canvas');
+    frontierSprite.width = 80; frontierSprite.height = 200;
+    const sc = frontierSprite.getContext('2d');
+    const g = sc.createLinearGradient(0,0,80,0);
+    g.addColorStop(0,'rgba(255,207,92,0)');
+    g.addColorStop(0.5,'rgba(255,207,92,1)');
+    g.addColorStop(1,'rgba(255,207,92,0)');
+    sc.fillStyle = g;
+    sc.fillRect(0,0,80,200);
+  }
+  buildFrontierSprite();
+
+  function drawFrontier(time){
+    const fx = W*(0.5+pressure*0.30);
+    coreGlow = Math.max(0.3, coreGlow*0.985);
+    const pulse = 0.6+0.4*Math.sin(time*0.0025);
+    ctx.save();
+    ctx.globalAlpha = 0.16*coreGlow*pulse;
+    ctx.drawImage(frontierSprite, fx-40, H*0.16, 80, H*0.7);
+    ctx.restore();
+
+    const coreState = pressure>0.35?'BULL DOMINANT':pressure<-0.35?'BEAR DOMINANT':'CONTESTED';
+    if(coreState!==lastCoreState){ lastCoreState = coreState; coreStateEl.textContent = coreState; }
+  }
+
+  /* ============================================================
+     UI PANELS + GAUGE + UPTIME
+  ============================================================ */
+  const gaugeFillEl = document.getElementById('gaugeFill');
+  const gaugeMarkerEl = document.getElementById('gaugeMarker');
+  const netFlowEl = document.getElementById('netFlow');
+  const liqTotalEl = document.getElementById('liqTotal');
+  function updateGauge(){
+    const pct = pressure*50;
+    if(pct>=0){
+      gaugeFillEl.style.left='50%'; gaugeFillEl.style.width=Math.abs(pct)+'%';
+      gaugeFillEl.style.background = `linear-gradient(to right, var(--frontier), var(--bull))`;
+    } else {
+      gaugeFillEl.style.left=(50-Math.abs(pct))+'%'; gaugeFillEl.style.width=Math.abs(pct)+'%';
+      gaugeFillEl.style.background = `linear-gradient(to right, var(--bear), var(--frontier))`;
+    }
+    gaugeMarkerEl.style.left=(50+pressure*44)+'%';
+    netFlowEl.textContent=(netFlowBTC>=0?'+':'')+netFlowBTC.toFixed(3)+' BTC';
+    netFlowEl.style.color = netFlowBTC>=0 ? COLORS['--bull'] : COLORS['--bear'];
+    liqTotalEl.textContent = fmtUSD(liqTotalUSD);
+  }
+
+  const bullPopEl=document.getElementById('bullPop'), bullPopBarEl=document.getElementById('bullPopBar');
+  const bullTerrEl=document.getElementById('bullTerr'), bullTerrBarEl=document.getElementById('bullTerrBar');
+  const bearPopEl=document.getElementById('bearPop'), bearPopBarEl=document.getElementById('bearPopBar');
+  const bearTerrEl=document.getElementById('bearTerr'), bearTerrBarEl=document.getElementById('bearTerrBar');
+  function updatePanels(){
+    const stats = fieldStats();
+    bullPopEl.textContent = bullVolumeTotal.toFixed(2)+' BTC';
+    bearPopEl.textContent = bearVolumeTotal.toFixed(2)+' BTC';
+    bullTerrEl.textContent = stats.bullTerritory.toFixed(1)+'%';
+    bearTerrEl.textContent = stats.bearTerritory.toFixed(1)+'%';
+    const maxVol = Math.max(bullVolumeTotal,bearVolumeTotal,0.0001);
+    bullPopBarEl.style.width = Math.max(4,(bullVolumeTotal/maxVol)*100)+'%';
+    bearPopBarEl.style.width = Math.max(4,(bearVolumeTotal/maxVol)*100)+'%';
+    bullTerrBarEl.style.width = Math.max(4,stats.bullTerritory*2)+'%';
+    bearTerrBarEl.style.width = Math.max(4,stats.bearTerritory*2)+'%';
+
+    const now = performance.now();
+    bullPopHistory.push({t:now, v:stats.bullTerritory});
+    bearPopHistory.push({t:now, v:stats.bearTerritory});
+    if(bullPopHistory.length>90) bullPopHistory.shift();
+    if(bearPopHistory.length>90) bearPopHistory.shift();
+
+    drawSparkline('bullSpark', bullPopHistory, COLORS['--bull']);
+    drawSparkline('bearSpark', bearPopHistory, COLORS['--bear']);
+    renderLadder('bullLadder', liveBook.bids.slice(0,7), 'bull');
+    renderLadder('bearLadder', liveBook.asks.slice(0,7), 'bear');
+    renderFills('bullFills', bullFills);
+    renderFills('bearFills', bearFills);
+    drawPriceChart();
+    drawDepthChart();
+    drawFlowChart();
+  }
+
+  /* ============================================================
+     MINI CHARTS (population sparklines, price, depth, trade flow)
+  ============================================================ */
+  const sparkCanvases = {};
+  function drawSparkline(id, history, color){
+    let cv = sparkCanvases[id];
+    if(!cv){ cv = document.getElementById(id); sparkCanvases[id]=cv; }
+    if(!cv || history.length<2) return;
+    const rect = cv.getBoundingClientRect();
+    const w = Math.max(1,Math.round(rect.width)), h = Math.max(1,Math.round(rect.height||32));
+    if(cv.width!==w) cv.width=w;
+    if(cv.height!==h) cv.height=h;
+    const c2 = cv.getContext('2d');
+    c2.clearRect(0,0,w,h);
+    const vals = history.map(p=>p.v);
+    const min = Math.min(...vals), max = Math.max(...vals,min+1);
+    c2.beginPath();
+    history.forEach((p,i)=>{
+      const x = (i/(history.length-1))*w;
+      const y = h - ((p.v-min)/(max-min))*h*0.85 - h*0.075;
+      if(i===0) c2.moveTo(x,y); else c2.lineTo(x,y);
+    });
+    c2.strokeStyle = color; c2.lineWidth = 1.5;
+    c2.stroke();
+    // fill under line
+    c2.lineTo(w,h); c2.lineTo(0,h); c2.closePath();
+    const rgb = hexToRgb(color);
+    c2.fillStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},0.12)`;
+    c2.fill();
+  }
+
+  function renderLadder(containerId, levels, side){
+    const el = document.getElementById(containerId);
+    if(!el) return;
+    if(!levels || levels.length===0){ el.innerHTML = '<div class="ladder-row"><span class="ltext" style="color:var(--lo)">awaiting book…</span></div>'; return; }
+    const maxQty = Math.max(...levels.map(l=>l.qty), 0.0001);
+    el.innerHTML = levels.map(l=>{
+      const pct = (l.qty/maxQty)*100;
+      return `<div class="ladder-row"><div class="lbar" style="width:${pct}%"></div><div class="ltext"><span class="lp">$${l.price.toLocaleString('en-US',{maximumFractionDigits:0})}</span><span>${l.qty.toFixed(3)}</span></div></div>`;
+    }).join('');
+  }
+
+  function renderFills(containerId, fills){
+    const el = document.getElementById(containerId);
+    if(!el) return;
+    if(!fills || fills.length===0){ el.innerHTML = '<div class="fill-row" style="color:var(--lo)">no fills yet…</div>'; return; }
+    el.innerHTML = fills.map(f=>`<div class="fill-row"><span>${f.qty.toFixed(3)} BTC</span><span class="fp">$${f.price.toLocaleString('en-US',{maximumFractionDigits:0})}</span></div>`).join('');
+  }
+
+  const priceSparkValEl = document.getElementById('priceSparkVal');
+  function drawPriceChart(){
+    const cv = document.getElementById('priceChart');
+    if(!cv || priceHistory.length<2) return;
+    const rect = cv.getBoundingClientRect();
+    const w = Math.max(1,Math.round(rect.width)), h = Math.max(1,Math.round(rect.height||64));
+    if(cv.width!==w) cv.width=w;
+    if(cv.height!==h) cv.height=h;
+    const c2 = cv.getContext('2d');
+    c2.clearRect(0,0,w,h);
+    const vals = priceHistory.map(p=>p.price);
+    const min = Math.min(...vals), max = Math.max(...vals, min+1);
+    const first = vals[0], last = vals[vals.length-1];
+    const up = last>=first;
+    const color = up ? COLORS['--bull'] : COLORS['--bear'];
+    c2.beginPath();
+    priceHistory.forEach((p,i)=>{
+      const x = (i/(priceHistory.length-1))*w;
+      const y = h - ((p.price-min)/(max-min))*h*0.8 - h*0.1;
+      if(i===0) c2.moveTo(x,y); else c2.lineTo(x,y);
+    });
+    c2.strokeStyle = color; c2.lineWidth = 1.6;
+    c2.stroke();
+    priceSparkValEl.textContent = '$'+last.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    priceSparkValEl.style.color = color;
+  }
+
+  const depthSparkValEl = document.getElementById('depthSparkVal');
+  function drawDepthChart(){
+    const cv = document.getElementById('depthChart');
+    if(!cv) return;
+    const rect = cv.getBoundingClientRect();
+    const w = Math.max(1,Math.round(rect.width)), h = Math.max(1,Math.round(rect.height||70));
+    if(cv.width!==w) cv.width=w;
+    if(cv.height!==h) cv.height=h;
+    const c2 = cv.getContext('2d');
+    c2.clearRect(0,0,w,h);
+    const bids = liveBook.bids.slice(0,20), asks = liveBook.asks.slice(0,20);
+    if(bids.length===0||asks.length===0){ depthSparkValEl.textContent='—'; return; }
+    let cum=0; const bidCum = bids.map(b=>{ cum+=b.qty; return cum; });
+    cum=0; const askCum = asks.map(a=>{ cum+=a.qty; return cum; });
+    const maxCum = Math.max(bidCum[bidCum.length-1], askCum[askCum.length-1], 0.0001);
+
+    // bid side (left half, teal)
+    c2.beginPath(); c2.moveTo(w/2,h);
+    bidCum.forEach((v,i)=>{ const x = w/2 - (i/(bidCum.length-1))*(w/2); const y = h-(v/maxCum)*h*0.9; c2.lineTo(x,y); });
+    c2.lineTo(0,h); c2.closePath();
+    c2.fillStyle = COLORS['--bull']+'33'; c2.fill();
+    c2.strokeStyle = COLORS['--bull']; c2.lineWidth=1.2; c2.stroke();
+
+    // ask side (right half, crimson)
+    c2.beginPath(); c2.moveTo(w/2,h);
+    askCum.forEach((v,i)=>{ const x = w/2 + (i/(askCum.length-1))*(w/2); const y = h-(v/maxCum)*h*0.9; c2.lineTo(x,y); });
+    c2.lineTo(w,h); c2.closePath();
+    c2.fillStyle = COLORS['--bear']+'33'; c2.fill();
+    c2.strokeStyle = COLORS['--bear']; c2.lineWidth=1.2; c2.stroke();
+
+    const bidVol = bidCum[bidCum.length-1], askVol = askCum[askCum.length-1];
+    const imb = ((bidVol-askVol)/(bidVol+askVol)*100);
+    depthSparkValEl.textContent = (imb>=0?'+':'')+imb.toFixed(0)+'%';
+    depthSparkValEl.style.color = imb>=0 ? COLORS['--bull'] : COLORS['--bear'];
+  }
+
+  const flowSparkValEl = document.getElementById('flowSparkVal');
+  function drawFlowChart(){
+    const cv = document.getElementById('flowChart');
+    if(!cv) return;
+    const rect = cv.getBoundingClientRect();
+    const w = Math.max(1,Math.round(rect.width)), h = Math.max(1,Math.round(rect.height||56));
+    if(cv.width!==w) cv.width=w;
+    if(cv.height!==h) cv.height=h;
+    const c2 = cv.getContext('2d');
+    c2.clearRect(0,0,w,h);
+    const now = performance.now();
+    const recent = flowBuckets.filter(b=>now-b.t<60000);
+    if(recent.length===0){ flowSparkValEl.textContent='—'; return; }
+    const maxV = Math.max(...recent.map(b=>Math.max(b.bull,b.bear)), 0.0001);
+    const bw = w/Math.max(recent.length,20);
+    let netBull=0, netBear=0;
+    recent.forEach((b,i)=>{
+      const x = i*bw;
+      const bullH = (b.bull/maxV)*h*0.48;
+      const bearH = (b.bear/maxV)*h*0.48;
+      c2.fillStyle = COLORS['--bull'];
+      c2.fillRect(x, h/2-bullH, bw*0.8, bullH);
+      c2.fillStyle = COLORS['--bear'];
+      c2.fillRect(x, h/2, bw*0.8, bearH);
+      netBull+=b.bull; netBear+=b.bear;
+    });
+    c2.strokeStyle = 'rgba(180,220,200,0.25)'; c2.lineWidth=1;
+    c2.beginPath(); c2.moveTo(0,h/2); c2.lineTo(w,h/2); c2.stroke();
+    const net = netBull-netBear;
+    flowSparkValEl.textContent = (net>=0?'+':'')+net.toFixed(2)+' BTC';
+    flowSparkValEl.style.color = net>=0 ? COLORS['--bull'] : COLORS['--bear'];
+  }
+
+  /* ============================================================
+     RAW FEED TICKER — pure CSS-animation-driven infinite marquee.
+     Content is duplicated back-to-back and scrolled 0% -> -50% in
+     a native @keyframes loop, so the browser's animation engine
+     owns the motion entirely — there is no persistent JS-computed
+     scroll position that could silently drift into a broken state.
+     We only rebuild the (duplicated) content periodically, and use
+     an animation-delay trick to resume from the same visual
+     position so a rebuild never causes a visible jump.
+  ============================================================ */
+  const tickerTrack = document.getElementById('tickerTrack');
+  const TICKER_PX_PER_SEC = 45;
+  let tickerItems = [];
+  let lastTickerRebuild = 0;
+  let lastTickerAppendTime = performance.now();
+
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function getTrackTranslateX(){
+    const t = getComputedStyle(tickerTrack).transform;
+    if(!t || t==='none') return 0;
+    const m = t.match(/matrix\(([^)]+)\)/);
+    if(!m) return 0;
+    const parts = m[1].split(',').map(Number);
+    return parts[4] || 0;
+  }
+
+  function rebuildTicker(){
+    if(tickerItems.length===0) return;
+    if(reducedMotion){
+      tickerTrack.classList.add('static');
+      tickerTrack.innerHTML = tickerItems.map(t=>'<span>'+escapeHtml(t)+'</span>').join('');
+      return;
+    }
+    // capture current visual scroll position so the rebuild is seamless
+    const prevX = getTrackTranslateX();
+
+    const itemsHtml = tickerItems.map(t=>'<span>'+escapeHtml(t)+'</span>').join('');
+    tickerTrack.innerHTML = itemsHtml + itemsHtml; // duplicated for the seamless 0->-50% loop
+
+    const singleWidth = tickerTrack.scrollWidth/2;
+    if(!(singleWidth>0)) return;
+    const duration = Math.max(6, singleWidth/TICKER_PX_PER_SEC);
+
+    // normalize the previous position into this track's new coordinate space
+    // so playback resumes from (approximately) the same visual spot
+    let norm = prevX % singleWidth;
+    if(norm>0) norm -= singleWidth;
+    const progress = (-norm)/singleWidth; // 0..1
+    const delay = -(progress*duration);
+
+    tickerTrack.style.animation = 'none';
+    void tickerTrack.offsetWidth; // force reflow so the restart below is clean
+    tickerTrack.style.animation = 'tickerScroll '+duration+'s linear infinite';
+    tickerTrack.style.animationDelay = delay+'s';
+  }
+
+  function pushTickerItem(text){
+    lastTickerAppendTime = performance.now();
+    tickerItems.push(text);
+    if(tickerItems.length>40) tickerItems.shift();
+  }
+
+  function updateTickerScroll(dt){
+    const now = performance.now();
+    // watchdog: guarantee the ticker never sits silently empty forever,
+    // regardless of upstream cause
+    if(tickerItems.length===0 && now-lastTickerAppendTime>4000){
+      lastTickerAppendTime = now;
+      pushTickerItem('…listening for live order flow…');
+    }
+    if(now-lastTickerRebuild>1500){
+      lastTickerRebuild = now;
+      rebuildTicker();
+    }
+  }
+
+  const startTime = performance.now();
+  const uptimeEl = document.getElementById('uptime');
+  function updateUptime(){
+    const s = Math.floor((performance.now()-startTime)/1000);
+    const hh=String(Math.floor(s/3600)).padStart(2,'0');
+    const mm=String(Math.floor((s%3600)/60)).padStart(2,'0');
+    const ss=String(s%60).padStart(2,'0');
+    uptimeEl.textContent = `${hh}:${mm}:${ss}`;
+  }
+
+  /* ============================================================
+     MAIN LOOP
+  ============================================================ */
+  let paused=false;
+  let lastFrame = performance.now();
+  let firstBookApplied = false;
+
+  // Adaptive quality: rather than guessing which browser/GPU combo needs
+  // lighter effects, measure real sustained frame time and automatically
+  // drop the more expensive decorative touches (extra glow passes) if this
+  // device/browser genuinely can't keep up — full quality stays untouched
+  // on fast setups.
+  let lowPerfMode = false;
+  let frameTimes = [];
+  function trackPerf(dt){
+    if(lowPerfMode) return;
+    frameTimes.push(dt);
+    if(frameTimes.length>90) frameTimes.shift();
+    if(frameTimes.length>=75){
+      const avg = frameTimes.reduce((a,b)=>a+b,0)/frameTimes.length;
+      if(avg>30){ // sustained average worse than ~33fps
+        lowPerfMode = true;
+        pushLog('sys','Reduced-effects mode enabled for smoother performance on this device/browser');
+        initField();
+        buildMotes();
+      }
+    }
+  }
+
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 1.5);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W*DPR; canvas.height = H*DPR;
+    canvas.style.width=W+'px'; canvas.style.height=H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    buildSubstrate();
+    buildMotes();
+    initField();
+    rebuildFieldGradients();
+  }
+
+  function loop(time){
+    requestAnimationFrame(loop);
+    const dt = Math.min(64, time-lastFrame);
+    lastFrame = time;
+    trackPerf(dt);
+
+    try{
+      if(paused){ render(time,true); updateTickerScroll(0); return; }
+
+      updatePressureTarget();
+      maybeSummarizeBook();
+
+      if(usingLiveBook()){
+        if(!firstBookApplied){ firstBookApplied=true; pushLog('sys','Live order book acquired — real growth data online'); }
+        drainTrades(time);
+        drainLiquidations();
+      } else {
+        eventTimer += dt;
+        if(eventTimer>=nextEventIn){ simulateEvent(); eventTimer=0; scheduleNext(); }
+      }
+
+      updateLiquidField(time, dt);
+      updateTickerScroll(dt);
+      render(time);
+    } catch(err){
+      // never let a single bad frame permanently break the visualization —
+      // log it for diagnosis and keep the animation loop alive regardless
+      console.error('Frame error (recovered):', err);
+      try{ render(time,true); }catch(e2){ /* even the fallback render failed, skip this frame */ }
+    }
+  }
+
+  function render(time, freeze){
+    ctx.clearRect(0,0,W,H);
+    ctx.drawImage(substrate,0,0,W,H);
+    drawMotes(time, freeze?0:(time-lastFrame));
+    drawFrontier(time);
+    renderLiquidField(time);
+    drawFloatingTexts(time);
+  }
+
+  setInterval(()=>{ updatePanels(); updateGauge(); updateUptime(); updateVolatilityUI(); }, 260);
+  setInterval(simulatePriceDrift, 4000);
+  setInterval(simulateFieldChurn, 55000);
+
+  /* ============================================================
+     CONTROLS
+  ============================================================ */
+  const pauseBtn = document.getElementById('pauseBtn');
+  pauseBtn.addEventListener('click', ()=>{
+    paused = !paused;
+    pauseBtn.textContent = paused?'►':'❚❚';
+    pauseBtn.setAttribute('aria-label', paused?'Resume simulation':'Pause simulation');
+  });
+  window.addEventListener('keydown',(e)=>{
+    if(e.code==='Space' && e.target.tagName!=='BUTTON'){ e.preventDefault(); pauseBtn.click(); }
+  });
+
+  const rippleSlider = document.getElementById('rippleSlider');
+  const rippleValEl = document.getElementById('rippleVal');
+  rippleSlider.addEventListener('input', ()=>{
+    rippleStrength = Number(rippleSlider.value)/100;
+    rippleValEl.textContent = rippleSlider.value;
+  });
+
+  const helpBtn = document.getElementById('helpBtn');
+  const helpBackdrop = document.getElementById('helpBackdrop');
+  const helpClose = document.getElementById('helpClose');
+  function openHelp(){ helpBackdrop.classList.add('open'); }
+  function closeHelp(){ helpBackdrop.classList.remove('open'); }
+  helpBtn.addEventListener('click', openHelp);
+  helpClose.addEventListener('click', closeHelp);
+  helpBackdrop.addEventListener('click', (e)=>{ if(e.target===helpBackdrop) closeHelp(); });
+  window.addEventListener('keydown', (e)=>{
+    if(e.key==='Escape' && helpBackdrop.classList.contains('open')) closeHelp();
+  });
+
+  const bullPanel=document.getElementById('bullPanel'), bearPanel=document.getElementById('bearPanel');
+  const toggleBull=document.getElementById('toggleBull'), toggleBear=document.getElementById('toggleBear');
+  function setPanel(which){
+    if(which==='bull'){
+      bullPanel.classList.toggle('open'); bearPanel.classList.remove('open');
+      toggleBull.classList.toggle('active', bullPanel.classList.contains('open'));
+      toggleBear.classList.remove('active');
+    } else {
+      bearPanel.classList.toggle('open'); bullPanel.classList.remove('open');
+      toggleBear.classList.toggle('active', bearPanel.classList.contains('open'));
+      toggleBull.classList.remove('active');
+    }
+  }
+  toggleBull.addEventListener('click', ()=>setPanel('bull'));
+  toggleBear.addEventListener('click', ()=>setPanel('bear'));
+
+  /* ============================================================
+     BOOT
+  ============================================================ */
+  window.addEventListener('resize', resize);
+  resize();
+  pushLog('sys','Tides initialized — connecting to live Binance order flow…');
+  updatePanels(); updateGauge();
+  requestAnimationFrame(loop);
+
+})();
+</script>
+</body>
+</html>
